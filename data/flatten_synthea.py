@@ -34,16 +34,36 @@ CANCER_PATTERNS = {  # matched against condition DESCRIPTION; edit after --inspe
 }
 CANCER_GUARD = r"malignant|carcinoma|cancer|neoplasm"
 
-# output column -> regex on observation DESCRIPTION (fill in after --inspect)
+# output column -> regex on observation DESCRIPTION.
+# Breast patterns are anchored to the exact descriptions seen in our Synthea output
+# (Nov 2026 inspect). Anchoring matters: "progesterone receptor" alone would also match
+# the combined "Estrogen+Progesterone receptor" test.
 FEATURE_KEYWORDS = {
     "breast": {
-        "er_status": r"estrogen receptor",
-        "pr_status": r"progesterone receptor",
-        "her2_status": r"\bher2\b|erbb2",
-        "tumor_size_mm": r"tumor size|size\.?\s*tumor|greatest dimension",
+        "stage_group": r"^stage group\.clinical cancer",
+        "t_class": r"^primary tumor\.clinical \[class\] cancer",
+        "n_class": r"^regional lymph nodes\.clinical \[class\] cancer",
+        "m_class": r"^distant metastases\.clinical \[class\] cancer",
+        "er_status": r"^estrogen receptor ag \[presence\] in breast cancer specimen",
+        "pr_status": r"^progesterone receptor ag \[presence\] in breast cancer specimen",
+        "her2_ihc": r"^her2 \[presence\] in breast cancer specimen by immune stain",
+        "her2_fish": r"^erbb2 gene duplication \[presence\] in breast cancer specimen by fish",
+        "tumor_size": r"^size\.maximum dimension in tumor",
+        "nodes_macromet": r"^lymph nodes with macrometastases \[#\]",
+        "nodes_micromet": r"^lymph nodes with micrometastases \[#\]",
     },
     "lung": {},
     "colorectal": {"cea": r"carcinoembryonic"},
+}
+NUMERIC_FEATURES = {"tumor_size", "nodes_macromet", "nodes_micromet"}
+
+# Candidate outcomes to examine before choosing one. Only post-index records can be outcomes.
+OUTCOME_CANDIDATES = {
+    "breast": {
+        "distant_metastasis_site": r"^site of distant metastasis in breast tumor",
+        "treatment_response": r"^response to cancer treatment",
+        "treatment_status": r"^treatment status cancer",
+    },
 }
 BASELINE_WINDOW_DAYS = 90
 
@@ -61,6 +81,62 @@ def _read(d: Path, name: str, required=True) -> pd.DataFrame | None:
 
 def _dates(s):
     return pd.to_datetime(s, errors="coerce", utc=True).dt.tz_localize(None)
+
+
+def inspect_values(synthea_dir: Path, cancer: str, window_days: int):
+    """Report, for every mapped feature and outcome candidate: coverage, timing, top values."""
+    patients = _read(synthea_dir, "patients")
+    conditions = _read(synthea_dir, "conditions")
+    observations = _read(synthea_dir, "observations")
+    desc = conditions["DESCRIPTION"].astype(str)
+    match = desc.str.contains(CANCER_PATTERNS[cancer], case=False, regex=True) & \
+        desc.str.contains(CANCER_GUARD, case=False, regex=True)
+    cond = conditions[match].copy()
+    cond["START"] = _dates(cond["START"])
+    index = cond.groupby("PATIENT")["START"].min().rename("idx")
+    n = len(index)
+    print(f"{n} patients; baseline window +/-{window_days} days of first diagnosis\n")
+
+    obs = observations[observations["PATIENT"].isin(index.index)].copy()
+    obs["DATE"] = _dates(obs["DATE"])
+    obs = obs.join(index, on="PATIENT")
+    obs["days"] = (obs["DATE"] - obs["idx"]).dt.days
+    d = obs["DESCRIPTION"].astype(str)
+
+    def report(name, pat):
+        o = obs[d.str.contains(pat, case=False, regex=True)]
+        if o.empty:
+            print(f"--- {name}: NO MATCHES for pattern {pat!r}\n")
+            return
+        any_p = o["PATIENT"].nunique()
+        in_win = o[o["days"].abs() <= window_days]["PATIENT"].nunique()
+        after = o[o["days"] > window_days]["PATIENT"].nunique()
+        q = o["days"].quantile([0, 0.25, 0.5, 0.75, 1]).round(0).astype(int).tolist()
+        print(f"--- {name}")
+        print(f"patients with any record: {any_p}/{n} | within window: {in_win} | "
+              f"only/also later than window: {after}")
+        print(f"days from diagnosis (min, q1, median, q3, max): {q}")
+        print("top values:", o["VALUE"].astype(str).value_counts().head(8).to_dict(), "\n")
+
+    print("=== FEATURES ===")
+    for name, pat in FEATURE_KEYWORDS.get(cancer, {}).items():
+        report(name, pat)
+    print("=== OUTCOME CANDIDATES ===")
+    for name, pat in OUTCOME_CANDIDATES.get(cancer, {}).items():
+        report(name, pat)
+
+    p = patients[patients["ID"].isin(index.index)].set_index("ID")
+    death = _dates(p.get("DEATHDATE"))
+    dd = (death - index.reindex(p.index)).dt.days.dropna()
+    print("=== DEATH ===")
+    print(f"deaths: {len(dd)}/{n}; days from diagnosis to death (min, q1, median, q3, max): "
+          f"{dd.quantile([0, .25, .5, .75, 1]).round(0).astype(int).tolist() if len(dd) else []}")
+    last = obs.groupby("PATIENT")["DATE"].max()
+    end = death.where(death.notna(), last.reindex(p.index))
+    fu = ((end - index.reindex(p.index)).dt.days / 30.44).dropna()
+    print(f"follow-up months (min, q1, median, q3, max): {fu.quantile([0, .25, .5, .75, 1]).round(1).tolist()}")
+    print(f"share followed >= 24 months: {(fu >= 24).mean():.0%}; >= 60 months: {(fu >= 60).mean():.0%}")
+    print(f"diagnosis years: {index.dt.year.value_counts().sort_index().to_dict()}")
 
 
 def build(synthea_dir: Path, cancer: str, inspect: bool = False):
@@ -120,7 +196,8 @@ def build(synthea_dir: Path, cancer: str, inspect: bool = False):
         for col, pat in FEATURE_KEYWORDS.get(cancer, {}).items():
             hit = obs[obs["DESCRIPTION"].astype(str).str.contains(pat, case=False, regex=True)]
             hit = hit.sort_values("DATE").groupby("PATIENT")["VALUE"].first()
-            out[col] = hit.reindex(out.index)
+            vals = hit.reindex(out.index)
+            out[col] = pd.to_numeric(vals, errors="coerce") if col in NUMERIC_FEATURES else vals
 
     out = out.reset_index(drop=True)
     coldefs = {c: {"type": "numeric" if pd.api.types.is_numeric_dtype(out[c]) else "categorical",
@@ -147,7 +224,14 @@ if __name__ == "__main__":
     ap.add_argument("--cancer", choices=sorted(CANCER_PATTERNS), default="breast")
     ap.add_argument("--out", type=Path, default=Path("data/synthea"))
     ap.add_argument("--inspect", action="store_true")
+    ap.add_argument("--inspect-values", action="store_true",
+                    help="coverage, timing and top values for each mapped field and outcome candidate")
+    ap.add_argument("--window-days", type=int, default=BASELINE_WINDOW_DAYS)
     a = ap.parse_args()
+    BASELINE_WINDOW_DAYS = a.window_days
+    if a.inspect_values:
+        inspect_values(a.synthea_dir, a.cancer, a.window_days)
+        raise SystemExit(0)
     df, d = build(a.synthea_dir, a.cancer, a.inspect)
     if df is not None:
         a.out.mkdir(parents=True, exist_ok=True)
