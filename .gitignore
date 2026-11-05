@@ -2,6 +2,6 @@ keys/
 .env
 __pycache__/
 *.pyc
-data/synthea/
+data/synthea*/
 .venv/
 node_modules/

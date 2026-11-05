@@ -2,8 +2,10 @@
 
 Run from the repo root after flattening:
   python data/flatten_synthea.py --synthea-dir ~/synthea/output_full/csv --cancer breast --out data/synthea
-  python scripts/run_synthea_specs.py
+  python scripts/run_synthea_specs.py                       # uses data/synthea
+  python scripts/run_synthea_specs.py --data-dir data/synthea_large
 """
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -13,8 +15,11 @@ sys.path.insert(0, str(ROOT))
 
 from cohort_firewall.engine import evaluate_dataset  # noqa: E402
 
-DATA = ROOT / "data" / "synthea" / "breast_cohort.csv"
-DICT = ROOT / "data" / "synthea" / "breast_cohort.dictionary.json"
+ap = argparse.ArgumentParser()
+ap.add_argument("--data-dir", type=Path, default=ROOT / "data" / "synthea")
+d = ap.parse_args().data_dir
+d = d if d.is_absolute() else ROOT / d
+DATA, DICT = d / "breast_cohort.csv", d / "breast_cohort.dictionary.json"
 if not DATA.exists():
     sys.exit(f"Missing {DATA}. Run the flatten command in this file's docstring first.")
 
