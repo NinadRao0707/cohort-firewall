@@ -60,7 +60,6 @@ NUMERIC_FEATURES = {"tumor_size", "nodes_macromet", "nodes_micromet"}
 # Candidate outcomes to examine before choosing one. Only post-index records can be outcomes.
 OUTCOME_CANDIDATES = {
     "breast": {
-        "distant_metastasis_site": r"^site of distant metastasis in breast tumor",
         "treatment_response": r"^response to cancer treatment",
         "treatment_status": r"^treatment status cancer",
     },
@@ -81,6 +80,46 @@ def _read(d: Path, name: str, required=True) -> pd.DataFrame | None:
 
 def _dates(s):
     return pd.to_datetime(s, errors="coerce", utc=True).dt.tz_localize(None)
+
+
+ROMAN = {"1": "I", "2": "II", "3": "III", "4": "IV"}
+
+
+def _norm_stage(v):
+    m = re.search(r"stage\s*(IV|III|II|I|[1-4])", str(v), re.IGNORECASE)
+    if not m:
+        return None
+    tok = m.group(1).upper()
+    return ROMAN.get(tok, tok)
+
+
+def _norm_tnm(v):
+    m = re.search(r"\bc([TNM][0-4X])", str(v))
+    return m.group(1) if m else None
+
+
+def _norm_receptor(v):
+    t = str(v).lower()
+    return "positive" if "positive" in t else "negative" if "negative" in t else None
+
+
+def _norm_fish(v):
+    t = str(v).lower()
+    if "greater than" in t:
+        return "amplified"
+    if "less than" in t:
+        return "not_amplified"
+    return "equivocal" if t.strip() and t != "nan" else None
+
+
+NORMALIZERS = {
+    "stage_group": _norm_stage, "t_class": _norm_tnm, "n_class": _norm_tnm, "m_class": _norm_tnm,
+    "er_status": _norm_receptor, "pr_status": _norm_receptor, "her2_ihc": _norm_receptor,
+    "her2_fish": _norm_fish,
+}
+PROGRESSION_PATTERN = r"^response to cancer treatment"
+PROGRESSION_VALUE = r"worsening"
+PROGRESSION_DAYS = 730
 
 
 def inspect_values(synthea_dir: Path, cancer: str, window_days: int):
@@ -193,11 +232,34 @@ def build(synthea_dir: Path, cancer: str, inspect: bool = False):
         obs["DATE"] = _dates(obs["DATE"])
         obs = obs.join(idx.rename("idx"), on="PATIENT")
         obs = obs[(obs["DATE"] - obs["idx"]).abs().dt.days <= BASELINE_WINDOW_DAYS]
+        units = {}
         for col, pat in FEATURE_KEYWORDS.get(cancer, {}).items():
-            hit = obs[obs["DESCRIPTION"].astype(str).str.contains(pat, case=False, regex=True)]
-            hit = hit.sort_values("DATE").groupby("PATIENT")["VALUE"].first()
-            vals = hit.reindex(out.index)
-            out[col] = pd.to_numeric(vals, errors="coerce") if col in NUMERIC_FEATURES else vals
+            hit = obs[obs["DESCRIPTION"].astype(str).str.contains(pat, case=False, regex=True)].copy()
+            if col in NORMALIZERS:
+                hit["VALUE"] = hit["VALUE"].map(NORMALIZERS[col])
+            elif col in NUMERIC_FEATURES:
+                hit["VALUE"] = pd.to_numeric(hit["VALUE"], errors="coerce")
+                if "UNITS" in hit.columns and hit["UNITS"].notna().any():
+                    units[col] = str(hit["UNITS"].mode().iloc[0])
+            hit = hit.dropna(subset=["VALUE"]).sort_values("DATE").groupby("PATIENT")["VALUE"].first()
+            out[col] = hit.reindex(out.index)
+
+    # Outcome proxy: any "Worsening" treatment response within PROGRESSION_DAYS after diagnosis.
+    # 0 only if the patient was followed past PROGRESSION_DAYS without one; unknown otherwise.
+    if observations is not None:
+        allobs = observations[observations["PATIENT"].isin(ids)].copy()
+        allobs["DATE"] = _dates(allobs["DATE"])
+        allobs = allobs.join(idx.rename("idx"), on="PATIENT")
+        days = (allobs["DATE"] - allobs["idx"]).dt.days
+        worse = allobs[allobs["DESCRIPTION"].astype(str).str.contains(PROGRESSION_PATTERN, case=False, regex=True)
+                       & allobs["VALUE"].astype(str).str.contains(PROGRESSION_VALUE, case=False, regex=True)
+                       & (days > 0) & (days <= PROGRESSION_DAYS)]
+        prog = pd.Series(0.0, index=out.index)
+        prog[out.index.isin(worse["PATIENT"].unique())] = 1.0
+        followed = out["follow_up_months"] >= PROGRESSION_DAYS / 30.44
+        out[f"progression_{PROGRESSION_DAYS // 365}yr"] = prog.where((prog == 1) | followed)
+    died_by = out["death_event"].eq(1) & (out["follow_up_months"] <= 24)
+    out["death_2yr"] = died_by.astype(float).where(died_by | (out["follow_up_months"] >= 24))
 
     out = out.reset_index(drop=True)
     coldefs = {c: {"type": "numeric" if pd.api.types.is_numeric_dtype(out[c]) else "categorical",
@@ -206,7 +268,19 @@ def build(synthea_dir: Path, cancer: str, inspect: bool = False):
     for c in ("sex", "race", "ethnicity", "age_at_diagnosis"):
         coldefs[c]["role"] = "demographic"
     coldefs["follow_up_months"].update(role="time", timing="outcome")
-    coldefs["death_event"].update(role="outcome", timing="outcome", type="binary")
+    coldefs["death_event"].update(role="outcome", timing="outcome", type="binary",
+                                  description="Death recorded during follow-up")
+    for c in [c for c in out.columns if c.startswith("progression_")]:
+        coldefs[c].update(role="outcome", timing="outcome", type="binary",
+                          description=f"Synthea proxy for progression: any 'Worsening' treatment response "
+                                      f"within {PROGRESSION_DAYS} days of diagnosis (blank if follow-up too short)")
+    coldefs["death_2yr"].update(role="outcome", timing="outcome", type="binary",
+                                description="Death within 24 months of diagnosis (blank if follow-up too short)")
+    for c, u in (units if observations is not None else {}).items():
+        coldefs[c]["description"] = f"{c} (unit as reported by Synthea: {u})"
+    for c in ("stage_group", "t_class", "n_class", "m_class"):
+        if c in coldefs:
+            coldefs[c]["type"] = "categorical"
     dictionary = {"dataset": {
         "name": f"synthea_{cancer}_cohort",
         "source": "Synthea synthetic patient generator (MITRE), flattened by data/flatten_synthea.py",
@@ -237,4 +311,18 @@ if __name__ == "__main__":
         a.out.mkdir(parents=True, exist_ok=True)
         df.to_csv(a.out / f"{a.cancer}_cohort.csv", index=False)
         (a.out / f"{a.cancer}_cohort.dictionary.json").write_text(json.dumps(d, indent=2, default=str))
-        print(f"wrote {len(df)} patients to {a.out}")
+        print(f"wrote {len(df)} patients to {a.out}\n")
+        era = (df["diagnosis_year"] >= 2012).map({True: "2012+", False: "before 2012"})
+        feats = [c for c in FEATURE_KEYWORDS.get(a.cancer, {}) if c in df.columns]
+        print("Share MISSING by diagnosis era:")
+        print(df[feats].isna().groupby(era).mean().round(2).T.to_string(), "\n")
+        outs = [c for c in df.columns if c.startswith("progression_") or c in ("death_2yr", "death_event")]
+        print("Outcome counts for patients diagnosed 2012+ (1 = event, 0 = no event, NaN = unknown):")
+        recent = df[df["diagnosis_year"] >= 2012]
+        for c in outs:
+            print(f"  {c}: {recent[c].value_counts(dropna=False).to_dict()}")
+        print("\nRace counts (2012+):", recent["race"].value_counts().to_dict())
+        print("Ethnicity counts (2012+):", recent["ethnicity"].value_counts().to_dict())
+        for c in ("stage_group", "er_status", "her2_ihc"):
+            if c in df.columns:
+                print(f"{c} values (2012+):", recent[c].value_counts(dropna=False).to_dict())
