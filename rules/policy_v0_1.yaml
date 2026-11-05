@@ -1,0 +1,242 @@
+# Cohort Firewall policy, version 0.1.0
+#
+# Checks measure. This file decides. The LLM never sees or changes it.
+# Verdict precedence (worst wins): BLOCKED > INSUFFICIENT_EVIDENCE > CONDITIONAL > READY
+#
+#   BLOCKED                a check ran and found a hard failure for THIS question
+#   INSUFFICIENT_EVIDENCE  the firewall could not verify something it needs (default-deny)
+#   CONDITIONAL            usable for this question if the listed remedies are applied
+#   READY                  every applicable check passed
+#
+# Thresholds are hackathon defaults, chosen to be explainable, not clinical standards.
+# Change them here, bump the version, and every certificate records which version decided.
+
+version: "0.1.0"
+
+parameters:
+  leakage_auc_threshold: 0.95   # single feature separating the outcome this well is suspicious
+  min_subgroup_n: 50            # too few records to evaluate model behavior in that subgroup
+
+rules:
+  # ---- provenance and metadata ---------------------------------------------------------
+  - id: META-001
+    check: metadata
+    when: [{metric: has_dictionary, op: "==", value: false}]
+    verdict: INSUFFICIENT_EVIDENCE
+    reason: "No data dictionary was supplied, so column meaning, timing and provenance cannot be verified."
+    remedy: "Upload a data dictionary (dataset source, license, provenance, and per-column role/timing)."
+
+  - id: META-002
+    check: metadata
+    when:
+      - {metric: has_dictionary, op: "==", value: true}
+      - {metric: license_recognized, op: "==", value: false}
+    verdict: INSUFFICIENT_EVIDENCE
+    reason: "The dataset license is missing or not on the allowed list."
+    remedy: "Declare an open license (e.g. Apache-2.0, CC-BY-4.0, CC0-1.0) or mark it event-approved."
+
+  - id: META-003
+    check: metadata
+    when: [{metric: contains_real_patient_data, op: "==", value: true}]
+    verdict: BLOCKED
+    reason: "The dataset declares that it contains real patient data, which this event does not permit."
+    remedy: "Use synthetic, openly licensed, or event-approved non-sensitive data."
+
+  - id: META-004
+    check: metadata
+    when:
+      - {metric: has_dictionary, op: "==", value: true}
+      - {metric: real_patient_status_declared, op: "==", value: false}
+    verdict: INSUFFICIENT_EVIDENCE
+    reason: "The dictionary does not state whether the data contains real patient records."
+    remedy: "Set dataset.contains_real_patient_data to true or false."
+
+  - id: META-005
+    check: metadata
+    when:
+      - {metric: has_dictionary, op: "==", value: true}
+      - {metric: has_provenance, op: "==", value: false}
+    verdict: INSUFFICIENT_EVIDENCE
+    reason: "Dataset source or provenance is not documented."
+    remedy: "Add dataset.source and dataset.provenance (how and when the data was produced)."
+
+  - id: META-006
+    check: metadata
+    when:
+      - {metric: has_dictionary, op: "==", value: true}
+      - {metric: undocumented_column_share, op: ">", value: 0.2}
+    verdict: CONDITIONAL
+    reason: "{undocumented_column_share:.0%} of columns are not described in the dictionary (e.g. {undocumented_columns})."
+    remedy: "Document every column's role and timing before modeling."
+
+  # ---- scope (event rule: no clinical decision-making) ---------------------------------
+  - id: SCOPE-001
+    check: scope
+    when: [{metric: clinical_use, op: "==", value: true}]
+    verdict: BLOCKED
+    reason: "The question is framed for {intended_use}, which is outside the permitted scope."
+    remedy: "Reframe as a research or model-development question about the cohort, not an individual patient decision."
+
+  - id: SCOPE-002
+    check: scope
+    when: [{metric: keyword_guard_hit, op: "==", value: true}]
+    verdict: BLOCKED
+    reason: "The question wording asks for an individual treatment or care decision (deterministic guard)."
+    remedy: "Reword the question so it does not direct care for a specific patient."
+
+  - id: SPEC-001
+    check: spec_quality
+    when: [{metric: parse_confidence, op: "<", value: 0.6}]
+    verdict: INSUFFICIENT_EVIDENCE
+    reason: "The question could not be turned into a precise specification (confidence {parse_confidence})."
+    remedy: "State the outcome, population, time horizon and intended use explicitly."
+
+  # ---- can this dataset answer this question at all? -----------------------------------
+  - id: COL-001
+    check: columns
+    when:
+      - {metric: outcome_required, op: "==", value: true}
+      - {metric: outcome_present, op: "==", value: false}
+    verdict: BLOCKED
+    reason: "The outcome the question needs is not in the dataset."
+    remedy: "Use a dataset that records the outcome, or change the question."
+
+  - id: COL-002
+    check: columns
+    when: [{metric: n_missing_features, op: ">", value: 0}]
+    verdict: BLOCKED
+    reason: "Required predictor(s) are not in the dataset: {missing_features}."
+    remedy: "Drop those predictors from the question or use a dataset that contains them."
+
+  - id: COL-003
+    check: columns
+    when: [{metric: n_missing_filter_columns, op: ">", value: 0}]
+    verdict: BLOCKED
+    reason: "The target population cannot be selected because a filter column is missing."
+    remedy: "Use a dataset with the attributes that define the population."
+
+  - id: COL-004
+    check: columns
+    when: [{metric: time_present, op: "==", value: false}]
+    verdict: BLOCKED
+    reason: "The question has a time horizon but the dataset has no follow-up time column."
+    remedy: "Use a dataset with follow-up or time-to-event data."
+
+  - id: COH-001
+    check: cohort
+    when: [{metric: n_cohort, op: "==", value: 0}]
+    verdict: BLOCKED
+    reason: "No records match the target population."
+    remedy: "Check the population filters."
+
+  # ---- completeness ----------------------------------------------------------------------
+  - id: CMP-001
+    check: completeness
+    when: [{metric: outcome_missing_rate, op: ">", value: 0.5}]
+    verdict: BLOCKED
+    reason: "The outcome is missing for {outcome_missing_rate:.0%} of the cohort."
+    remedy: "Use a dataset with more complete outcome ascertainment."
+
+  - id: CMP-002
+    check: completeness
+    when:
+      - {metric: outcome_missing_rate, op: ">", value: 0.2}
+      - {metric: outcome_missing_rate, op: "<=", value: 0.5}
+    verdict: CONDITIONAL
+    reason: "The outcome is missing for {outcome_missing_rate:.0%} of the cohort."
+    remedy: "Explain why outcomes are missing and analyze whether missingness is related to patient characteristics."
+
+  - id: CMP-003
+    check: completeness
+    when: [{metric: max_feature_missing_rate, op: ">", value: 0.5}]
+    verdict: BLOCKED
+    reason: "Predictor '{worst_feature}' is missing for {max_feature_missing_rate:.0%} of the cohort."
+    remedy: "Drop the predictor or use a more complete dataset."
+
+  - id: CMP-004
+    check: completeness
+    when:
+      - {metric: max_feature_missing_rate, op: ">", value: 0.2}
+      - {metric: max_feature_missing_rate, op: "<=", value: 0.5}
+    verdict: CONDITIONAL
+    reason: "Predictor '{worst_feature}' is missing for {max_feature_missing_rate:.0%} of the cohort."
+    remedy: "Plan and document an imputation strategy, or drop the predictor."
+
+  # ---- enough signal -----------------------------------------------------------------------
+  - id: EVT-001
+    check: outcome_events
+    when: [{metric: minority_class_n, op: "<", value: 20}]
+    verdict: BLOCKED
+    reason: "Only {minority_class_n} records in the smaller outcome class; too few to develop or evaluate a model."
+    remedy: "Use a larger cohort or a more common outcome."
+
+  - id: EVT-002
+    check: outcome_events
+    when:
+      - {metric: minority_class_n, op: ">=", value: 20}
+      - {metric: events_per_parameter, op: "<", value: 10}
+    verdict: CONDITIONAL
+    reason: "{events_per_parameter} events per model parameter ({n_parameters} parameters); high overfitting risk."
+    remedy: "Reduce predictors, use penalized models, and report validation with uncertainty."
+
+  # ---- leakage -------------------------------------------------------------------------------
+  - id: LEAK-001
+    check: leakage
+    when: [{metric: n_declared_post_index_features, op: ">", value: 0}]
+    verdict: CONDITIONAL
+    reason: "Predictor(s) recorded after the index date per the dictionary: {declared_post_index_features}."
+    remedy: "Remove post-index predictors from the feature set."
+
+  - id: LEAK-002
+    check: leakage
+    when: [{metric: n_empirically_leaky_features, op: ">", value: 0}]
+    verdict: CONDITIONAL
+    reason: "Predictor(s) separate the outcome almost perfectly on their own (max AUC {max_single_feature_auc}): {empirically_leaky_features}."
+    remedy: "Confirm these are measured before the outcome; if not, remove them."
+
+  # ---- time horizon ----------------------------------------------------------------------------
+  - id: TIME-001
+    check: temporal
+    when: [{metric: horizon_coverage, op: "<", value: 0.2}]
+    verdict: BLOCKED
+    reason: "Only {horizon_coverage:.0%} of the cohort is observed through the {horizon_months:g}-month horizon."
+    remedy: "Shorten the horizon or use data with longer follow-up."
+
+  - id: TIME-002
+    check: temporal
+    when:
+      - {metric: horizon_coverage, op: ">=", value: 0.2}
+      - {metric: horizon_coverage, op: "<", value: 0.5}
+    verdict: CONDITIONAL
+    reason: "Only {horizon_coverage:.0%} of the cohort is observed through the {horizon_months:g}-month horizon (median follow-up {median_follow_up_months} months)."
+    remedy: "Use censoring-aware methods (survival analysis) or shorten the horizon."
+
+  # ---- representativeness (STANDING Together-inspired) -----------------------------------------
+  - id: SUB-001
+    check: subgroups
+    when: [{metric: n_missing_subgroup_columns, op: ">", value: 0}]
+    verdict: INSUFFICIENT_EVIDENCE
+    reason: "Subgroup attribute(s) needed to evaluate fairness are not recorded: {missing_subgroup_columns}."
+    remedy: "Use a dataset that records these attributes, or justify why subgroup evaluation is not needed."
+
+  - id: SUB-002
+    check: subgroups
+    when: [{metric: n_small_subgroups, op: ">", value: 0}]
+    verdict: CONDITIONAL
+    reason: "Some subgroups are too small to evaluate model behavior reliably: {small_subgroups}."
+    remedy: "Report subgroup performance with uncertainty, or obtain more data for these groups."
+
+  # ---- privacy and integrity -------------------------------------------------------------------
+  - id: PHI-001
+    check: phi
+    when: [{metric: n_phi_columns, op: ">", value: 0}]
+    verdict: BLOCKED
+    reason: "Column(s) look like direct identifiers: {phi_columns}."
+    remedy: "Remove identifiers (names, SSNs, contact details, full dates, sub-state geography) before evaluation."
+
+  - id: INJ-001
+    check: injection
+    when: [{metric: n_injection_hits, op: ">", value: 0}]
+    verdict: CONDITIONAL
+    reason: "Instruction-like text found in the data or dictionary at {injection_locations}. It was quarantined and had no effect on this verdict."
+    remedy: "Review and clean those fields; free text in a training set can carry prompt-injection payloads."

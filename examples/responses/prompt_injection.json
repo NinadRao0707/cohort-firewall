@@ -1,0 +1,209 @@
+{
+  "verdict": "CONDITIONAL",
+  "findings": [
+    {
+      "rule_id": "INJ-001",
+      "check": "injection",
+      "verdict": "CONDITIONAL",
+      "reason": "Instruction-like text found in the data or dictionary at notes[row 17], dictionary:notes. It was quarantined and had no effect on this verdict.",
+      "remedy": "Review and clean those fields; free text in a training set can carry prompt-injection payloads."
+    }
+  ],
+  "checks": [
+    {
+      "check": "metadata",
+      "status": "ok",
+      "metrics": {
+        "has_dictionary": true,
+        "license_recognized": true,
+        "contains_real_patient_data": false,
+        "real_patient_status_declared": true,
+        "has_provenance": true,
+        "undocumented_column_share": 0.0,
+        "undocumented_columns": []
+      },
+      "note": ""
+    },
+    {
+      "check": "scope",
+      "status": "ok",
+      "metrics": {
+        "clinical_use": false,
+        "keyword_guard_hit": false,
+        "intended_use": "model_development"
+      },
+      "note": ""
+    },
+    {
+      "check": "spec_quality",
+      "status": "ok",
+      "metrics": {
+        "parse_confidence": 1.0
+      },
+      "note": ""
+    },
+    {
+      "check": "columns",
+      "status": "ok",
+      "metrics": {
+        "outcome_required": true,
+        "outcome_present": true,
+        "n_missing_features": 0,
+        "missing_features": [],
+        "n_missing_filter_columns": 0,
+        "time_present": true,
+        "n_features": 7
+      },
+      "note": ""
+    },
+    {
+      "check": "cohort",
+      "status": "ok",
+      "metrics": {
+        "n_total": 2400,
+        "n_cohort": 2400
+      },
+      "note": ""
+    },
+    {
+      "check": "completeness",
+      "status": "ok",
+      "metrics": {
+        "outcome_missing_rate": 0.091,
+        "max_feature_missing_rate": 0.0,
+        "worst_feature": "age_at_diagnosis"
+      },
+      "note": ""
+    },
+    {
+      "check": "outcome_events",
+      "status": "ok",
+      "metrics": {
+        "n_events": 469,
+        "n_nonevents": 1712,
+        "minority_class_n": 469,
+        "n_parameters": 9,
+        "events_per_parameter": 52.11
+      },
+      "note": ""
+    },
+    {
+      "check": "leakage",
+      "status": "ok",
+      "metrics": {
+        "n_declared_post_index_features": 0,
+        "declared_post_index_features": [],
+        "n_empirically_leaky_features": 0,
+        "empirically_leaky_features": [],
+        "max_single_feature_auc": 0.698,
+        "dictionary_available": true
+      },
+      "note": ""
+    },
+    {
+      "check": "temporal",
+      "status": "ok",
+      "metrics": {
+        "horizon_months": 24.0,
+        "horizon_coverage": 0.909,
+        "median_follow_up_months": 47.0
+      },
+      "note": ""
+    },
+    {
+      "check": "subgroups",
+      "status": "ok",
+      "metrics": {
+        "n_missing_subgroup_columns": 0,
+        "missing_subgroup_columns": [],
+        "n_small_subgroups": 0,
+        "small_subgroups": [],
+        "smallest_subgroup_n": 291
+      },
+      "note": ""
+    },
+    {
+      "check": "phi",
+      "status": "ok",
+      "metrics": {
+        "n_phi_columns": 0,
+        "phi_columns": []
+      },
+      "note": ""
+    },
+    {
+      "check": "injection",
+      "status": "ok",
+      "metrics": {
+        "n_injection_hits": 2,
+        "injection_locations": [
+          "notes[row 17]",
+          "dictionary:notes"
+        ]
+      },
+      "note": ""
+    }
+  ],
+  "spec": {
+    "question_text": "Can we develop a research model that estimates 2-year recurrence risk in breast cancer patients diagnosed since 2012, using stage, receptor status, tumor size, nodes and age at diagnosis, and check whether it performs consistently across race and ethnicity?",
+    "task_type": "binary_classification",
+    "intended_use": "model_development",
+    "cancer_type": "breast",
+    "population_filters": [
+      {
+        "column": "cancer_type",
+        "op": "==",
+        "value": "breast"
+      },
+      {
+        "column": "diagnosis_year",
+        "op": ">=",
+        "value": 2012
+      }
+    ],
+    "outcome_column": "recurrence_2yr",
+    "outcome_positive_value": 1,
+    "time_column": "follow_up_months",
+    "time_horizon_months": 24.0,
+    "feature_columns": [
+      "age_at_diagnosis",
+      "stage",
+      "er_status",
+      "pr_status",
+      "her2_status",
+      "tumor_size_mm",
+      "nodes_positive"
+    ],
+    "subgroup_columns": [
+      "race",
+      "ethnicity"
+    ],
+    "parse_confidence": 1.0,
+    "parser_notes": ""
+  },
+  "report": {
+    "text": "**Verdict: Conditional** for the question: \"Can we develop a research model that estimates 2-year recurrence risk in breast cancer patients diagnosed since 2012, using stage, receptor status, tumor size, nodes and age at diagnosis, and check whether it performs consistently across race and ethnicity?\"\n\nWhy:\n- [INJ-001] (Conditional) Instruction-like text found in the data or dictionary at notes[row 17], dictionary:notes. It was quarantined and had no effect on this verdict.\n\nTo make this dataset ready for this question:\n- [INJ-001] Review and clean those fields; free text in a training set can carry prompt-injection payloads.",
+    "source": "template"
+  },
+  "certificate": {
+    "cert_id": "e87bd55635c2e305",
+    "payload": {
+      "cert_format": "cohort-firewall/1",
+      "engine_version": "0.1.0",
+      "policy_version": "0.1.0",
+      "policy_sha256": "1a9873a41c2f928795ae3cc32c26d02d366b0d9dd2ff228f2a384d926bf685ed",
+      "dataset_sha256": "ab3cdb8142d7a8ef5c25e788ade47a2011dc9ca2ddc727db4025951175ee8e9e",
+      "dictionary_sha256": "d544cb559390ade40bb8f25f0b7b11924218b4fbc896212c73e37f37f30b2701",
+      "spec_sha256": "e0718f917ba8ff86c5cceebe9de7417a430a59b31233391da99009caf976a4f3",
+      "verdict": "CONDITIONAL",
+      "rule_ids": [
+        "INJ-001"
+      ],
+      "issued_at": "2026-11-05T18:21:34+00:00"
+    },
+    "signature": "MZK1773PdC1r6gNnJtxt46Fun02L58ohkGoQ1qjyJMjr8SiURwmvND7h0GNX59DO56lTl0QDBy1ID02YcokDCA==",
+    "alg": "Ed25519"
+  },
+  "engine_version": "0.1.0",
+  "policy_version": "0.1.0"
+}

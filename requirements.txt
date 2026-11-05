@@ -1,0 +1,14 @@
+# core engine
+pandas>=2.2
+numpy>=1.26
+pyyaml>=6.0
+cryptography>=42
+# API
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9
+pydantic>=2.6
+# optional
+anthropic        # LLM question parser + report wording
+supabase         # run log
+pytest

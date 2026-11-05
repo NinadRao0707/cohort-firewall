@@ -1,0 +1,36 @@
+{
+  "question_text": "Can we develop a research model that estimates 2-year recurrence risk in breast cancer patients diagnosed since 2012, using stage, receptor status, tumor size, nodes and age at diagnosis, and check whether it performs consistently across race and ethnicity?",
+  "task_type": "binary_classification",
+  "intended_use": "model_development",
+  "cancer_type": "breast",
+  "population_filters": [
+    {
+      "column": "cancer_type",
+      "op": "==",
+      "value": "breast"
+    },
+    {
+      "column": "diagnosis_year",
+      "op": ">=",
+      "value": 2012
+    }
+  ],
+  "outcome_column": "recurrence_2yr",
+  "outcome_positive_value": 1,
+  "time_column": "follow_up_months",
+  "time_horizon_months": 24,
+  "feature_columns": [
+    "age_at_diagnosis",
+    "stage",
+    "er_status",
+    "pr_status",
+    "her2_status",
+    "tumor_size_mm",
+    "nodes_positive"
+  ],
+  "subgroup_columns": [
+    "race",
+    "ethnicity"
+  ],
+  "parse_confidence": 1.0
+}

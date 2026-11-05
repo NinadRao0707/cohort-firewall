@@ -1,0 +1,35 @@
+{
+  "question_text": "Does germline BRCA1/2 status improve 2-year recurrence prediction in breast cancer patients diagnosed since 2012?",
+  "task_type": "binary_classification",
+  "intended_use": "research",
+  "cancer_type": "breast",
+  "population_filters": [
+    {
+      "column": "cancer_type",
+      "op": "==",
+      "value": "breast"
+    },
+    {
+      "column": "diagnosis_year",
+      "op": ">=",
+      "value": 2012
+    }
+  ],
+  "outcome_column": "recurrence_2yr",
+  "time_column": "follow_up_months",
+  "time_horizon_months": 24,
+  "feature_columns": [
+    "age_at_diagnosis",
+    "stage",
+    "er_status",
+    "pr_status",
+    "her2_status",
+    "tumor_size_mm",
+    "nodes_positive",
+    "brca_status"
+  ],
+  "subgroup_columns": [
+    "race"
+  ],
+  "parse_confidence": 0.95
+}
