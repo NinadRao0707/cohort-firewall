@@ -52,12 +52,17 @@ Optional: `SUPABASE_URL` + `SUPABASE_SERVICE_KEY` to log runs (schema in `supaba
 | `data/make_variants.py` | Seeded-defect cases (the evaluation) |
 | `examples/specs/` | Four questions against the same cohort |
 | `examples/responses/` | Real `/evaluate` responses for the frontend to build against |
-| `docs/` | Design, kickoff questions, demo script |
+| `web/` | Next.js UI (runs on sample results without the API) |
+| `scripts/smoke_api.sh` | First real test of the API endpoints |
+| `scripts/try_parser.py` | Trial of the Claude question parser on 5 questions |
+| `scripts/create_github_issues.sh` | Creates the pre-kickoff task list as GitHub issues |
+| `docs/` | Design, kickoff questions, demo script, Synthea setup, pre-kickoff plan |
 
 ## Status (pre-kickoff)
 
-Done and tested offline: spec validation, all checks, policy engine, certificates, template
-reports, 16-case suite passing, Synthea flattener smoke-tested on a fixture.
-Written but not yet run here: FastAPI layer, Claude API calls, Supabase logging
-(the build sandbox had no network or those packages). Next.js UI not started; build it against
-`examples/responses/*.json`.
+Tested offline: spec validation, all checks, policy engine, certificates, template reports,
+16-case suite, Synthea flattener on a fixture, and the web UI's result views (server-rendered
+and screenshotted in light, dark and phone widths).
+
+Written but not yet run: FastAPI layer (`scripts/smoke_api.sh` tests it), Claude API calls
+(`scripts/try_parser.py`), Supabase logging, and a full `next build` of the web app.
