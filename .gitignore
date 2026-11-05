@@ -5,3 +5,5 @@ __pycache__/
 data/synthea*/
 .venv/
 node_modules/
+.env.local
+.next/
