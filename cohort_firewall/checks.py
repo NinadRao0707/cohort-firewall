@@ -333,9 +333,12 @@ def check_phi(ctx: Context) -> CheckResult:
             if sample.str.match(pat).mean() > 0.5:
                 hits[col] = kind
                 break
+    why = {"column_name": "flagged by its name", "ssn": "values look like SSNs",
+           "phone": "values look like phone numbers", "email": "values look like email addresses",
+           "full_date": "values look like full dates", "zip5": "values look like ZIP codes"}
     return CheckResult("phi", "ok", {
         "n_phi_columns": len(hits),
-        "phi_columns": [f"{safe_ident(c)}:{k}" for c, k in hits.items()],
+        "phi_columns": [f"{safe_ident(c)} ({why.get(k, k)})" for c, k in hits.items()],
     })
 
 

@@ -5,7 +5,7 @@
       "rule_id": "PHI-001",
       "check": "phi",
       "verdict": "BLOCKED",
-      "reason": "Column(s) look like direct identifiers: first_name:column_name, last_name:column_name, ssn:column_name, birthdate:column_name, zip:column_name.",
+      "reason": "Column(s) look like direct identifiers: first_name (flagged by its name), last_name (flagged by its name), ssn (flagged by its name), birthdate (flagged by its name), zip (flagged by its name).",
       "remedy": "Remove identifiers (names, SSNs, contact details, full dates, sub-state geography) before evaluation."
     }
   ],
@@ -128,11 +128,11 @@
       "metrics": {
         "n_phi_columns": 5,
         "phi_columns": [
-          "first_name:column_name",
-          "last_name:column_name",
-          "ssn:column_name",
-          "birthdate:column_name",
-          "zip:column_name"
+          "first_name (flagged by its name)",
+          "last_name (flagged by its name)",
+          "ssn (flagged by its name)",
+          "birthdate (flagged by its name)",
+          "zip (flagged by its name)"
         ]
       },
       "note": ""
@@ -185,11 +185,11 @@
     "parser_notes": ""
   },
   "report": {
-    "text": "**Verdict: Blocked** for the question: \"Can we develop a research model that estimates 2-year recurrence risk in breast cancer patients diagnosed since 2012, using stage, receptor status, tumor size, nodes and age at diagnosis, and check whether it performs consistently across race and ethnicity?\"\n\nWhy:\n- [PHI-001] (Blocked) Column(s) look like direct identifiers: first_name:column_name, last_name:column_name, ssn:column_name, birthdate:column_name, zip:column_name.\n\nTo make this dataset ready for this question:\n- [PHI-001] Remove identifiers (names, SSNs, contact details, full dates, sub-state geography) before evaluation.",
+    "text": "**Verdict: Blocked** for the question: \"Can we develop a research model that estimates 2-year recurrence risk in breast cancer patients diagnosed since 2012, using stage, receptor status, tumor size, nodes and age at diagnosis, and check whether it performs consistently across race and ethnicity?\"\n\nWhy:\n- [PHI-001] (Blocked) Column(s) look like direct identifiers: first_name (flagged by its name), last_name (flagged by its name), ssn (flagged by its name), birthdate (flagged by its name), zip (flagged by its name).\n\nTo make this dataset ready for this question:\n- [PHI-001] Remove identifiers (names, SSNs, contact details, full dates, sub-state geography) before evaluation.",
     "source": "template"
   },
   "certificate": {
-    "cert_id": "523f7c13908b1349",
+    "cert_id": "15a79eacbaa79f82",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -202,9 +202,9 @@
       "rule_ids": [
         "PHI-001"
       ],
-      "issued_at": "2026-11-05T18:21:34+00:00"
+      "issued_at": "2026-11-05T20:05:16+00:00"
     },
-    "signature": "+RYWAy4mORXPDgtiEtAVkjJj2lGn56OAaMhBz23Vcm4hXHcx2Szfi1xfQtQAnN0vX4N6q1Y6lQ+DiZD96kc4CQ==",
+    "signature": "YRET9MxBzDqJGdXf9QgliI4ijrXjtjHGsJt2+ukh+a15VOPliPxPrWjfc75lxbqVeBmFkVDXcN8E1fZYm+YtBA==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

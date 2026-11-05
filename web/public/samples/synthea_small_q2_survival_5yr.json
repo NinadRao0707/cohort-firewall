@@ -1,0 +1,226 @@
+{
+  "verdict": "BLOCKED",
+  "findings": [
+    {
+      "rule_id": "EVT-001",
+      "check": "outcome_events",
+      "verdict": "BLOCKED",
+      "reason": "Only 17 records in the smaller outcome class; too few to develop or evaluate a model.",
+      "remedy": "Use a larger cohort or a more common outcome."
+    },
+    {
+      "rule_id": "CMP-004",
+      "check": "completeness",
+      "verdict": "CONDITIONAL",
+      "reason": "Predictor 'tumor_size' is missing for 26% of the cohort.",
+      "remedy": "Plan and document an imputation strategy, or drop the predictor."
+    },
+    {
+      "rule_id": "SUB-002",
+      "check": "subgroups",
+      "verdict": "CONDITIONAL",
+      "reason": "Some subgroups are too small to evaluate model behavior reliably: race=black (n=12), race=asian (n=10), race=other (n=5), race=hawaiian (n=2), race=native (n=1).",
+      "remedy": "Report subgroup performance with uncertainty, or obtain more data for these groups."
+    }
+  ],
+  "checks": [
+    {
+      "check": "metadata",
+      "status": "ok",
+      "metrics": {
+        "has_dictionary": true,
+        "license_recognized": true,
+        "contains_real_patient_data": false,
+        "real_patient_status_declared": true,
+        "has_provenance": true,
+        "undocumented_column_share": 0.0,
+        "undocumented_columns": []
+      },
+      "note": ""
+    },
+    {
+      "check": "scope",
+      "status": "ok",
+      "metrics": {
+        "clinical_use": false,
+        "keyword_guard_hit": false,
+        "intended_use": "research"
+      },
+      "note": ""
+    },
+    {
+      "check": "spec_quality",
+      "status": "ok",
+      "metrics": {
+        "parse_confidence": 1.0
+      },
+      "note": ""
+    },
+    {
+      "check": "columns",
+      "status": "ok",
+      "metrics": {
+        "outcome_required": true,
+        "outcome_present": true,
+        "n_missing_features": 0,
+        "missing_features": [],
+        "n_missing_filter_columns": 0,
+        "time_present": true,
+        "n_features": 6
+      },
+      "note": ""
+    },
+    {
+      "check": "cohort",
+      "status": "ok",
+      "metrics": {
+        "n_total": 302,
+        "n_cohort": 157
+      },
+      "note": ""
+    },
+    {
+      "check": "completeness",
+      "status": "ok",
+      "metrics": {
+        "outcome_missing_rate": 0.0,
+        "max_feature_missing_rate": 0.261,
+        "worst_feature": "tumor_size"
+      },
+      "note": ""
+    },
+    {
+      "check": "outcome_events",
+      "status": "ok",
+      "metrics": {
+        "n_events": 17,
+        "n_nonevents": 140,
+        "minority_class_n": 17,
+        "n_parameters": 8,
+        "events_per_parameter": 2.12
+      },
+      "note": ""
+    },
+    {
+      "check": "leakage",
+      "status": "ok",
+      "metrics": {
+        "n_declared_post_index_features": 0,
+        "declared_post_index_features": [],
+        "n_empirically_leaky_features": 0,
+        "empirically_leaky_features": [],
+        "max_single_feature_auc": 0.868,
+        "dictionary_available": true
+      },
+      "note": ""
+    },
+    {
+      "check": "temporal",
+      "status": "ok",
+      "metrics": {
+        "horizon_months": 60.0,
+        "horizon_coverage": 0.624,
+        "median_follow_up_months": 62.9
+      },
+      "note": ""
+    },
+    {
+      "check": "subgroups",
+      "status": "ok",
+      "metrics": {
+        "n_missing_subgroup_columns": 0,
+        "missing_subgroup_columns": [],
+        "n_small_subgroups": 5,
+        "small_subgroups": [
+          "race=black (n=12)",
+          "race=asian (n=10)",
+          "race=other (n=5)",
+          "race=hawaiian (n=2)",
+          "race=native (n=1)"
+        ],
+        "smallest_subgroup_n": 1
+      },
+      "note": ""
+    },
+    {
+      "check": "phi",
+      "status": "ok",
+      "metrics": {
+        "n_phi_columns": 0,
+        "phi_columns": []
+      },
+      "note": ""
+    },
+    {
+      "check": "injection",
+      "status": "ok",
+      "metrics": {
+        "n_injection_hits": 0,
+        "injection_locations": []
+      },
+      "note": ""
+    }
+  ],
+  "spec": {
+    "question_text": "Can we model 5-year overall survival in breast cancer patients diagnosed since 2012 from stage, receptor status, tumor size and age, and compare across race?",
+    "task_type": "survival",
+    "intended_use": "research",
+    "cancer_type": "breast",
+    "population_filters": [
+      {
+        "column": "cancer_type",
+        "op": "==",
+        "value": "breast"
+      },
+      {
+        "column": "diagnosis_year",
+        "op": ">=",
+        "value": 2012
+      }
+    ],
+    "outcome_column": "death_event",
+    "outcome_positive_value": 1,
+    "time_column": "follow_up_months",
+    "time_horizon_months": 60.0,
+    "feature_columns": [
+      "age_at_diagnosis",
+      "stage_group",
+      "er_status",
+      "pr_status",
+      "her2_ihc",
+      "tumor_size"
+    ],
+    "subgroup_columns": [
+      "race"
+    ],
+    "parse_confidence": 1.0,
+    "parser_notes": ""
+  },
+  "report": {
+    "text": "**Verdict: Blocked** for the question: \"Can we model 5-year overall survival in breast cancer patients diagnosed since 2012 from stage, receptor status, tumor size and age, and compare across race?\"\n\nWhy:\n- [EVT-001] (Blocked) Only 17 records in the smaller outcome class; too few to develop or evaluate a model.\n- [CMP-004] (Conditional) Predictor 'tumor_size' is missing for 26% of the cohort.\n- [SUB-002] (Conditional) Some subgroups are too small to evaluate model behavior reliably: race=black (n=12), race=asian (n=10), race=other (n=5), race=hawaiian (n=2), race=native (n=1).\n\nTo make this dataset ready for this question:\n- [EVT-001] Use a larger cohort or a more common outcome.\n- [CMP-004] Plan and document an imputation strategy, or drop the predictor.\n- [SUB-002] Report subgroup performance with uncertainty, or obtain more data for these groups.",
+    "source": "template"
+  },
+  "certificate": {
+    "cert_id": "a83e40f72a712fc5",
+    "payload": {
+      "cert_format": "cohort-firewall/1",
+      "engine_version": "0.1.0",
+      "policy_version": "0.1.0",
+      "policy_sha256": "1a9873a41c2f928795ae3cc32c26d02d366b0d9dd2ff228f2a384d926bf685ed",
+      "dataset_sha256": "36c4dd46760187e50e27ea25869566a09c8d6fd515e3a1d9f5975ccf64c751dc",
+      "dictionary_sha256": "ffb6df259cfc22476a238af54dafa149c97d967140018c814cbbbdd29925a0fa",
+      "spec_sha256": "58b0adcf852e991f73933760edba9e9239644efc40656380b26c2e978661f005",
+      "verdict": "BLOCKED",
+      "rule_ids": [
+        "CMP-004",
+        "EVT-001",
+        "SUB-002"
+      ],
+      "issued_at": "2026-11-05T20:05:16+00:00"
+    },
+    "signature": "4yNp0bREVJkF/m7GN40Qbi/ZOPlUsOf/bgR5WuXoXIledBaKTX4fSAJVy7TkT1xGGT0CAdyQK2zhYeNL9WayBQ==",
+    "alg": "Ed25519"
+  },
+  "engine_version": "0.1.0",
+  "policy_version": "0.1.0"
+}

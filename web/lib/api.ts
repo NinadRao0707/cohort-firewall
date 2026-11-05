@@ -51,4 +51,7 @@ export const SAMPLES: { name: string; label: string }[] = [
   { name: "phi", label: "Identifiers in the data" },
   { name: "prompt_injection", label: "Injection attempt" },
   { name: "no_dictionary", label: "No data dictionary" },
+  { name: "synthea_small_q1_progression_2yr", label: "Synthea, small cohort: 2-year worsening" },
+  { name: "synthea_large_q1_progression_2yr", label: "Synthea, large cohort: 2-year worsening" },
+  { name: "synthea_large_q2_survival_5yr", label: "Synthea, large cohort: 5-year survival" },
 ];
