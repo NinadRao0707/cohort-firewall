@@ -7,3 +7,4 @@ data/synthea*/
 node_modules/
 .env.local
 .next/
+data/variants/
