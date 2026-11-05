@@ -51,7 +51,6 @@ Optional: `SUPABASE_URL` + `SUPABASE_SERVICE_KEY` to log runs (schema in `supaba
 | `data/flatten_synthea.py` | Synthea CSV export → one patient-level cohort table + dictionary |
 | `data/make_variants.py` | Seeded-defect cases (the evaluation) |
 | `examples/specs/` | Four questions against the same cohort |
-| `examples/responses/` | Real `/evaluate` responses for the frontend to build against |
 | `web/` | Next.js UI (runs on sample results without the API) |
 | `scripts/smoke_api.sh` | First real test of the API endpoints |
 | `scripts/try_parser.py` | Trial of the Claude question parser on 5 questions |
