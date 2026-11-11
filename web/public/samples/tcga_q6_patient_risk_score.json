@@ -213,7 +213,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "90a3e9302c30ee2c",
+    "cert_id": "cbf2a4f0e226b38c",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -228,9 +228,9 @@
         "EVT-002",
         "SCOPE-002"
       ],
-      "issued_at": "2026-11-11T18:43:47+00:00"
+      "issued_at": "2026-11-11T18:46:15+00:00"
     },
-    "signature": "1c7rkxogn6D7s9590vw8lsHFlKOGjpJar1583rddkxoIaehHN7/4IZM2WBw2s0KwbGZ+o1anbqZb2fhXaFYmDQ==",
+    "signature": "1EsmQy6ANTqVjg5DxCjjIgBKmXSClAeSi+O0SIPBgeFZ+ssnZoIr3KrhPr9dGMWNA1JF0GOjtEfna+u+qyJ7Cg==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
