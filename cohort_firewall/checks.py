@@ -33,6 +33,11 @@ CLINICAL_PHRASES = [
     r"\bfor (my|this) patient\b",
     r"\b(prescribe|dosing for)\b",
     r"triage (patients|this patient)",
+    r"\b(patient|individual)[- ]level risk score",
+    r"risk score (for|of) (a|each|every|this|an individual|individual) patient",
+    r"\bscore (each|every|individual) patients?\b",
+    r"diagnos(e|is) (for )?(this|a|the|my) patient",
+    r"\bdoes (this|the|my) patient have\b",
 ]
 _CLIN = re.compile("|".join(CLINICAL_PHRASES), re.IGNORECASE)
 
@@ -151,19 +156,30 @@ def check_metadata(ctx: Context) -> CheckResult:
     if not d:
         return CheckResult("metadata", "ok", {
             "has_dictionary": False, "license_recognized": False,
-            "contains_real_patient_data": None, "has_provenance": False,
+            "patient_derived": None, "patient_status_declared": False,
+            "identifiable": None, "deidentification_declared": False,
+            "access_restricted": None, "has_provenance": False,
             "undocumented_column_share": 1.0,
         }, "No data dictionary supplied.")
     meta = d.get("dataset", {}) or {}
     lic = str(meta.get("license", "")).strip().lower()
     cols = list(ctx.df.columns) if ctx.df is not None else []
     undocumented = [c for c in cols if c not in ctx.coldefs]
-    real = meta.get("contains_real_patient_data")
+    # Patient-data model:
+    #   patient_derived  true for real (even de-identified) patient data such as TCGA; false for synthetic
+    #   identifiable     true if direct identifiers are present; must be false for patient-derived data
+    #   access           "open" | "controlled" | "restricted"; controlled-access data is not permitted
+    derived = meta.get("patient_derived", meta.get("contains_real_patient_data"))  # older dictionaries
+    ident = meta.get("identifiable")
+    access = str(meta.get("access", "open")).strip().lower()
     return CheckResult("metadata", "ok", {
         "has_dictionary": True,
         "license_recognized": lic in ALLOWED_LICENSES,
-        "contains_real_patient_data": real if isinstance(real, bool) else None,
-        "real_patient_status_declared": isinstance(real, bool),
+        "patient_derived": derived if isinstance(derived, bool) else None,
+        "patient_status_declared": isinstance(derived, bool),
+        "identifiable": ident if isinstance(ident, bool) else None,
+        "deidentification_declared": isinstance(ident, bool) or derived is False,
+        "access_restricted": access in {"controlled", "restricted", "private"},
         "has_provenance": bool(meta.get("source")) and bool(meta.get("provenance")),
         "undocumented_column_share": round(len(undocumented) / len(cols), 3) if cols else 0.0,
         "undocumented_columns": [safe_ident(c) for c in undocumented[:10]],
@@ -278,7 +294,12 @@ def check_temporal(ctx: Context) -> CheckResult:
         return CheckResult("temporal", "skipped")
     if c is None or not spec.time_column or spec.time_column not in c.columns:
         return CheckResult("temporal", "not_evaluable", note="No follow-up time column for the stated horizon.")
-    t = c[spec.time_column]
+    unit = str(ctx.coldefs.get(spec.time_column, {}).get("unit", "months")).lower()
+    per_month = {"days": 30.44, "day": 30.44, "weeks": 4.345, "months": 1.0, "month": 1.0,
+                 "years": 1 / 12, "year": 1 / 12}.get(unit)
+    if per_month is None:
+        return CheckResult("temporal", "not_evaluable", note=f"Unknown time unit '{safe_ident(unit)}'.")
+    t = pd.to_numeric(c[spec.time_column], errors="coerce") / per_month   # convert to months
     observed = t >= spec.time_horizon_months
     if spec.outcome_column in c.columns:
         y = _binary_outcome(ctx, c).fillna(False).astype(bool)
@@ -286,7 +307,8 @@ def check_temporal(ctx: Context) -> CheckResult:
     return CheckResult("temporal", "ok", {
         "horizon_months": spec.time_horizon_months,
         "horizon_coverage": round(float(observed.mean()), 3) if len(c) else 0.0,
-        "median_follow_up_months": round(float(t.median()), 1) if len(c) else None,
+        "median_follow_up_months": round(float(t.median()), 1) if len(c) and t.notna().any() else None,
+        "time_unit": safe_ident(unit),
     })
 
 

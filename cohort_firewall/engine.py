@@ -21,8 +21,16 @@ def evaluate_dataset(dataset_bytes: bytes, dictionary: dict | None, spec: dict |
                      use_llm_parser: bool = False, use_llm_report: bool = False) -> dict:
     policy = Policy.load(policy_path)
 
+    tokens = [str(t) for t in policy.parameters.get("missing_tokens", [])]
+    notes: list[str] = []
     try:
-        df = pd.read_csv(io.BytesIO(dataset_bytes))
+        raw = pd.read_csv(io.BytesIO(dataset_bytes), dtype=str, keep_default_na=False)
+        placeholder = [t for t in tokens if t.strip()]
+        n_tokens = int(raw.isin(placeholder).sum().sum()) if placeholder else 0
+        df = pd.read_csv(io.BytesIO(dataset_bytes), na_values=tokens, keep_default_na=True)
+        if n_tokens:
+            notes.append(f"{n_tokens} values written as placeholders such as '[Not Available]' or "
+                         f"'Not Reported' were treated as missing.")
     except Exception as e:
         return _short_circuit("DATA-LOAD", f"Dataset could not be read as CSV ({type(e).__name__}).",
                               dataset_bytes, dictionary, spec or {"question_text": question}, policy)
@@ -50,6 +58,9 @@ def evaluate_dataset(dataset_bytes: bytes, dictionary: dict | None, spec: dict |
                  verdict=ev["verdict"], rule_ids=[f["rule_id"] for f in ev["findings"]])
     return {
         "verdict": ev["verdict"],
+        "human_review": human_review(ev["verdict"]),
+        "notes": notes,
+        "limitations": LIMITATIONS,
         "findings": ev["findings"],
         "checks": [r.to_dict() for r in results],
         "spec": qs.to_dict(),
@@ -58,6 +69,28 @@ def evaluate_dataset(dataset_bytes: bytes, dictionary: dict | None, spec: dict |
         "engine_version": ENGINE_VERSION,
         "policy_version": policy.version,
     }
+
+
+LIMITATIONS = [
+    "This is a research data-readiness screen. It is not a clinical tool and makes no claim of "
+    "clinical validity, regulatory compliance, or production readiness.",
+    "Identifier detection is heuristic. A pass does not guarantee that no personal information is present.",
+    "Leakage detection checks one feature at a time and can miss leakage spread across several features.",
+    "Thresholds (events per parameter, minimum subgroup size, missingness) are configurable defaults, "
+    "not clinical standards.",
+    "Subgroup coverage uses minimum counts and does not compare against a reference population.",
+]
+
+
+def human_review(verdict: str) -> dict:
+    if verdict == "READY":
+        return {"level": "recommended",
+                "text": "A person should still confirm the question and data match before training."}
+    if verdict == "BLOCKED":
+        return {"level": "required",
+                "text": "Do not use this dataset for this question. A person must resolve every Blocked finding first."}
+    return {"level": "required",
+            "text": "A person must review the findings and decide whether the remedies are acceptable."}
 
 
 def _short_circuit(rule_id, reason, dataset_bytes, dictionary, spec, policy) -> dict:
@@ -70,5 +103,6 @@ def _short_circuit(rule_id, reason, dataset_bytes, dictionary, spec, policy) -> 
                  policy_version=policy.version, policy_sha256=policy.sha256,
                  verdict=ev["verdict"], rule_ids=[rule_id])
     q = (spec or {}).get("question_text") or ""
-    return {**ev, "checks": [], "spec": spec, "report": build_report(ev, q),
+    return {**ev, "human_review": human_review(ev["verdict"]), "notes": [], "limitations": LIMITATIONS,
+            "checks": [], "spec": spec, "report": build_report(ev, q),
             "certificate": cert, "engine_version": ENGINE_VERSION, "policy_version": policy.version}

@@ -60,7 +60,7 @@ export function InputPanel({ busy, onSubmit, onSample }: {
 
       <div className="samples">
         <h3>Sample results</h3>
-        <p className="quiet">The same breast cancer cohort, checked against different questions and defects.</p>
+        <p className="quiet">Stand-in and Synthea breast cancer cohorts, checked against different questions and defects.</p>
         <ul>
           {SAMPLES.map((s) => (
             <li key={s.name}>

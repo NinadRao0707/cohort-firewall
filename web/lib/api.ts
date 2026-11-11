@@ -43,9 +43,10 @@ export async function loadSample(name: string): Promise<EvaluateResponse> {
 }
 
 export const SAMPLES: { name: string; label: string }[] = [
-  { name: "clean", label: "2-year recurrence model" },
+  { name: "clean", label: "2-year recurrence study" },
   { name: "q3_survival", label: "5-year survival model" },
   { name: "q2_clinical", label: "Treatment recommendation" },
+  { name: "risk_score_question", label: "Patient risk score" },
   { name: "leakage", label: "Hidden outcome leak" },
   { name: "skewed_subgroup", label: "Underrepresented group" },
   { name: "phi", label: "Identifiers in the data" },

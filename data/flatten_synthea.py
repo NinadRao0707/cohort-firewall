@@ -287,7 +287,9 @@ def build(synthea_dir: Path, cancer: str, inspect: bool = False):
         "provenance": f"Flattened from {synthea_dir.name}; identifiers removed; baseline window "
                       f"+/-{BASELINE_WINDOW_DAYS} days of first {cancer} cancer condition.",
         "license": "Apache-2.0",  # confirm the license that applies to your Synthea output
-        "contains_real_patient_data": False,
+        "patient_derived": False,
+        "identifiable": False,
+        "access": "open",
     }, "columns": coldefs}
     return out, dictionary
 

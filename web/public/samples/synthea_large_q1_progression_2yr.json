@@ -1,5 +1,17 @@
 {
   "verdict": "CONDITIONAL",
+  "human_review": {
+    "level": "required",
+    "text": "A person must review the findings and decide whether the remedies are acceptable."
+  },
+  "notes": [],
+  "limitations": [
+    "This is a research data-readiness screen. It is not a clinical tool and makes no claim of clinical validity, regulatory compliance, or production readiness.",
+    "Identifier detection is heuristic. A pass does not guarantee that no personal information is present.",
+    "Leakage detection checks one feature at a time and can miss leakage spread across several features.",
+    "Thresholds (events per parameter, minimum subgroup size, missingness) are configurable defaults, not clinical standards.",
+    "Subgroup coverage uses minimum counts and does not compare against a reference population."
+  ],
   "findings": [
     {
       "rule_id": "CMP-004",
@@ -23,8 +35,11 @@
       "metrics": {
         "has_dictionary": true,
         "license_recognized": true,
-        "contains_real_patient_data": false,
-        "real_patient_status_declared": true,
+        "patient_derived": false,
+        "patient_status_declared": true,
+        "identifiable": null,
+        "deidentification_declared": true,
+        "access_restricted": false,
         "has_provenance": true,
         "undocumented_column_share": 0.0,
         "undocumented_columns": []
@@ -113,7 +128,8 @@
       "metrics": {
         "horizon_months": 24.0,
         "horizon_coverage": 0.833,
-        "median_follow_up_months": 63.8
+        "median_follow_up_months": 63.8,
+        "time_unit": "months"
       },
       "note": ""
     },
@@ -153,7 +169,7 @@
     }
   ],
   "spec": {
-    "question_text": "Can we develop a research model that estimates the risk of disease worsening within 2 years in breast cancer patients diagnosed since 2012, using stage, receptor status, tumor size and age at diagnosis, and check whether it performs consistently across race and ethnicity?",
+    "question_text": "Is this dataset suitable for a research study of which baseline factors (stage, receptor status, tumor size, age at diagnosis) are associated with disease worsening within 2 years in breast cancer patients diagnosed since 2012, including whether a model performs consistently across race and ethnicity?",
     "task_type": "binary_classification",
     "intended_use": "model_development",
     "cancer_type": "breast",
@@ -189,29 +205,29 @@
     "parser_notes": ""
   },
   "report": {
-    "text": "**Verdict: Conditional** for the question: \"Can we develop a research model that estimates the risk of disease worsening within 2 years in breast cancer patients diagnosed since 2012, using stage, receptor status, tumor size and age at diagnosis, and check whether it performs consistently across race and ethnicity?\"\n\nWhy:\n- [CMP-004] (Conditional) Predictor 'tumor_size' is missing for 27% of the cohort.\n- [SUB-002] (Conditional) Some subgroups are too small to evaluate model behavior reliably: race=hawaiian (n=13), race=other (n=13), race=native (n=2).\n\nTo make this dataset ready for this question:\n- [CMP-004] Plan and document an imputation strategy, or drop the predictor.\n- [SUB-002] Report subgroup performance with uncertainty, or obtain more data for these groups.",
+    "text": "**Verdict: Conditional** for the question: \"Is this dataset suitable for a research study of which baseline factors (stage, receptor status, tumor size, age at diagnosis) are associated with disease worsening within 2 years in breast cancer patients diagnosed since 2012, including whether a model performs consistently across race and ethnicity?\"\n\nWhy:\n- [CMP-004] (Conditional) Predictor 'tumor_size' is missing for 27% of the cohort.\n- [SUB-002] (Conditional) Some subgroups are too small to evaluate model behavior reliably: race=hawaiian (n=13), race=other (n=13), race=native (n=2).\n\nTo make this dataset ready for this question:\n- [CMP-004] Plan and document an imputation strategy, or drop the predictor.\n- [SUB-002] Report subgroup performance with uncertainty, or obtain more data for these groups.",
     "source": "template"
   },
   "certificate": {
-    "cert_id": "d1e7ccfa38dbe55d",
+    "cert_id": "1d9190a8da70b35d",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.1.0",
-      "policy_sha256": "1a9873a41c2f928795ae3cc32c26d02d366b0d9dd2ff228f2a384d926bf685ed",
+      "policy_version": "0.2.0",
+      "policy_sha256": "a3ee1f42d46641b13681e9eec095a4930dec5cf2e2c848958b1b816abedf57ed",
       "dataset_sha256": "af34aae37e9e542dca5b81039b8ee1a49f2263b85a5f13588e95f85aa89e289f",
       "dictionary_sha256": "ffb6df259cfc22476a238af54dafa149c97d967140018c814cbbbdd29925a0fa",
-      "spec_sha256": "cbb032e96720541e97c7eaea3c0ba3b60789077f3ef79a2f3f52b70b5b2956b7",
+      "spec_sha256": "f9323faa9b19277628524c49b327289046963aea9159a4ae73e951e60b7bda21",
       "verdict": "CONDITIONAL",
       "rule_ids": [
         "CMP-004",
         "SUB-002"
       ],
-      "issued_at": "2026-11-05T20:05:16+00:00"
+      "issued_at": "2026-11-11T18:15:05+00:00"
     },
-    "signature": "qoHW7hO3pCFbGHDQMIXN9U6EUGJeo0IIiTIXSIpajsoEXl07FMkJy+xRuAxcNPPExirHrO7feki8JtfpbaAFAQ==",
+    "signature": "c7D8WBbmRHv3lTZBG6NmZhgbCBeuHSK2oXik/LsoDCV/z2J4RFuSsZ4H2bd3ktxZbxWgTZ48C+08O9VMKwUQBQ==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.1.0"
+  "policy_version": "0.2.0"
 }

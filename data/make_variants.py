@@ -127,10 +127,54 @@ def case_unknown_license(df, d):
     return df, d, spec("q1_recurrence_2yr"), "INSUFFICIENT_EVIDENCE", ["META-002"]
 
 
-def case_real_patient_flag(df, d):
+def case_identifiable_patient_data(df, d):
     d = copy.deepcopy(d)
-    d["dataset"]["contains_real_patient_data"] = True
+    d["dataset"].update(patient_derived=True, identifiable=True)
     return df, d, spec("q1_recurrence_2yr"), "BLOCKED", ["META-003"]
+
+
+def case_deidentified_patient_data(df, d):
+    # TCGA-style: real patients, de-identified, open access. Allowed.
+    d = copy.deepcopy(d)
+    d["dataset"].update(patient_derived=True, identifiable=False, access="open")
+    return df, d, spec("q1_recurrence_2yr"), "READY", []
+
+
+def case_controlled_access(df, d):
+    d = copy.deepcopy(d)
+    d["dataset"].update(patient_derived=True, identifiable=False, access="controlled")
+    return df, d, spec("q1_recurrence_2yr"), "BLOCKED", ["META-008"]
+
+
+def case_deidentification_undeclared(df, d):
+    d = copy.deepcopy(d)
+    d["dataset"].update(patient_derived=True)
+    d["dataset"].pop("identifiable", None)
+    return df, d, spec("q1_recurrence_2yr"), "INSUFFICIENT_EVIDENCE", ["META-007"]
+
+
+def case_placeholder_missing(df, d):
+    # TCGA-style "[Not Available]" strings must count as missing, not as a category.
+    df = df.copy()
+    df["her2_status"] = df["her2_status"].astype(object)
+    df.loc[RNG.random(len(df)) < 0.30, "her2_status"] = "[Not Available]"
+    return df, d, spec("q1_recurrence_2yr"), "CONDITIONAL", ["CMP-004"]
+
+
+def case_time_in_days(df, d):
+    # Follow-up recorded in days (as TCGA does); the horizon is in months.
+    df = df.copy()
+    df["follow_up_months"] = (df["follow_up_months"] * 30.44).round(0)
+    d = copy.deepcopy(d)
+    d["columns"]["follow_up_months"]["unit"] = "days"
+    return df, d, spec("q3_survival_5yr"), "CONDITIONAL", ["TIME-002"]
+
+
+def case_risk_score_question(df, d):
+    s = spec("q1_recurrence_2yr")
+    s.update(question_text="Generate a patient-level risk score for each patient's 2-year recurrence.",
+             intended_use="model_development")
+    return df, d, s, "BLOCKED", ["SCOPE-002"]
 
 
 def case_prompt_injection(df, d):

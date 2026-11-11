@@ -22,8 +22,8 @@ Blocked = "we checked and it fails". Insufficient = "we could not check, so we d
 
 | Check | Measures | Rules |
 |---|---|---|
-| metadata | dictionary present, license, provenance, real-patient flag, undocumented columns | META-001..006 |
-| scope | intended use; keyword backstop for individual care decisions | SCOPE-001..002 |
+| metadata | dictionary present, license, provenance, patient-derived / identifiable / access level, undocumented columns | META-001..008 |
+| scope | intended use; keyword backstop for individual diagnosis, treatment, or patient risk scores | SCOPE-001..002 |
 | spec_quality | parser confidence | SPEC-001 |
 | columns | outcome, predictors, filter and time columns present | COL-001..004 |
 | cohort | size after population filters | COH-001 |
@@ -50,6 +50,11 @@ STANDING Together recommendations (dataset transparency and subgroup representat
   engine version, signed with Ed25519. Changing any byte fails verification.
 - **Data retention.** The API evaluates uploads in memory and stores hashes and results only;
   the Supabase table is append-only.
+
+## Patient-data model
+`patient_derived` (true for real, even de-identified, data such as TCGA), `identifiable` (must be
+false), `access` (open only). De-identified open-access patient data is allowed; identifiable or
+controlled-access data is Blocked; an undeclared status is Insufficient evidence.
 
 ## Known limits (say these before judges do)
 - PHI detection is heuristic; a pass is not a privacy guarantee.

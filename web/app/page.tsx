@@ -59,6 +59,10 @@ export default function Home() {
           )}
         </section>
       </div>
+      <footer className="disclaimer">
+        Research data-readiness screen. Not a clinical tool: it gives no diagnosis, treatment
+        recommendation, or patient risk score, and makes no claim of clinical validity or regulatory compliance.
+      </footer>
     </main>
   );
 }

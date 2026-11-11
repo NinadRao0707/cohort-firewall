@@ -1,5 +1,17 @@
 {
   "verdict": "CONDITIONAL",
+  "human_review": {
+    "level": "required",
+    "text": "A person must review the findings and decide whether the remedies are acceptable."
+  },
+  "notes": [],
+  "limitations": [
+    "This is a research data-readiness screen. It is not a clinical tool and makes no claim of clinical validity, regulatory compliance, or production readiness.",
+    "Identifier detection is heuristic. A pass does not guarantee that no personal information is present.",
+    "Leakage detection checks one feature at a time and can miss leakage spread across several features.",
+    "Thresholds (events per parameter, minimum subgroup size, missingness) are configurable defaults, not clinical standards.",
+    "Subgroup coverage uses minimum counts and does not compare against a reference population."
+  ],
   "findings": [
     {
       "rule_id": "INJ-001",
@@ -16,8 +28,11 @@
       "metrics": {
         "has_dictionary": true,
         "license_recognized": true,
-        "contains_real_patient_data": false,
-        "real_patient_status_declared": true,
+        "patient_derived": false,
+        "patient_status_declared": true,
+        "identifiable": false,
+        "deidentification_declared": true,
+        "access_restricted": false,
         "has_provenance": true,
         "undocumented_column_share": 0.0,
         "undocumented_columns": []
@@ -106,7 +121,8 @@
       "metrics": {
         "horizon_months": 24.0,
         "horizon_coverage": 0.909,
-        "median_follow_up_months": 47.0
+        "median_follow_up_months": 47.0,
+        "time_unit": "months"
       },
       "note": ""
     },
@@ -145,7 +161,7 @@
     }
   ],
   "spec": {
-    "question_text": "Can we develop a research model that estimates 2-year recurrence risk in breast cancer patients diagnosed since 2012, using stage, receptor status, tumor size, nodes and age at diagnosis, and check whether it performs consistently across race and ethnicity?",
+    "question_text": "Is this dataset suitable for a research study of which baseline factors (stage, receptor status, tumor size, nodes, age at diagnosis) are associated with 2-year recurrence in breast cancer patients diagnosed since 2012, including whether a model performs consistently across race and ethnicity?",
     "task_type": "binary_classification",
     "intended_use": "model_development",
     "cancer_type": "breast",
@@ -182,28 +198,28 @@
     "parser_notes": ""
   },
   "report": {
-    "text": "**Verdict: Conditional** for the question: \"Can we develop a research model that estimates 2-year recurrence risk in breast cancer patients diagnosed since 2012, using stage, receptor status, tumor size, nodes and age at diagnosis, and check whether it performs consistently across race and ethnicity?\"\n\nWhy:\n- [INJ-001] (Conditional) Instruction-like text found in the data or dictionary at notes[row 17], dictionary:notes. It was quarantined and had no effect on this verdict.\n\nTo make this dataset ready for this question:\n- [INJ-001] Review and clean those fields; free text in a training set can carry prompt-injection payloads.",
+    "text": "**Verdict: Conditional** for the question: \"Is this dataset suitable for a research study of which baseline factors (stage, receptor status, tumor size, nodes, age at diagnosis) are associated with 2-year recurrence in breast cancer patients diagnosed since 2012, including whether a model performs consistently across race and ethnicity?\"\n\nWhy:\n- [INJ-001] (Conditional) Instruction-like text found in the data or dictionary at notes[row 17], dictionary:notes. It was quarantined and had no effect on this verdict.\n\nTo make this dataset ready for this question:\n- [INJ-001] Review and clean those fields; free text in a training set can carry prompt-injection payloads.",
     "source": "template"
   },
   "certificate": {
-    "cert_id": "1d411893fa2a205f",
+    "cert_id": "4feb2d4cca4719c3",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.1.0",
-      "policy_sha256": "1a9873a41c2f928795ae3cc32c26d02d366b0d9dd2ff228f2a384d926bf685ed",
+      "policy_version": "0.2.0",
+      "policy_sha256": "a3ee1f42d46641b13681e9eec095a4930dec5cf2e2c848958b1b816abedf57ed",
       "dataset_sha256": "ab3cdb8142d7a8ef5c25e788ade47a2011dc9ca2ddc727db4025951175ee8e9e",
-      "dictionary_sha256": "d544cb559390ade40bb8f25f0b7b11924218b4fbc896212c73e37f37f30b2701",
-      "spec_sha256": "e0718f917ba8ff86c5cceebe9de7417a430a59b31233391da99009caf976a4f3",
+      "dictionary_sha256": "d51b45bb498005070a122fe023cba4ae21bc2fc429de7b4811df36bb7ad60190",
+      "spec_sha256": "1d7a22d3fdd7440308503ceed1a574fb91969a63d614d75a48ff974d1e2e215c",
       "verdict": "CONDITIONAL",
       "rule_ids": [
         "INJ-001"
       ],
-      "issued_at": "2026-11-05T20:05:16+00:00"
+      "issued_at": "2026-11-11T18:15:05+00:00"
     },
-    "signature": "2PQaHmwwd2XNVcNcBr5/vf7koqwgRTnBR6HjeJqSnG2o0+/nlX0tt/J73zLitR0GBYKWjjWkXmvSuJfm5UWeCQ==",
+    "signature": "zMIn2CnhlAA2ThL20/lnwicGtFW/BNjJjDim6SDqQdqjIZphN0cn+8aWNevPFzc1Mn6ro1EeFtK4pmzgL7AFBA==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.1.0"
+  "policy_version": "0.2.0"
 }

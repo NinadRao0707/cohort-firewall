@@ -1,4 +1,4 @@
-# Cohort Firewall policy, version 0.1.0
+# Cohort Firewall policy, version 0.2.0
 #
 # Checks measure. This file decides. The LLM never sees or changes it.
 # Verdict precedence (worst wins): BLOCKED > INSUFFICIENT_EVIDENCE > CONDITIONAL > READY
@@ -11,11 +11,15 @@
 # Thresholds are hackathon defaults, chosen to be explainable, not clinical standards.
 # Change them here, bump the version, and every certificate records which version decided.
 
-version: "0.1.0"
+version: "0.2.0"
 
 parameters:
   leakage_auc_threshold: 0.95   # single feature separating the outcome this well is suspicious
   min_subgroup_n: 50            # too few records to evaluate model behavior in that subgroup
+  # Strings that TCGA/GDC-style exports use to mean "no value". Treated as missing before any check.
+  missing_tokens: ["[Not Available]", "[Not Evaluated]", "[Unknown]", "[Not Applicable]",
+                   "[Discrepancy]", "Not Reported", "not reported", "Unknown",
+                   "unknown", "'--", "--", "NA", "N/A", ""]
 
 rules:
   # ---- provenance and metadata ---------------------------------------------------------
@@ -37,19 +41,35 @@ rules:
 
   - id: META-003
     check: metadata
-    when: [{metric: contains_real_patient_data, op: "==", value: true}]
+    when: [{metric: identifiable, op: "==", value: true}]
     verdict: BLOCKED
-    reason: "The dataset declares that it contains real patient data, which this event does not permit."
-    remedy: "Use synthetic, openly licensed, or event-approved non-sensitive data."
+    reason: "The dataset declares that it contains identifiable patient data, which this event does not permit."
+    remedy: "Use de-identified, synthetic, or event-approved non-sensitive data."
 
   - id: META-004
     check: metadata
     when:
       - {metric: has_dictionary, op: "==", value: true}
-      - {metric: real_patient_status_declared, op: "==", value: false}
+      - {metric: patient_status_declared, op: "==", value: false}
     verdict: INSUFFICIENT_EVIDENCE
-    reason: "The dictionary does not state whether the data contains real patient records."
-    remedy: "Set dataset.contains_real_patient_data to true or false."
+    reason: "The dictionary does not state whether the data comes from real patients."
+    remedy: "Set dataset.patient_derived to true (real, e.g. TCGA) or false (synthetic)."
+
+  - id: META-007
+    check: metadata
+    when:
+      - {metric: patient_derived, op: "==", value: true}
+      - {metric: deidentification_declared, op: "==", value: false}
+    verdict: INSUFFICIENT_EVIDENCE
+    reason: "The data is patient-derived but its de-identification status is not declared."
+    remedy: "Set dataset.identifiable to false only if the source certifies de-identification."
+
+  - id: META-008
+    check: metadata
+    when: [{metric: access_restricted, op: "==", value: true}]
+    verdict: BLOCKED
+    reason: "The dataset is controlled or restricted access, which this event does not permit."
+    remedy: "Use the open-access release provided by the organizers."
 
   - id: META-005
     check: metadata
@@ -74,15 +94,15 @@ rules:
     check: scope
     when: [{metric: clinical_use, op: "==", value: true}]
     verdict: BLOCKED
-    reason: "The question is framed for {intended_use}, which is outside the permitted scope."
+    reason: "The question is framed for {intended_use}, which is outside the permitted scope (no diagnosis, treatment recommendation, or patient risk score)."
     remedy: "Reframe as a research or model-development question about the cohort, not an individual patient decision."
 
   - id: SCOPE-002
     check: scope
     when: [{metric: keyword_guard_hit, op: "==", value: true}]
     verdict: BLOCKED
-    reason: "The question wording asks for an individual treatment or care decision (deterministic guard)."
-    remedy: "Reword the question so it does not direct care for a specific patient."
+    reason: "The question asks for an individual diagnosis, treatment choice, or patient risk score (deterministic guard)."
+    remedy: "Reword it as a cohort-level research question that does not produce a result for a specific patient."
 
   - id: SPEC-001
     check: spec_quality

@@ -1,5 +1,17 @@
 {
   "verdict": "CONDITIONAL",
+  "human_review": {
+    "level": "required",
+    "text": "A person must review the findings and decide whether the remedies are acceptable."
+  },
+  "notes": [],
+  "limitations": [
+    "This is a research data-readiness screen. It is not a clinical tool and makes no claim of clinical validity, regulatory compliance, or production readiness.",
+    "Identifier detection is heuristic. A pass does not guarantee that no personal information is present.",
+    "Leakage detection checks one feature at a time and can miss leakage spread across several features.",
+    "Thresholds (events per parameter, minimum subgroup size, missingness) are configurable defaults, not clinical standards.",
+    "Subgroup coverage uses minimum counts and does not compare against a reference population."
+  ],
   "findings": [
     {
       "rule_id": "CMP-004",
@@ -23,8 +35,11 @@
       "metrics": {
         "has_dictionary": true,
         "license_recognized": true,
-        "contains_real_patient_data": false,
-        "real_patient_status_declared": true,
+        "patient_derived": false,
+        "patient_status_declared": true,
+        "identifiable": null,
+        "deidentification_declared": true,
+        "access_restricted": false,
         "has_provenance": true,
         "undocumented_column_share": 0.0,
         "undocumented_columns": []
@@ -113,7 +128,8 @@
       "metrics": {
         "horizon_months": 60.0,
         "horizon_coverage": 0.615,
-        "median_follow_up_months": 63.8
+        "median_follow_up_months": 63.8,
+        "time_unit": "months"
       },
       "note": ""
     },
@@ -192,12 +208,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "d9f2bafaeb106c65",
+    "cert_id": "d5c783111f3d0927",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.1.0",
-      "policy_sha256": "1a9873a41c2f928795ae3cc32c26d02d366b0d9dd2ff228f2a384d926bf685ed",
+      "policy_version": "0.2.0",
+      "policy_sha256": "a3ee1f42d46641b13681e9eec095a4930dec5cf2e2c848958b1b816abedf57ed",
       "dataset_sha256": "af34aae37e9e542dca5b81039b8ee1a49f2263b85a5f13588e95f85aa89e289f",
       "dictionary_sha256": "ffb6df259cfc22476a238af54dafa149c97d967140018c814cbbbdd29925a0fa",
       "spec_sha256": "58b0adcf852e991f73933760edba9e9239644efc40656380b26c2e978661f005",
@@ -206,11 +222,11 @@
         "CMP-004",
         "SUB-002"
       ],
-      "issued_at": "2026-11-05T20:05:16+00:00"
+      "issued_at": "2026-11-11T18:15:05+00:00"
     },
-    "signature": "duuBf9H2b5v+80icbpGnYPlWxUWM+nTKkpRLtdqjqnPyNUajDj1UxCQJw4FUEvwIH33Qq46kHPEAORwUz92MAw==",
+    "signature": "nbY5SAXcvpkEJrVJ/YR8SJnWIkUhnJXfZZcm94WAwvGCrYlcKfGBDcas3CbVx3E4prGyRGpTFz+o7LzeanA0CQ==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.1.0"
+  "policy_version": "0.2.0"
 }

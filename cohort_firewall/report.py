@@ -38,6 +38,7 @@ def report_passes_guard(text: str, evaluation: dict) -> bool:
 
 
 def build_report(evaluation: dict, question: str, use_llm: bool = False) -> dict:
+    """Report wording only. Human review, notes and limitations are added separately by the engine."""
     if use_llm:
         try:
             from .llm import write_report_llm

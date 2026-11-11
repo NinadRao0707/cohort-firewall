@@ -17,7 +17,7 @@ from cohort_firewall.engine import evaluate_dataset  # noqa: E402
 
 OUT = ROOT / "web" / "public" / "samples"
 VARIANTS = ROOT / "data" / "variants"
-CASES = ["clean", "q3_survival", "q2_clinical", "leakage", "skewed_subgroup", "phi",
+CASES = ["clean", "q3_survival", "q2_clinical", "risk_score_question", "leakage", "skewed_subgroup", "phi",
          "prompt_injection", "no_dictionary"]
 SYNTHEA = {"synthea_small": ROOT / "data" / "synthea", "synthea_large": ROOT / "data" / "synthea_large"}
 

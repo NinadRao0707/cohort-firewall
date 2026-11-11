@@ -34,6 +34,9 @@ export interface Certificate {
 
 export interface EvaluateResponse {
   verdict: Verdict;
+  human_review?: { level: "required" | "recommended"; text: string };
+  notes?: string[];
+  limitations?: string[];
   findings: Finding[];
   checks: CheckResult[];
   spec: { question_text?: string } & Record<string, unknown>;

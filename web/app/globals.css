@@ -156,3 +156,15 @@ button.link:hover { text-decoration-color: currentColor; }
 .cert-result[data-state="valid"] { color: var(--ready); }
 .cert-result[data-state="invalid"], .cert-result[data-state="error"] { color: var(--blocked); }
 .cert-result[data-state="idle"] { font-weight: 400; color: var(--ink-soft); font-size: 0.875rem; }
+
+/* ---- human review, notes, limitations, disclaimer ---- */
+.review { margin: 16px 0 0; max-width: 64ch; font-size: 0.9375rem; color: var(--ink-soft); }
+.review span { font-weight: 700; color: var(--ink); }
+.plain-list { margin: 0; padding-left: 18px; display: grid; gap: 4px; max-width: 72ch; font-size: 0.9375rem; }
+.limits { margin-top: 16px; }
+.limits summary { cursor: pointer; font-weight: 600; font-size: 0.9375rem; }
+.limits ul { margin-top: 8px; color: var(--ink-soft); }
+.disclaimer {
+  margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--rule);
+  color: var(--ink-soft); font-size: 0.8125rem; max-width: 80ch;
+}

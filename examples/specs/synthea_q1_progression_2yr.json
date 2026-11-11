@@ -1,5 +1,5 @@
 {
-  "question_text": "Can we develop a research model that estimates the risk of disease worsening within 2 years in breast cancer patients diagnosed since 2012, using stage, receptor status, tumor size and age at diagnosis, and check whether it performs consistently across race and ethnicity?",
+  "question_text": "Is this dataset suitable for a research study of which baseline factors (stage, receptor status, tumor size, age at diagnosis) are associated with disease worsening within 2 years in breast cancer patients diagnosed since 2012, including whether a model performs consistently across race and ethnicity?",
   "task_type": "binary_classification",
   "intended_use": "model_development",
   "cancer_type": "breast",

@@ -1,5 +1,17 @@
 {
   "verdict": "BLOCKED",
+  "human_review": {
+    "level": "required",
+    "text": "Do not use this dataset for this question. A person must resolve every Blocked finding first."
+  },
+  "notes": [],
+  "limitations": [
+    "This is a research data-readiness screen. It is not a clinical tool and makes no claim of clinical validity, regulatory compliance, or production readiness.",
+    "Identifier detection is heuristic. A pass does not guarantee that no personal information is present.",
+    "Leakage detection checks one feature at a time and can miss leakage spread across several features.",
+    "Thresholds (events per parameter, minimum subgroup size, missingness) are configurable defaults, not clinical standards.",
+    "Subgroup coverage uses minimum counts and does not compare against a reference population."
+  ],
   "findings": [
     {
       "rule_id": "EVT-001",
@@ -30,8 +42,11 @@
       "metrics": {
         "has_dictionary": true,
         "license_recognized": true,
-        "contains_real_patient_data": false,
-        "real_patient_status_declared": true,
+        "patient_derived": false,
+        "patient_status_declared": true,
+        "identifiable": null,
+        "deidentification_declared": true,
+        "access_restricted": false,
         "has_provenance": true,
         "undocumented_column_share": 0.0,
         "undocumented_columns": []
@@ -120,7 +135,8 @@
       "metrics": {
         "horizon_months": 24.0,
         "horizon_coverage": 0.866,
-        "median_follow_up_months": 62.9
+        "median_follow_up_months": 62.9,
+        "time_unit": "months"
       },
       "note": ""
     },
@@ -163,7 +179,7 @@
     }
   ],
   "spec": {
-    "question_text": "Can we develop a research model that estimates the risk of disease worsening within 2 years in breast cancer patients diagnosed since 2012, using stage, receptor status, tumor size and age at diagnosis, and check whether it performs consistently across race and ethnicity?",
+    "question_text": "Is this dataset suitable for a research study of which baseline factors (stage, receptor status, tumor size, age at diagnosis) are associated with disease worsening within 2 years in breast cancer patients diagnosed since 2012, including whether a model performs consistently across race and ethnicity?",
     "task_type": "binary_classification",
     "intended_use": "model_development",
     "cancer_type": "breast",
@@ -199,30 +215,30 @@
     "parser_notes": ""
   },
   "report": {
-    "text": "**Verdict: Blocked** for the question: \"Can we develop a research model that estimates the risk of disease worsening within 2 years in breast cancer patients diagnosed since 2012, using stage, receptor status, tumor size and age at diagnosis, and check whether it performs consistently across race and ethnicity?\"\n\nWhy:\n- [EVT-001] (Blocked) Only 12 records in the smaller outcome class; too few to develop or evaluate a model.\n- [CMP-004] (Conditional) Predictor 'tumor_size' is missing for 26% of the cohort.\n- [SUB-002] (Conditional) Some subgroups are too small to evaluate model behavior reliably: race=black (n=12), race=asian (n=10), race=other (n=5), race=hawaiian (n=2), race=native (n=1), ethnicity=hispanic (n=30).\n\nTo make this dataset ready for this question:\n- [EVT-001] Use a larger cohort or a more common outcome.\n- [CMP-004] Plan and document an imputation strategy, or drop the predictor.\n- [SUB-002] Report subgroup performance with uncertainty, or obtain more data for these groups.",
+    "text": "**Verdict: Blocked** for the question: \"Is this dataset suitable for a research study of which baseline factors (stage, receptor status, tumor size, age at diagnosis) are associated with disease worsening within 2 years in breast cancer patients diagnosed since 2012, including whether a model performs consistently across race and ethnicity?\"\n\nWhy:\n- [EVT-001] (Blocked) Only 12 records in the smaller outcome class; too few to develop or evaluate a model.\n- [CMP-004] (Conditional) Predictor 'tumor_size' is missing for 26% of the cohort.\n- [SUB-002] (Conditional) Some subgroups are too small to evaluate model behavior reliably: race=black (n=12), race=asian (n=10), race=other (n=5), race=hawaiian (n=2), race=native (n=1), ethnicity=hispanic (n=30).\n\nTo make this dataset ready for this question:\n- [EVT-001] Use a larger cohort or a more common outcome.\n- [CMP-004] Plan and document an imputation strategy, or drop the predictor.\n- [SUB-002] Report subgroup performance with uncertainty, or obtain more data for these groups.",
     "source": "template"
   },
   "certificate": {
-    "cert_id": "407028ed30449c41",
+    "cert_id": "498496c76f2374a7",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.1.0",
-      "policy_sha256": "1a9873a41c2f928795ae3cc32c26d02d366b0d9dd2ff228f2a384d926bf685ed",
+      "policy_version": "0.2.0",
+      "policy_sha256": "a3ee1f42d46641b13681e9eec095a4930dec5cf2e2c848958b1b816abedf57ed",
       "dataset_sha256": "36c4dd46760187e50e27ea25869566a09c8d6fd515e3a1d9f5975ccf64c751dc",
       "dictionary_sha256": "ffb6df259cfc22476a238af54dafa149c97d967140018c814cbbbdd29925a0fa",
-      "spec_sha256": "cbb032e96720541e97c7eaea3c0ba3b60789077f3ef79a2f3f52b70b5b2956b7",
+      "spec_sha256": "f9323faa9b19277628524c49b327289046963aea9159a4ae73e951e60b7bda21",
       "verdict": "BLOCKED",
       "rule_ids": [
         "CMP-004",
         "EVT-001",
         "SUB-002"
       ],
-      "issued_at": "2026-11-05T20:05:16+00:00"
+      "issued_at": "2026-11-11T18:15:05+00:00"
     },
-    "signature": "n5/+VtBTk6l5OEmLAeFco5bUrpBpDJ9mQn95p6lJqnE+luwn+3AppVTSHZo69blc7GSA50Zhi6X9yynU+oH8BQ==",
+    "signature": "5AqkGriMQyG5WDNWXzVeAam4Y53SMTNS5azf5FdJUQ78vhj2Ecm5qP11UPEwxCGdoD7n8V//tZUgG9agkdKkBQ==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.1.0"
+  "policy_version": "0.2.0"
 }

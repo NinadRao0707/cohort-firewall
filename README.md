@@ -5,6 +5,15 @@ Decides whether an oncology dataset is ready for a **specific** proposed AI ques
 
 Built for the OncoSys AI / The Open Accelerator AI Healthcare Hackathon at Northeastern (Cohort Firewall track).
 
+> Research data-readiness screen. Not a clinical tool: no diagnosis, treatment recommendation, or
+> patient risk score, and no claim of clinical validity, regulatory compliance, or production readiness.
+
+## Data
+- **Judged results:** the event's frozen TCGA-BRCA release from the Cancer AI Lab starter repository.
+  Raw TCGA files are never committed; fetch them with the starter's script and verify its pinned checksums.
+- **Engine tests only:** a stand-in cohort from `data/make_demo_cohort.py` (random values, CC0) and
+  optional Synthea output (MITRE's open-source synthetic patient generator). Neither contains real patients.
+
 ## Core idea
 
 Readiness is a property of a dataset *and* a question together. The same cohort can be Ready
@@ -28,7 +37,7 @@ The LLM parses the question and words the report. **It never decides the verdict
 ```bash
 pip install -r requirements.txt
 python data/make_demo_cohort.py      # stand-in Synthea-shaped breast cohort
-python data/make_variants.py         # 16 seeded-defect test cases
+python data/make_variants.py         # 22 seeded-defect test cases
 python tests/test_variants.py        # expected vs actual verdict table
 uvicorn api.main:app --reload        # http://localhost:8000/docs
 ```
@@ -51,6 +60,7 @@ Optional: `SUPABASE_URL` + `SUPABASE_SERVICE_KEY` to log runs (schema in `supaba
 | `data/flatten_synthea.py` | Synthea CSV export → one patient-level cohort table + dictionary |
 | `data/make_variants.py` | Seeded-defect cases (the evaluation) |
 | `examples/specs/` | Four questions against the same cohort |
+| `examples/responses/` | Real `/evaluate` responses for the frontend to build against |
 | `web/` | Next.js UI (runs on sample results without the API) |
 | `scripts/smoke_api.sh` | First real test of the API endpoints |
 | `scripts/try_parser.py` | Trial of the Claude question parser on 5 questions |
