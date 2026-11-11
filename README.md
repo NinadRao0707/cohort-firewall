@@ -14,6 +14,16 @@ Built for the OncoSys AI / The Open Accelerator AI Healthcare Hackathon at North
 - **Engine tests only:** a stand-in cohort from `data/make_demo_cohort.py` (random values, CC0) and
   optional Synthea output (MITRE's open-source synthetic patient generator). Neither contains real patients.
 
+## Featured product: Cohort Control Tower
+Compare a new TCGA-BRCA release with the frozen one, find what changed, rerun only the affected
+reference analyses, give each a readiness verdict, and write `findings.json` (shared format v0.2).
+See `docs/CONTROL_TOWER.md`.
+
+```bash
+python -m cohort_firewall.tower --challenge-repo ~/oncosys-hackathon-challenge \
+  --b ~/oncosys-hackathon-challenge/data/tcga-brca/releases/practice-B --out findings.json
+```
+
 ## Core idea
 
 Readiness is a property of a dataset *and* a question together. The same cohort can be Ready
@@ -60,7 +70,6 @@ Optional: `SUPABASE_URL` + `SUPABASE_SERVICE_KEY` to log runs (schema in `supaba
 | `data/flatten_synthea.py` | Synthea CSV export → one patient-level cohort table + dictionary |
 | `data/make_variants.py` | Seeded-defect cases (the evaluation) |
 | `examples/specs/` | Four questions against the same cohort |
-| `examples/responses/` | Real `/evaluate` responses for the frontend to build against |
 | `web/` | Next.js UI (runs on sample results without the API) |
 | `scripts/smoke_api.sh` | First real test of the API endpoints |
 | `scripts/try_parser.py` | Trial of the Claude question parser on 5 questions |

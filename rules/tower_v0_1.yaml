@@ -1,0 +1,72 @@
+# Cohort Control Tower policy, version 0.1.0
+# One verdict per protected analysis after a new release. Same evaluator and precedence as the
+# readiness policy: BLOCKED > INSUFFICIENT_EVIDENCE > CONDITIONAL > READY.
+
+version: "0.1.0"
+parameters: {}
+
+rules:
+  - id: TWR-PROV-1
+    check: provenance
+    when: [{metric: baseline_verified, op: "==", value: false}]
+    verdict: INSUFFICIENT_EVIDENCE
+    reason: "The baseline release does not match the event's frozen checksums ({unverified_files}), so changes cannot be attributed to the new release."
+    remedy: "Re-run fetch.py so the baseline matches sources.csv, then compare again."
+
+  - id: TWR-RUN-1
+    check: impact
+    when: [{metric: run_failed, op: "==", value: true}]
+    verdict: INSUFFICIENT_EVIDENCE
+    reason: "The analysis could not be run ({error})."
+    remedy: "Fix the input files or the analysis, then rerun the comparison."
+
+  - id: TWR-SWAP-1
+    check: impact
+    when: [{metric: n_swaps, op: ">", value: 0}]
+    verdict: BLOCKED
+    reason: "{n_swaps} sample swap(s) in its inputs: measurements are attached to the wrong samples ({swap_samples})."
+    remedy: "Restore the affected samples from the previous release, or exclude them, then rerun."
+
+  - id: TWR-DUP-1
+    check: impact
+    when: [{metric: n_duplicates, op: ">", value: 0}]
+    verdict: BLOCKED
+    reason: "{n_duplicates} sample(s) now carry another sample's exact profile, so the same measurement is counted under different IDs ({duplicate_samples})."
+    remedy: "Restore the original profiles from the previous release, or exclude the duplicates, then rerun."
+
+  - id: TWR-LBL-1
+    check: impact
+    when: [{metric: n_key_label_changes, op: ">", value: 0}]
+    verdict: BLOCKED
+    reason: "{n_key_label_changes} sample(s) changed a clinical label this analysis groups by ({label_samples})."
+    remedy: "Confirm each label against the source record before using the new release."
+
+  - id: TWR-MEM-1
+    check: impact
+    when: [{metric: n_membership_changes, op: ">", value: 0}]
+    verdict: CONDITIONAL
+    reason: "{n_membership_changes} sample(s) appeared or disappeared in its inputs, changing who is counted."
+    remedy: "Confirm the removals and additions are intended and report the new denominator."
+
+  - id: TWR-VAL-1
+    check: impact
+    when: [{metric: n_value_changes, op: ">", value: 0}]
+    verdict: CONDITIONAL
+    reason: "{n_value_changes} sample(s) have edited or missing values in its inputs."
+    remedy: "Review the edits; if unexplained, restore the previous values."
+
+  - id: TWR-OTH-1
+    check: impact
+    when: [{metric: n_other_changes, op: ">", value: 0}]
+    verdict: CONDITIONAL
+    reason: "{n_other_changes} other change(s) to its input files (features, non-key clinical fields)."
+    remedy: "Review whether these changes are expected."
+
+  - id: TWR-RES-1
+    check: impact
+    when:
+      - {metric: result_changed, op: "==", value: true}
+      - {metric: n_integrity_issues, op: "==", value: 0}
+    verdict: CONDITIONAL
+    reason: "The analysis result changed between releases (see before and after)."
+    remedy: "Report the new result alongside the old one and explain the difference."

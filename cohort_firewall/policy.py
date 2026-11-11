@@ -49,11 +49,12 @@ def _fmt(template: str, metrics: dict) -> str:
         return template
 
 
-def evaluate(results: list[CheckResult], policy: Policy) -> dict:
+def evaluate(results: list[CheckResult], policy: Policy, expected: set[str] | None = None) -> dict:
     by_name = {r.check: r for r in results}
     findings = []
+    expected = EXPECTED_CHECKS if expected is None else expected
 
-    for name in sorted(EXPECTED_CHECKS - set(by_name)):
+    for name in sorted(expected - set(by_name)):
         findings.append({"rule_id": "DEFAULT-DENY", "check": name, "verdict": "INSUFFICIENT_EVIDENCE",
                          "reason": f"Check '{name}' did not report.", "remedy": "Investigate the engine."})
     for r in results:
