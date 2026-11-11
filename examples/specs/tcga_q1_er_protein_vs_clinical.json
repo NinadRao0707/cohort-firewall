@@ -1,0 +1,29 @@
+{
+  "question_text": "Is the frozen TCGA-BRCA release suitable for a descriptive research comparison of ER-alpha protein levels between clinically ER-positive and ER-negative primary tumors?",
+  "task_type": "descriptive",
+  "intended_use": "research",
+  "cancer_type": "breast",
+  "population_filters": [
+    {
+      "column": "sample_type",
+      "op": "==",
+      "value": "Primary Tumor"
+    },
+    {
+      "column": "er_status",
+      "op": "in",
+      "value": [
+        "Positive",
+        "Negative"
+      ]
+    }
+  ],
+  "feature_columns": [
+    "er_status",
+    "er_alpha_rppa"
+  ],
+  "subgroup_columns": [
+    "er_status"
+  ],
+  "parse_confidence": 1.0
+}

@@ -40,6 +40,8 @@
       "check": "metadata",
       "status": "ok",
       "metrics": {
+        "n_unverified_source_files": 0,
+        "unverified_source_files": [],
         "has_dictionary": true,
         "license_recognized": true,
         "patient_derived": false,
@@ -136,9 +138,16 @@
         "horizon_months": 24.0,
         "horizon_coverage": 0.866,
         "median_follow_up_months": 62.9,
-        "time_unit": "months"
+        "time_unit": "months",
+        "n_negative_times": 0
       },
       "note": ""
+    },
+    {
+      "check": "units",
+      "status": "skipped",
+      "metrics": {},
+      "note": "No patient identifier column declared."
     },
     {
       "check": "subgroups",
@@ -219,12 +228,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "498496c76f2374a7",
+    "cert_id": "b2af0711ea9ee66f",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.2.0",
-      "policy_sha256": "a3ee1f42d46641b13681e9eec095a4930dec5cf2e2c848958b1b816abedf57ed",
+      "policy_version": "0.3.0",
+      "policy_sha256": "045c4ddc3e0cad17a1db6a1444fb8df13407e73cb50510e3c7e868c1b72e7063",
       "dataset_sha256": "36c4dd46760187e50e27ea25869566a09c8d6fd515e3a1d9f5975ccf64c751dc",
       "dictionary_sha256": "ffb6df259cfc22476a238af54dafa149c97d967140018c814cbbbdd29925a0fa",
       "spec_sha256": "f9323faa9b19277628524c49b327289046963aea9159a4ae73e951e60b7bda21",
@@ -234,11 +243,11 @@
         "EVT-001",
         "SUB-002"
       ],
-      "issued_at": "2026-11-11T18:15:05+00:00"
+      "issued_at": "2026-11-11T18:43:47+00:00"
     },
-    "signature": "5AqkGriMQyG5WDNWXzVeAam4Y53SMTNS5azf5FdJUQ78vhj2Ecm5qP11UPEwxCGdoD7n8V//tZUgG9agkdKkBQ==",
+    "signature": "AdIIR6lXDUVQOjBUfvjxf6d3xHKZKswaBMfF+38le30MyjwmF4WktQURI79OeUFhUgxZOg/z9FhE6tje9YSOAA==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.2.0"
+  "policy_version": "0.3.0"
 }

@@ -37,6 +37,18 @@ for case in CASES:
                                  json.loads(dct.read_text()) if dct.exists() else None,
                                  spec=json.loads((f / "spec.json").read_text())))
 
+TCGA = ROOT / "data" / "tcga"
+TCGA_SPECS = ["tcga_q1_er_protein_vs_clinical", "tcga_q1b_er_protein_profiled_only", "tcga_q2_survival_5yr",
+              "tcga_q3_pfi_2yr_by_race", "tcga_q5_all_samples", "tcga_q6_patient_risk_score"]
+if (TCGA / "tcga_brca_raw.csv").exists():
+    data = (TCGA / "tcga_brca_raw.csv").read_bytes()
+    dct = json.loads((TCGA / "tcga_brca_raw.dictionary.json").read_text())
+    for spec in TCGA_SPECS:
+        s = json.loads((ROOT / "examples" / "specs" / f"{spec}.json").read_text())
+        write(spec, evaluate_dataset(data, dct, spec=s))
+else:
+    print("skip TCGA: run data/flatten_tcga.py first")
+
 for label, folder in SYNTHEA.items():
     data, dct = folder / "breast_cohort.csv", folder / "breast_cohort.dictionary.json"
     if not data.exists():

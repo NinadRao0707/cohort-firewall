@@ -1,4 +1,4 @@
-# Cohort Firewall policy, version 0.2.0
+# Cohort Firewall policy, version 0.3.0
 #
 # Checks measure. This file decides. The LLM never sees or changes it.
 # Verdict precedence (worst wins): BLOCKED > INSUFFICIENT_EVIDENCE > CONDITIONAL > READY
@@ -11,7 +11,7 @@
 # Thresholds are hackathon defaults, chosen to be explainable, not clinical standards.
 # Change them here, bump the version, and every certificate records which version decided.
 
-version: "0.2.0"
+version: "0.3.0"
 
 parameters:
   leakage_auc_threshold: 0.95   # single feature separating the outcome this well is suspicious
@@ -79,6 +79,13 @@ rules:
     verdict: INSUFFICIENT_EVIDENCE
     reason: "Dataset source or provenance is not documented."
     remedy: "Add dataset.source and dataset.provenance (how and when the data was produced)."
+
+  - id: META-009
+    check: metadata
+    when: [{metric: n_unverified_source_files, op: ">", value: 0}]
+    verdict: INSUFFICIENT_EVIDENCE
+    reason: "Source file(s) could not be verified against the release checksums: {unverified_source_files}."
+    remedy: "Re-fetch the release and rebuild the table so every source file matches its pinned checksum."
 
   - id: META-006
     check: metadata
@@ -230,6 +237,21 @@ rules:
     verdict: CONDITIONAL
     reason: "Only {horizon_coverage:.0%} of the cohort is observed through the {horizon_months:g}-month horizon (median follow-up {median_follow_up_months} months)."
     remedy: "Use censoring-aware methods (survival analysis) or shorten the horizon."
+
+  - id: TIME-003
+    check: temporal
+    when: [{metric: n_negative_times, op: ">", value: 0}]
+    verdict: CONDITIONAL
+    reason: "{n_negative_times} record(s) have a negative follow-up time, which is impossible and suggests a data-entry error."
+    remedy: "Exclude or correct records with negative follow-up times and report how many."
+
+  # ---- unit of analysis -------------------------------------------------------------------------
+  - id: UNIT-001
+    check: units
+    when: [{metric: n_patients_repeated, op: ">", value: 0}]
+    verdict: CONDITIONAL
+    reason: "{n_patients_repeated} patient(s) appear more than once ({n_rows} rows for {n_patients} patients), so counting rows counts some people twice (e.g. {example_repeated})."
+    remedy: "Choose one sample per patient (for example the primary tumor) or analyze at sample level and say so."
 
   # ---- representativeness (STANDING Together-inspired) -----------------------------------------
   - id: SUB-001

@@ -1,0 +1,238 @@
+{
+  "verdict": "BLOCKED",
+  "human_review": {
+    "level": "required",
+    "text": "Do not use this dataset for this question. A person must resolve every Blocked finding first."
+  },
+  "notes": [
+    "3 values written as placeholders such as '[Not Available]' or 'Not Reported' were treated as missing."
+  ],
+  "limitations": [
+    "This is a research data-readiness screen. It is not a clinical tool and makes no claim of clinical validity, regulatory compliance, or production readiness.",
+    "Identifier detection is heuristic. A pass does not guarantee that no personal information is present.",
+    "Leakage detection checks one feature at a time and can miss leakage spread across several features.",
+    "Thresholds (events per parameter, minimum subgroup size, missingness) are configurable defaults, not clinical standards.",
+    "Subgroup coverage uses minimum counts and does not compare against a reference population."
+  ],
+  "findings": [
+    {
+      "rule_id": "SCOPE-002",
+      "check": "scope",
+      "verdict": "BLOCKED",
+      "reason": "The question asks for an individual diagnosis, treatment choice, or patient risk score (deterministic guard).",
+      "remedy": "Reword it as a cohort-level research question that does not produce a result for a specific patient."
+    },
+    {
+      "rule_id": "CMP-002",
+      "check": "completeness",
+      "verdict": "CONDITIONAL",
+      "reason": "The outcome is missing for 42% of the cohort.",
+      "remedy": "Explain why outcomes are missing and analyze whether missingness is related to patient characteristics."
+    },
+    {
+      "rule_id": "EVT-002",
+      "check": "outcome_events",
+      "verdict": "CONDITIONAL",
+      "reason": "5.64 events per model parameter (11 parameters); high overfitting risk.",
+      "remedy": "Reduce predictors, use penalized models, and report validation with uncertainty."
+    }
+  ],
+  "checks": [
+    {
+      "check": "metadata",
+      "status": "ok",
+      "metrics": {
+        "n_unverified_source_files": 0,
+        "unverified_source_files": [],
+        "has_dictionary": true,
+        "license_recognized": true,
+        "patient_derived": true,
+        "patient_status_declared": true,
+        "identifiable": false,
+        "deidentification_declared": true,
+        "access_restricted": false,
+        "has_provenance": true,
+        "undocumented_column_share": 0.0,
+        "undocumented_columns": []
+      },
+      "note": ""
+    },
+    {
+      "check": "scope",
+      "status": "ok",
+      "metrics": {
+        "clinical_use": false,
+        "keyword_guard_hit": true,
+        "intended_use": "model_development"
+      },
+      "note": ""
+    },
+    {
+      "check": "spec_quality",
+      "status": "ok",
+      "metrics": {
+        "parse_confidence": 0.9
+      },
+      "note": ""
+    },
+    {
+      "check": "columns",
+      "status": "ok",
+      "metrics": {
+        "outcome_required": true,
+        "outcome_present": true,
+        "n_missing_features": 0,
+        "missing_features": [],
+        "n_missing_filter_columns": 0,
+        "time_present": true,
+        "n_features": 5
+      },
+      "note": ""
+    },
+    {
+      "check": "cohort",
+      "status": "ok",
+      "metrics": {
+        "n_total": 1247,
+        "n_cohort": 1101
+      },
+      "note": ""
+    },
+    {
+      "check": "completeness",
+      "status": "ok",
+      "metrics": {
+        "outcome_missing_rate": 0.418,
+        "max_feature_missing_rate": 0.165,
+        "worst_feature": "her2_ihc_status"
+      },
+      "note": ""
+    },
+    {
+      "check": "outcome_events",
+      "status": "ok",
+      "metrics": {
+        "n_events": 62,
+        "n_nonevents": 579,
+        "minority_class_n": 62,
+        "n_parameters": 11,
+        "events_per_parameter": 5.64
+      },
+      "note": ""
+    },
+    {
+      "check": "leakage",
+      "status": "ok",
+      "metrics": {
+        "n_declared_post_index_features": 0,
+        "declared_post_index_features": [],
+        "n_empirically_leaky_features": 0,
+        "empirically_leaky_features": [],
+        "max_single_feature_auc": 0.695,
+        "dictionary_available": true
+      },
+      "note": ""
+    },
+    {
+      "check": "temporal",
+      "status": "ok",
+      "metrics": {
+        "horizon_months": 24.0,
+        "horizon_coverage": 0.582,
+        "median_follow_up_months": 25.4,
+        "time_unit": "days",
+        "n_negative_times": 0
+      },
+      "note": ""
+    },
+    {
+      "check": "units",
+      "status": "ok",
+      "metrics": {
+        "n_rows": 1101,
+        "n_patients": 1101,
+        "n_patients_repeated": 0,
+        "example_repeated": []
+      },
+      "note": ""
+    },
+    {
+      "check": "subgroups",
+      "status": "skipped",
+      "metrics": {},
+      "note": ""
+    },
+    {
+      "check": "phi",
+      "status": "ok",
+      "metrics": {
+        "n_phi_columns": 0,
+        "phi_columns": []
+      },
+      "note": ""
+    },
+    {
+      "check": "injection",
+      "status": "ok",
+      "metrics": {
+        "n_injection_hits": 0,
+        "injection_locations": []
+      },
+      "note": ""
+    }
+  ],
+  "spec": {
+    "question_text": "Use the TCGA-BRCA release to generate a patient-level risk score for each patient's progression.",
+    "task_type": "binary_classification",
+    "intended_use": "model_development",
+    "cancer_type": "breast",
+    "population_filters": [
+      {
+        "column": "sample_type",
+        "op": "==",
+        "value": "Primary Tumor"
+      }
+    ],
+    "outcome_column": "pfi_2yr",
+    "outcome_positive_value": 1,
+    "time_column": "pfi_days",
+    "time_horizon_months": 24.0,
+    "feature_columns": [
+      "stage_group",
+      "er_status",
+      "pr_status",
+      "her2_ihc_status",
+      "age_at_diagnosis"
+    ],
+    "subgroup_columns": [],
+    "parse_confidence": 0.9,
+    "parser_notes": ""
+  },
+  "report": {
+    "text": "**Verdict: Blocked** for the question: \"Use the TCGA-BRCA release to generate a patient-level risk score for each patient's progression.\"\n\nWhy:\n- [SCOPE-002] (Blocked) The question asks for an individual diagnosis, treatment choice, or patient risk score (deterministic guard).\n- [CMP-002] (Conditional) The outcome is missing for 42% of the cohort.\n- [EVT-002] (Conditional) 5.64 events per model parameter (11 parameters); high overfitting risk.\n\nTo make this dataset ready for this question:\n- [SCOPE-002] Reword it as a cohort-level research question that does not produce a result for a specific patient.\n- [CMP-002] Explain why outcomes are missing and analyze whether missingness is related to patient characteristics.\n- [EVT-002] Reduce predictors, use penalized models, and report validation with uncertainty.",
+    "source": "template"
+  },
+  "certificate": {
+    "cert_id": "90a3e9302c30ee2c",
+    "payload": {
+      "cert_format": "cohort-firewall/1",
+      "engine_version": "0.1.0",
+      "policy_version": "0.3.0",
+      "policy_sha256": "045c4ddc3e0cad17a1db6a1444fb8df13407e73cb50510e3c7e868c1b72e7063",
+      "dataset_sha256": "f13a41d731ed373ea0d345191087c3c7f2d9640a8f2ae4cb15241d9fbc939cff",
+      "dictionary_sha256": "1abc681a85b444733f49dc76e424f2e82391a7c9074e8040a6a6e4d88ab7ce4c",
+      "spec_sha256": "b8da20503eadb3eb517785512c9ce02c1f1c7887e2f9d750d5d9eee607ea0f4b",
+      "verdict": "BLOCKED",
+      "rule_ids": [
+        "CMP-002",
+        "EVT-002",
+        "SCOPE-002"
+      ],
+      "issued_at": "2026-11-11T18:43:47+00:00"
+    },
+    "signature": "1c7rkxogn6D7s9590vw8lsHFlKOGjpJar1583rddkxoIaehHN7/4IZM2WBw2s0KwbGZ+o1anbqZb2fhXaFYmDQ==",
+    "alg": "Ed25519"
+  },
+  "engine_version": "0.1.0",
+  "policy_version": "0.3.0"
+}

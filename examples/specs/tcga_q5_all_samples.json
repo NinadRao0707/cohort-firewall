@@ -1,0 +1,18 @@
+{
+  "question_text": "Is the frozen TCGA-BRCA release suitable for a research study of 2-year progression-free interval across all samples in the clinical file?",
+  "task_type": "binary_classification",
+  "intended_use": "research",
+  "cancer_type": "breast",
+  "population_filters": [],
+  "outcome_column": "pfi_2yr",
+  "outcome_positive_value": 1,
+  "time_column": "pfi_days",
+  "time_horizon_months": 24,
+  "feature_columns": [
+    "stage_group",
+    "er_status",
+    "age_at_diagnosis"
+  ],
+  "subgroup_columns": [],
+  "parse_confidence": 1.0
+}

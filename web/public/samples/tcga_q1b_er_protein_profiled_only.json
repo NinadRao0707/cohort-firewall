@@ -1,0 +1,211 @@
+{
+  "verdict": "READY",
+  "human_review": {
+    "level": "recommended",
+    "text": "A person should still confirm the question and data match before training."
+  },
+  "notes": [
+    "3 values written as placeholders such as '[Not Available]' or 'Not Reported' were treated as missing."
+  ],
+  "limitations": [
+    "This is a research data-readiness screen. It is not a clinical tool and makes no claim of clinical validity, regulatory compliance, or production readiness.",
+    "Identifier detection is heuristic. A pass does not guarantee that no personal information is present.",
+    "Leakage detection checks one feature at a time and can miss leakage spread across several features.",
+    "Thresholds (events per parameter, minimum subgroup size, missingness) are configurable defaults, not clinical standards.",
+    "Subgroup coverage uses minimum counts and does not compare against a reference population."
+  ],
+  "findings": [],
+  "checks": [
+    {
+      "check": "metadata",
+      "status": "ok",
+      "metrics": {
+        "n_unverified_source_files": 0,
+        "unverified_source_files": [],
+        "has_dictionary": true,
+        "license_recognized": true,
+        "patient_derived": true,
+        "patient_status_declared": true,
+        "identifiable": false,
+        "deidentification_declared": true,
+        "access_restricted": false,
+        "has_provenance": true,
+        "undocumented_column_share": 0.0,
+        "undocumented_columns": []
+      },
+      "note": ""
+    },
+    {
+      "check": "scope",
+      "status": "ok",
+      "metrics": {
+        "clinical_use": false,
+        "keyword_guard_hit": false,
+        "intended_use": "research"
+      },
+      "note": ""
+    },
+    {
+      "check": "spec_quality",
+      "status": "ok",
+      "metrics": {
+        "parse_confidence": 1.0
+      },
+      "note": ""
+    },
+    {
+      "check": "columns",
+      "status": "ok",
+      "metrics": {
+        "outcome_required": false,
+        "outcome_present": true,
+        "n_missing_features": 0,
+        "missing_features": [],
+        "n_missing_filter_columns": 0,
+        "time_present": true,
+        "n_features": 2
+      },
+      "note": ""
+    },
+    {
+      "check": "cohort",
+      "status": "ok",
+      "metrics": {
+        "n_total": 1247,
+        "n_cohort": 698
+      },
+      "note": ""
+    },
+    {
+      "check": "completeness",
+      "status": "ok",
+      "metrics": {
+        "outcome_missing_rate": null,
+        "max_feature_missing_rate": 0.0,
+        "worst_feature": "er_status"
+      },
+      "note": ""
+    },
+    {
+      "check": "outcome_events",
+      "status": "skipped",
+      "metrics": {},
+      "note": ""
+    },
+    {
+      "check": "leakage",
+      "status": "skipped",
+      "metrics": {},
+      "note": ""
+    },
+    {
+      "check": "temporal",
+      "status": "skipped",
+      "metrics": {},
+      "note": ""
+    },
+    {
+      "check": "units",
+      "status": "ok",
+      "metrics": {
+        "n_rows": 698,
+        "n_patients": 698,
+        "n_patients_repeated": 0,
+        "example_repeated": []
+      },
+      "note": ""
+    },
+    {
+      "check": "subgroups",
+      "status": "ok",
+      "metrics": {
+        "n_missing_subgroup_columns": 0,
+        "missing_subgroup_columns": [],
+        "n_small_subgroups": 0,
+        "small_subgroups": [],
+        "smallest_subgroup_n": 169
+      },
+      "note": ""
+    },
+    {
+      "check": "phi",
+      "status": "ok",
+      "metrics": {
+        "n_phi_columns": 0,
+        "phi_columns": []
+      },
+      "note": ""
+    },
+    {
+      "check": "injection",
+      "status": "ok",
+      "metrics": {
+        "n_injection_hits": 0,
+        "injection_locations": []
+      },
+      "note": ""
+    }
+  ],
+  "spec": {
+    "question_text": "Same comparison, restricted to primary tumors that have RPPA protein data: is the release suitable for comparing ER-alpha protein between clinically ER-positive and ER-negative tumors?",
+    "task_type": "descriptive",
+    "intended_use": "research",
+    "cancer_type": "breast",
+    "population_filters": [
+      {
+        "column": "sample_type",
+        "op": "==",
+        "value": "Primary Tumor"
+      },
+      {
+        "column": "er_status",
+        "op": "in",
+        "value": [
+          "Positive",
+          "Negative"
+        ]
+      },
+      {
+        "column": "has_protein",
+        "op": "==",
+        "value": 1
+      }
+    ],
+    "outcome_column": null,
+    "outcome_positive_value": 1,
+    "time_column": null,
+    "time_horizon_months": null,
+    "feature_columns": [
+      "er_status",
+      "er_alpha_rppa"
+    ],
+    "subgroup_columns": [
+      "er_status"
+    ],
+    "parse_confidence": 1.0,
+    "parser_notes": ""
+  },
+  "report": {
+    "text": "**Verdict: Ready** for the question: \"Same comparison, restricted to primary tumors that have RPPA protein data: is the release suitable for comparing ER-alpha protein between clinically ER-positive and ER-negative tumors?\"\n\nEvery applicable check passed under the current policy.",
+    "source": "template"
+  },
+  "certificate": {
+    "cert_id": "e98d647e609619fe",
+    "payload": {
+      "cert_format": "cohort-firewall/1",
+      "engine_version": "0.1.0",
+      "policy_version": "0.3.0",
+      "policy_sha256": "045c4ddc3e0cad17a1db6a1444fb8df13407e73cb50510e3c7e868c1b72e7063",
+      "dataset_sha256": "f13a41d731ed373ea0d345191087c3c7f2d9640a8f2ae4cb15241d9fbc939cff",
+      "dictionary_sha256": "1abc681a85b444733f49dc76e424f2e82391a7c9074e8040a6a6e4d88ab7ce4c",
+      "spec_sha256": "6e0a5f880b9f8d4d5a5a3a10ee852b472be28b62378c068b26cc2e98e2df64f4",
+      "verdict": "READY",
+      "rule_ids": [],
+      "issued_at": "2026-11-11T18:43:47+00:00"
+    },
+    "signature": "qJT4uXDvUG3YBT3MChOC4nuxKFALxwfKfExdirUl6pJPsBwGL0yEsMYC1priUtG6QucA+gKpksrNvwg8sJP/BA==",
+    "alg": "Ed25519"
+  },
+  "engine_version": "0.1.0",
+  "policy_version": "0.3.0"
+}

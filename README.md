@@ -24,6 +24,13 @@ python -m cohort_firewall.tower --challenge-repo ~/oncosys-hackathon-challenge \
   --b ~/oncosys-hackathon-challenge/data/tcga-brca/releases/practice-B --out findings.json
 ```
 
+## Readiness on the judged TCGA-BRCA data
+```bash
+python data/flatten_tcga.py --challenge-repo ~/oncosys-hackathon-challenge   # verifies checksums first
+python scripts/run_tcga_specs.py
+```
+Seven research questions against the same frozen release, from Ready to Blocked. Output in `data/tcga/` is git-ignored.
+
 ## Core idea
 
 Readiness is a property of a dataset *and* a question together. The same cohort can be Ready

@@ -1,0 +1,34 @@
+{
+  "question_text": "Same comparison, restricted to primary tumors that have RPPA protein data: is the release suitable for comparing ER-alpha protein between clinically ER-positive and ER-negative tumors?",
+  "task_type": "descriptive",
+  "intended_use": "research",
+  "cancer_type": "breast",
+  "population_filters": [
+    {
+      "column": "sample_type",
+      "op": "==",
+      "value": "Primary Tumor"
+    },
+    {
+      "column": "er_status",
+      "op": "in",
+      "value": [
+        "Positive",
+        "Negative"
+      ]
+    },
+    {
+      "column": "has_protein",
+      "op": "==",
+      "value": 1
+    }
+  ],
+  "feature_columns": [
+    "er_status",
+    "er_alpha_rppa"
+  ],
+  "subgroup_columns": [
+    "er_status"
+  ],
+  "parse_confidence": 1.0
+}

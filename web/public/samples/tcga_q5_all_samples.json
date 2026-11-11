@@ -1,0 +1,228 @@
+{
+  "verdict": "CONDITIONAL",
+  "human_review": {
+    "level": "required",
+    "text": "A person must review the findings and decide whether the remedies are acceptable."
+  },
+  "notes": [
+    "3 values written as placeholders such as '[Not Available]' or 'Not Reported' were treated as missing."
+  ],
+  "limitations": [
+    "This is a research data-readiness screen. It is not a clinical tool and makes no claim of clinical validity, regulatory compliance, or production readiness.",
+    "Identifier detection is heuristic. A pass does not guarantee that no personal information is present.",
+    "Leakage detection checks one feature at a time and can miss leakage spread across several features.",
+    "Thresholds (events per parameter, minimum subgroup size, missingness) are configurable defaults, not clinical standards.",
+    "Subgroup coverage uses minimum counts and does not compare against a reference population."
+  ],
+  "findings": [
+    {
+      "rule_id": "CMP-002",
+      "check": "completeness",
+      "verdict": "CONDITIONAL",
+      "reason": "The outcome is missing for 39% of the cohort.",
+      "remedy": "Explain why outcomes are missing and analyze whether missingness is related to patient characteristics."
+    },
+    {
+      "rule_id": "UNIT-001",
+      "check": "units",
+      "verdict": "CONDITIONAL",
+      "reason": "142 patient(s) appear more than once (1247 rows for 1101 patients), so counting rows counts some people twice (e.g. TCGA-A7-A0CE, TCGA-A7-A0CH, TCGA-A7-A0D9, TCGA-A7-A0DB, TCGA-A7-A0DC).",
+      "remedy": "Choose one sample per patient (for example the primary tumor) or analyze at sample level and say so."
+    }
+  ],
+  "checks": [
+    {
+      "check": "metadata",
+      "status": "ok",
+      "metrics": {
+        "n_unverified_source_files": 0,
+        "unverified_source_files": [],
+        "has_dictionary": true,
+        "license_recognized": true,
+        "patient_derived": true,
+        "patient_status_declared": true,
+        "identifiable": false,
+        "deidentification_declared": true,
+        "access_restricted": false,
+        "has_provenance": true,
+        "undocumented_column_share": 0.0,
+        "undocumented_columns": []
+      },
+      "note": ""
+    },
+    {
+      "check": "scope",
+      "status": "ok",
+      "metrics": {
+        "clinical_use": false,
+        "keyword_guard_hit": false,
+        "intended_use": "research"
+      },
+      "note": ""
+    },
+    {
+      "check": "spec_quality",
+      "status": "ok",
+      "metrics": {
+        "parse_confidence": 1.0
+      },
+      "note": ""
+    },
+    {
+      "check": "columns",
+      "status": "ok",
+      "metrics": {
+        "outcome_required": true,
+        "outcome_present": true,
+        "n_missing_features": 0,
+        "missing_features": [],
+        "n_missing_filter_columns": 0,
+        "time_present": true,
+        "n_features": 3
+      },
+      "note": ""
+    },
+    {
+      "check": "cohort",
+      "status": "ok",
+      "metrics": {
+        "n_total": 1247,
+        "n_cohort": 1247
+      },
+      "note": ""
+    },
+    {
+      "check": "completeness",
+      "status": "ok",
+      "metrics": {
+        "outcome_missing_rate": 0.392,
+        "max_feature_missing_rate": 0.053,
+        "worst_feature": "er_status"
+      },
+      "note": ""
+    },
+    {
+      "check": "outcome_events",
+      "status": "ok",
+      "metrics": {
+        "n_events": 70,
+        "n_nonevents": 688,
+        "minority_class_n": 70,
+        "n_parameters": 6,
+        "events_per_parameter": 11.67
+      },
+      "note": ""
+    },
+    {
+      "check": "leakage",
+      "status": "ok",
+      "metrics": {
+        "n_declared_post_index_features": 0,
+        "declared_post_index_features": [],
+        "n_empirically_leaky_features": 0,
+        "empirically_leaky_features": [],
+        "max_single_feature_auc": 0.687,
+        "dictionary_available": true
+      },
+      "note": ""
+    },
+    {
+      "check": "temporal",
+      "status": "ok",
+      "metrics": {
+        "horizon_months": 24.0,
+        "horizon_coverage": 0.608,
+        "median_follow_up_months": 28.2,
+        "time_unit": "days",
+        "n_negative_times": 0
+      },
+      "note": ""
+    },
+    {
+      "check": "units",
+      "status": "ok",
+      "metrics": {
+        "n_rows": 1247,
+        "n_patients": 1101,
+        "n_patients_repeated": 142,
+        "example_repeated": [
+          "TCGA-A7-A0CE",
+          "TCGA-A7-A0CH",
+          "TCGA-A7-A0D9",
+          "TCGA-A7-A0DB",
+          "TCGA-A7-A0DC"
+        ]
+      },
+      "note": ""
+    },
+    {
+      "check": "subgroups",
+      "status": "skipped",
+      "metrics": {},
+      "note": ""
+    },
+    {
+      "check": "phi",
+      "status": "ok",
+      "metrics": {
+        "n_phi_columns": 0,
+        "phi_columns": []
+      },
+      "note": ""
+    },
+    {
+      "check": "injection",
+      "status": "ok",
+      "metrics": {
+        "n_injection_hits": 0,
+        "injection_locations": []
+      },
+      "note": ""
+    }
+  ],
+  "spec": {
+    "question_text": "Is the frozen TCGA-BRCA release suitable for a research study of 2-year progression-free interval across all samples in the clinical file?",
+    "task_type": "binary_classification",
+    "intended_use": "research",
+    "cancer_type": "breast",
+    "population_filters": [],
+    "outcome_column": "pfi_2yr",
+    "outcome_positive_value": 1,
+    "time_column": "pfi_days",
+    "time_horizon_months": 24.0,
+    "feature_columns": [
+      "stage_group",
+      "er_status",
+      "age_at_diagnosis"
+    ],
+    "subgroup_columns": [],
+    "parse_confidence": 1.0,
+    "parser_notes": ""
+  },
+  "report": {
+    "text": "**Verdict: Conditional** for the question: \"Is the frozen TCGA-BRCA release suitable for a research study of 2-year progression-free interval across all samples in the clinical file?\"\n\nWhy:\n- [CMP-002] (Conditional) The outcome is missing for 39% of the cohort.\n- [UNIT-001] (Conditional) 142 patient(s) appear more than once (1247 rows for 1101 patients), so counting rows counts some people twice (e.g. TCGA-A7-A0CE, TCGA-A7-A0CH, TCGA-A7-A0D9, TCGA-A7-A0DB, TCGA-A7-A0DC).\n\nTo make this dataset ready for this question:\n- [CMP-002] Explain why outcomes are missing and analyze whether missingness is related to patient characteristics.\n- [UNIT-001] Choose one sample per patient (for example the primary tumor) or analyze at sample level and say so.",
+    "source": "template"
+  },
+  "certificate": {
+    "cert_id": "abff2dafa6958c98",
+    "payload": {
+      "cert_format": "cohort-firewall/1",
+      "engine_version": "0.1.0",
+      "policy_version": "0.3.0",
+      "policy_sha256": "045c4ddc3e0cad17a1db6a1444fb8df13407e73cb50510e3c7e868c1b72e7063",
+      "dataset_sha256": "f13a41d731ed373ea0d345191087c3c7f2d9640a8f2ae4cb15241d9fbc939cff",
+      "dictionary_sha256": "1abc681a85b444733f49dc76e424f2e82391a7c9074e8040a6a6e4d88ab7ce4c",
+      "spec_sha256": "cf173241b701ca9f102a42c70a868b37ed55c2898a29136c3c72be8a2c38f52a",
+      "verdict": "CONDITIONAL",
+      "rule_ids": [
+        "CMP-002",
+        "UNIT-001"
+      ],
+      "issued_at": "2026-11-11T18:43:47+00:00"
+    },
+    "signature": "t5WnWH3HqB4WdCp+bBuazy7a6qyLwaxhpybOwABOqr+bj/XdIw9duk4alFozSVu4h92ebV6oAUEpxI9q7Aa4Dg==",
+    "alg": "Ed25519"
+  },
+  "engine_version": "0.1.0",
+  "policy_version": "0.3.0"
+}

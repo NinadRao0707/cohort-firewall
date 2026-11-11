@@ -26,7 +26,9 @@ from .releases import MISSING, Release, _fp
 KEY_LABELS = {
     "breast_carcinoma_estrogen_receptor_status", "breast_carcinoma_progesterone_receptor_status",
     "lab_proc_her2_neu_immunohistochemistry_receptor_status", "PAM50Call_RNAseq", "sample_type",
-    "pathologic_stage", "AJCC_Stage_nature2012", "vital_status",
+    "pathologic_stage", "AJCC_Stage_nature2012", "vital_status", "ER_Status_nature2012",
+    "PR_Status_nature2012", "HER2_Final_Status_nature2012", "PAM50_mRNA_nature2012",
+    "pathologic_T", "pathologic_N", "pathologic_M", "histological_type", "gender",
 }
 SUBGROUP_COLUMNS = ["breast_carcinoma_estrogen_receptor_status", "PAM50Call_RNAseq"]
 

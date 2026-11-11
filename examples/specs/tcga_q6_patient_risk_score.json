@@ -1,0 +1,25 @@
+{
+  "question_text": "Use the TCGA-BRCA release to generate a patient-level risk score for each patient's progression.",
+  "task_type": "binary_classification",
+  "intended_use": "model_development",
+  "cancer_type": "breast",
+  "population_filters": [
+    {
+      "column": "sample_type",
+      "op": "==",
+      "value": "Primary Tumor"
+    }
+  ],
+  "outcome_column": "pfi_2yr",
+  "time_column": "pfi_days",
+  "time_horizon_months": 24,
+  "feature_columns": [
+    "stage_group",
+    "er_status",
+    "pr_status",
+    "her2_ihc_status",
+    "age_at_diagnosis"
+  ],
+  "subgroup_columns": [],
+  "parse_confidence": 0.9
+}

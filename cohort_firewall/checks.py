@@ -172,7 +172,11 @@ def check_metadata(ctx: Context) -> CheckResult:
     derived = meta.get("patient_derived", meta.get("contains_real_patient_data"))  # older dictionaries
     ident = meta.get("identifiable")
     access = str(meta.get("access", "open")).strip().lower()
+    src = meta.get("source_files") or []
+    unverified = [safe_ident(f.get("file", "?")) for f in src if isinstance(f, dict) and f.get("verified") is False]
     return CheckResult("metadata", "ok", {
+        "n_unverified_source_files": len(unverified),
+        "unverified_source_files": unverified,
         "has_dictionary": True,
         "license_recognized": lic in ALLOWED_LICENSES,
         "patient_derived": derived if isinstance(derived, bool) else None,
@@ -300,6 +304,7 @@ def check_temporal(ctx: Context) -> CheckResult:
     if per_month is None:
         return CheckResult("temporal", "not_evaluable", note=f"Unknown time unit '{safe_ident(unit)}'.")
     t = pd.to_numeric(c[spec.time_column], errors="coerce") / per_month   # convert to months
+    n_negative = int((t < 0).sum())
     observed = t >= spec.time_horizon_months
     if spec.outcome_column in c.columns:
         y = _binary_outcome(ctx, c).fillna(False).astype(bool)
@@ -309,6 +314,21 @@ def check_temporal(ctx: Context) -> CheckResult:
         "horizon_coverage": round(float(observed.mean()), 3) if len(c) else 0.0,
         "median_follow_up_months": round(float(t.median()), 1) if len(c) and t.notna().any() else None,
         "time_unit": safe_ident(unit),
+        "n_negative_times": n_negative,
+    })
+
+
+def check_units(ctx: Context) -> CheckResult:
+    """Does each patient appear once? Counting samples as patients inflates a cohort."""
+    c = ctx.cohort
+    pid = next((col for col, m in ctx.coldefs.items() if m.get("role") == "patient_id"), None)
+    if c is None or pid is None or pid not in c.columns:
+        return CheckResult("units", "skipped", note="No patient identifier column declared.")
+    n_rows, n_pat = int(len(c)), int(c[pid].nunique())
+    dup = c[pid][c[pid].duplicated(keep=False)]
+    return CheckResult("units", "ok", {
+        "n_rows": n_rows, "n_patients": n_pat, "n_patients_repeated": int(dup.nunique()),
+        "example_repeated": [safe_ident(x) for x in dup.drop_duplicates().head(5)],
     })
 
 
@@ -389,7 +409,7 @@ def check_injection(ctx: Context) -> CheckResult:
 ALL_CHECKS = [
     check_metadata, check_scope, check_spec_quality, check_columns, check_cohort,
     check_completeness, check_outcome_events, check_leakage, check_temporal,
-    check_subgroups, check_phi, check_injection,
+    check_units, check_subgroups, check_phi, check_injection,
 ]
 
 

@@ -1,0 +1,26 @@
+{
+  "question_text": "Is the frozen TCGA-BRCA release suitable for a research study of 5-year overall survival in primary breast tumors by stage, receptor status and age?",
+  "task_type": "survival",
+  "intended_use": "research",
+  "cancer_type": "breast",
+  "population_filters": [
+    {
+      "column": "sample_type",
+      "op": "==",
+      "value": "Primary Tumor"
+    }
+  ],
+  "outcome_column": "os_event",
+  "outcome_positive_value": 1,
+  "time_column": "os_days",
+  "time_horizon_months": 60,
+  "feature_columns": [
+    "stage_group",
+    "er_status",
+    "pr_status",
+    "her2_ihc_status",
+    "age_at_diagnosis"
+  ],
+  "subgroup_columns": [],
+  "parse_confidence": 1.0
+}
