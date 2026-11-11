@@ -40,6 +40,9 @@ SCENARIOS = [
      {"A1": "Conditional", "A2": "Ready"}, {"membership_change"}),
     ("protein_new_duplicate_id", [{"type": "new_duplicate", "file": "protein_rppa.tsv.gz"}],
      {"A1": "Blocked", "A2": "Ready"}, {"duplicate"}),
+    ("count_unchanged_membership_changed", [{"type": "drop", "file": "protein_rppa.tsv.gz", "count": 1},
+                                            {"type": "new_duplicate", "file": "protein_rppa.tsv.gz"}],
+     {"A1": "Blocked", "A2": "Ready"}, {"membership_change", "duplicate"}),
     ("unused_file_edit", [{"type": "edit", "file": "mutation_gene_level.tsv.gz"}],
      {"A1": "Ready", "A2": "Ready"}, {"other"}),
     ("combined", [{"type": "swap", "file": "protein_rppa.tsv.gz"},
@@ -71,6 +74,18 @@ def run_all(verbose=True):
             found = {f["kind"] for f in doc["findings"]}
             problems = [f"{k}: expected {v}, got {got.get(k)}" for k, v in expected.items() if got.get(k) != v]
             problems += [f"missing finding kind {k}" for k in kinds - found]
+            if name == "count_unchanged_membership_changed" and not any(
+                    "count unchanged" in f["summary"] for f in doc["findings"]):
+                problems.append("did not report that the count was unchanged while membership changed")
+            if name == "protein_copied_profiles":
+                # sources of copies keep their data: coverage loss must not exceed the overwritten samples
+                lost = sum(1 for f in doc["findings"] if f["kind"] == "missing_data")
+                srcs = {e["id"] for f in doc["findings"] if f["kind"] == "duplicate" for e in f["evidence"][1:2]}
+                for f in doc["findings"]:
+                    if f["kind"] == "missing_data" and srcs & {e["id"] for e in f["evidence"]}:
+                        problems.append("coverage loss blamed on the source of a copy")
+                if any(f["kind"] == "missing_data" and not f["affects_analyses"] for f in doc["findings"]):
+                    problems.append("coverage finding affects no analysis")
             if not ops and doc["findings"]:
                 problems.append("findings reported for an unchanged release")
             if any(a["status"] != "not_rerun" for a in doc["analyses"] if a["verdict"] == "Ready" and not a["affected_by"]):

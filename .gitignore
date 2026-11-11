@@ -9,3 +9,4 @@ node_modules/
 .next/
 data/variants/
 data/tcga*/
+findings.json

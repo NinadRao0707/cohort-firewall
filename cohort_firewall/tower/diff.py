@@ -9,6 +9,7 @@ Detected change types (shared-format kinds in brackets):
   values_missing  values that existed are now missing                    [missing_data]
   values_edited   values changed in place                                [other]
   coverage_loss   fewer genuine profiles in a clinical subgroup          [missing_data]
+  count_masks_membership  same sample count, different samples           [membership_change]
 
 Fingerprints are exact. A swap combined with small edits shows up as two value edits, not a swap;
 that limitation is reported with every finding. Only profiles that were unique in the baseline count
@@ -42,6 +43,7 @@ class Change:
         return {"swap": "sample_swap", "copied_profile": "duplicate", "new_duplicate": "duplicate",
                 "removed": "membership_change", "added": "membership_change",
                 "values_missing": "missing_data", "coverage_loss": "missing_data",
+                "count_masks_membership": "membership_change",
                 "label_change": "label_conflict" if self.detail.get("key_labels") else "other",
                 }.get(self.type, "other")
 
@@ -127,17 +129,30 @@ def diff_file(a, b) -> list[Change]:
             changes.append(Change("added", a.name, [sid]))
     for sid in sorted(A - B):
         changes.append(Change("removed", a.name, [sid]))
+    if len(A) == len(B) and A != B:
+        changes.append(Change("count_masks_membership", a.name, sorted(A ^ B), {
+            "n": len(A), "removed": len(A - B), "added": len(B - A)}))
     return changes
 
 
-def _genuine(rel: Release, fname: str) -> set[str]:
-    """Samples with a non-empty profile that is not an exact copy of another sample's profile."""
-    v = rel.files[fname]
-    by_fp = defaultdict(list)
-    for s, h in v.fingerprints.items():
-        if s not in v.empty:
-            by_fp[h].append(s)
-    return {s for group in by_fp.values() if len(group) == 1 for s in group}
+def _genuine_pair(a: Release, b: Release, fname: str) -> tuple[set[str], set[str]]:
+    """Samples with a real profile of their own: every non-empty sample in the baseline; in the new
+    release, non-empty samples whose profile is not another sample's baseline profile."""
+    va, vb = a.files[fname], b.files[fname]
+    ga = {s for s in va.fingerprints if s not in va.empty}
+    owner = defaultdict(set)
+    for s, h in va.fingerprints.items():
+        if s not in va.empty:
+            owner[h].add(s)
+    gb = set()
+    for s, h in vb.fingerprints.items():
+        if s in vb.empty:
+            continue
+        others = owner.get(h, set()) - {s}
+        if others and va.fingerprints.get(s) != h:
+            continue                      # carries someone else's measurement
+        gb.add(s)
+    return ga, gb
 
 
 def coverage_changes(a: Release, b: Release) -> list[Change]:
@@ -154,7 +169,7 @@ def coverage_changes(a: Release, b: Release) -> list[Change]:
         for fname in sorted(set(a.files) & set(b.files)):
             if fname == "clinical.tsv":
                 continue
-            ga, gb = _genuine(a, fname), _genuine(b, fname)
+            ga, gb = _genuine_pair(a, b, fname)
             groups = sorted({label[s] for s in ga | gb if s in label})
             for g in groups:
                 na = sum(1 for s in ga if label.get(s) == g)

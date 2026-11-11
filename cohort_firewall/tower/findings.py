@@ -24,7 +24,8 @@ LIMITATION = {
     "copied_profile": "Exact-match detection: a near-copy with small edits appears as a value edit instead.",
     "new_duplicate": "Exact-match detection: a near-copy with small edits appears as a new sample instead.",
     "label_change": "The tool sees that a label changed, not which version is correct.",
-    "coverage_loss": "Counts genuine profiles per clinical subgroup using the newer release's labels.",
+    "coverage_loss": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
+    "count_masks_membership": "Compares sample IDs only; see the linked findings for what replaced the removed samples.",
 }
 GROUPABLE = {"added", "removed", "values_missing", "values_edited"}
 SUMMARY = {
@@ -104,7 +105,13 @@ def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: 
         fid = f"F{n}"
         for m in members:
             ids_by_change[id(m)] = fid
-        affects = sorted(r.analysis.id for r in runs if any(id(m) in {id(x) for x in r.changes} for m in members))
+        if ch.type in {"coverage_loss", "count_masks_membership"}:
+            # summary findings: affect analyses that read this file and use the samples involved
+            affects = sorted(r.analysis.id for r in runs if ch.file in r.analysis.inputs and r.before
+                             and (set(ch.samples) & set(r.before.get("sample_ids", [])) or
+                                  (ch.type == "count_masks_membership" and r.affected)))
+        else:
+            affects = sorted(r.analysis.id for r in runs if any(id(m) in {id(x) for x in r.changes} for m in members))
         not_affected = sorted(r.analysis.id for r in runs if r.analysis.id not in affects)
         if ch.type == "label_change":
             cols = ch.detail.get("columns", [])
@@ -112,6 +119,11 @@ def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: 
                        ", ".join(f"{c} {ch.detail['before'].get(c)!r} → {ch.detail['after'].get(c)!r}"
                                  for c in cols[:4]))
             severity = "high" if ch.detail.get("key_labels") else "low"
+        elif ch.type == "count_masks_membership":
+            d = ch.detail
+            summary = (f"{ch.file}: sample count unchanged ({d['n']}) but membership changed: "
+                       f"{d['removed']} sample(s) removed and {d['added']} added. A count check alone would miss this.")
+            severity = "high"
         elif ch.type == "coverage_loss":
             d = ch.detail
             summary = (f"{ch.file}: genuine profiles for {d['subgroup_column']} = {d['subgroup']!r} "

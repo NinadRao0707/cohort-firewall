@@ -259,11 +259,94 @@
     },
     {
       "id": "F7",
+      "kind": "membership_change",
+      "summary": "protein_rppa.tsv.gz: sample count unchanged (747) but membership changed: 5 sample(s) removed and 5 added. A count check alone would miss this.",
+      "severity": "high",
+      "confidence": "high",
+      "evidence": [
+        {
+          "kind": "sample",
+          "id": "TCGA-A8-A08J-01",
+          "release": "practice-B",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "TCGA-C8-A12Q-01",
+          "release": "practice-B",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "TCGA-C8-A26Y-01",
+          "release": "practice-B",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "TCGA-E2-A106-01",
+          "release": "practice-B",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "TCGA-E2-A9RU-01",
+          "release": "practice-B",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "TCGA-E9-A1RH-01",
+          "release": "practice-B",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "TCGA-GM-A2DH-01",
+          "release": "practice-B",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "TCGA-GM-A5PX-01",
+          "release": "practice-B",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "TCGA-LL-A5YN-01",
+          "release": "practice-B",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "TCGA-LL-A73Z-01",
+          "release": "practice-B",
+          "file": "protein_rppa.tsv.gz"
+        }
+      ],
+      "affects_analyses": [
+        "A1"
+      ],
+      "not_affected_analyses": [
+        "A2"
+      ],
+      "limitation": "Compares sample IDs only; see the linked findings for what replaced the removed samples.",
+      "needs_human_review": true
+    },
+    {
+      "id": "F8",
       "kind": "missing_data",
-      "summary": "protein_rppa.tsv.gz: genuine profiles for breast_carcinoma_estrogen_receptor_status = 'Negative' fell from 170 to 167",
+      "summary": "protein_rppa.tsv.gz: genuine profiles for breast_carcinoma_estrogen_receptor_status = 'Negative' fell from 170 to 166",
       "severity": "medium",
       "confidence": "high",
       "evidence": [
+        {
+          "kind": "sample",
+          "id": "TCGA-B6-A0WX-01",
+          "release": "practice-B",
+          "file": "protein_rppa.tsv.gz"
+        },
         {
           "kind": "sample",
           "id": "TCGA-C8-A12Q-01",
@@ -283,18 +366,19 @@
           "file": "protein_rppa.tsv.gz"
         }
       ],
-      "affects_analyses": [],
+      "affects_analyses": [
+        "A1"
+      ],
       "not_affected_analyses": [
-        "A1",
         "A2"
       ],
-      "limitation": "Counts genuine profiles per clinical subgroup using the newer release's labels.",
+      "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
       "needs_human_review": true
     },
     {
-      "id": "F8",
+      "id": "F9",
       "kind": "missing_data",
-      "summary": "protein_rppa.tsv.gz: genuine profiles for breast_carcinoma_estrogen_receptor_status = 'Positive' fell from 533 to 529",
+      "summary": "protein_rppa.tsv.gz: genuine profiles for breast_carcinoma_estrogen_receptor_status = 'Positive' fell from 533 to 531",
       "severity": "medium",
       "confidence": "high",
       "evidence": [
@@ -306,33 +390,45 @@
         },
         {
           "kind": "sample",
-          "id": "TCGA-AR-A1AP-01",
-          "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
-        },
-        {
-          "kind": "sample",
-          "id": "TCGA-C8-A133-01",
-          "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
-        },
-        {
-          "kind": "sample",
-          "id": "TCGA-EW-A1PE-01",
+          "id": "TCGA-A8-A09K-01",
           "release": "practice-B",
           "file": "protein_rppa.tsv.gz"
         }
       ],
-      "affects_analyses": [],
+      "affects_analyses": [
+        "A1"
+      ],
       "not_affected_analyses": [
-        "A1",
         "A2"
       ],
-      "limitation": "Counts genuine profiles per clinical subgroup using the newer release's labels.",
+      "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
       "needs_human_review": true
     },
     {
-      "id": "F9",
+      "id": "F10",
+      "kind": "missing_data",
+      "summary": "protein_rppa.tsv.gz: genuine profiles for PAM50Call_RNAseq = 'Basal' fell from 121 to 120",
+      "severity": "medium",
+      "confidence": "high",
+      "evidence": [
+        {
+          "kind": "sample",
+          "id": "TCGA-B6-A0WX-01",
+          "release": "practice-B",
+          "file": "protein_rppa.tsv.gz"
+        }
+      ],
+      "affects_analyses": [
+        "A1"
+      ],
+      "not_affected_analyses": [
+        "A2"
+      ],
+      "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
+      "needs_human_review": true
+    },
+    {
+      "id": "F11",
       "kind": "missing_data",
       "summary": "protein_rppa.tsv.gz: genuine profiles for PAM50Call_RNAseq = 'Her2' fell from 61 to 56",
       "severity": "medium",
@@ -369,62 +465,40 @@
           "file": "protein_rppa.tsv.gz"
         }
       ],
-      "affects_analyses": [],
+      "affects_analyses": [
+        "A1"
+      ],
       "not_affected_analyses": [
-        "A1",
         "A2"
       ],
-      "limitation": "Counts genuine profiles per clinical subgroup using the newer release's labels.",
+      "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
       "needs_human_review": true
     },
     {
-      "id": "F10",
+      "id": "F12",
       "kind": "missing_data",
-      "summary": "protein_rppa.tsv.gz: genuine profiles for PAM50Call_RNAseq = 'LumA' fell from 330 to 325",
+      "summary": "protein_rppa.tsv.gz: genuine profiles for PAM50Call_RNAseq = 'LumA' fell from 330 to 329",
       "severity": "medium",
       "confidence": "high",
       "evidence": [
         {
           "kind": "sample",
-          "id": "TCGA-AR-A1AP-01",
-          "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
-        },
-        {
-          "kind": "sample",
-          "id": "TCGA-C8-A133-01",
-          "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
-        },
-        {
-          "kind": "sample",
-          "id": "TCGA-E9-A1N3-01",
-          "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
-        },
-        {
-          "kind": "sample",
-          "id": "TCGA-E9-A2JT-01",
-          "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
-        },
-        {
-          "kind": "sample",
-          "id": "TCGA-EW-A1PE-01",
+          "id": "TCGA-A8-A09K-01",
           "release": "practice-B",
           "file": "protein_rppa.tsv.gz"
         }
       ],
-      "affects_analyses": [],
+      "affects_analyses": [
+        "A1"
+      ],
       "not_affected_analyses": [
-        "A1",
         "A2"
       ],
-      "limitation": "Counts genuine profiles per clinical subgroup using the newer release's labels.",
+      "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
       "needs_human_review": true
     },
     {
-      "id": "F11",
+      "id": "F13",
       "kind": "membership_change",
       "summary": "5 sample(s) disappeared from protein_rppa.tsv.gz",
       "severity": "medium",
@@ -504,7 +578,7 @@
       ],
       "affected_by": [
         "F1",
-        "F11",
+        "F13",
         "F2",
         "F3",
         "F4",
@@ -717,7 +791,7 @@
       ],
       "justification": "The tool cannot tell whether this change is a correction or an error.",
       "addresses": [
-        "F11"
+        "F13"
       ]
     }
   ],
@@ -732,7 +806,7 @@
     "tower_policy": "0.1.0"
   },
   "certificate": {
-    "cert_id": "db0c7e1ef0d4dc22",
+    "cert_id": "c1e3ce5dcd45c9dd",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -747,9 +821,9 @@
         "TWR-MEM-1",
         "TWR-SWAP-1"
       ],
-      "issued_at": "2026-11-11T18:35:25+00:00"
+      "issued_at": "2026-11-11T18:38:43+00:00"
     },
-    "signature": "xwJDRbiq7nLMDVTSy/pK9qIdVfgDRjGQbbveYEMdoP9oht2+Fh3sZ9kfIEjvoBs8Y41+pO/iNQhkaSoleu3BBw==",
+    "signature": "SUxC18VYuuXC6oN9lHIPCKjT4A1rdpFQ9kxnWGHI3ZxwsD7RYC58fic3r7Uw41khL9bsvylbF+9V7NFjUj3ACA==",
     "alg": "Ed25519"
   }
 }

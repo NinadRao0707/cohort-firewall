@@ -104,8 +104,8 @@ def evaluate_analyses(analyses: list[Analysis], path_a: Path, path_b: Path,
         for c in changes:
             if c.file not in an.inputs:
                 continue
-            if c.type == "coverage_loss":
-                continue                  # summarizes other changes; reported, not counted twice
+            if c.type in {"coverage_loss", "count_masks_membership"}:
+                continue                  # summarize other changes; reported, not counted twice
             if c.type == "label_change" and not any(an.reads_column(col) for col in c.detail.get("columns", [])):
                 continue                  # this analysis never reads the clinical fields that changed
             if c.type in SAMPLELESS:
