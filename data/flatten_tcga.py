@@ -100,6 +100,8 @@ def main():
     for new, old in CLINICAL.items():
         out[new] = clin[old].replace({"": None}) if old in clin.columns else None
     out["stage_group"] = out["pathologic_stage"].map(stage_group)
+    # "Post (prior bilateral ovariectomy OR ...)" -> "Post"; the full wording stays in the source file
+    out["menopause_status"] = out["menopause_status"].map(lambda v: str(v).split(" (")[0] if v else None)
     out["t_stage"] = out["t_stage"].replace({"TX": None})
     out["m_stage"] = out["m_stage"].replace({"MX": None})
     for c in ("age_at_diagnosis", "days_to_last_followup"):
@@ -136,7 +138,7 @@ def main():
         "m_stage": col("categorical", "feature", "baseline", "Pathologic M; MX is missing"),
         "age_at_diagnosis": col("numeric", "demographic", "baseline", "Age in years at initial diagnosis"),
         "gender": col("categorical", "demographic", "baseline", "Recorded gender"),
-        "menopause_status": col("categorical", "demographic", "baseline", "Menopause status at diagnosis"),
+        "menopause_status": col("categorical", "demographic", "baseline", "Menopause status at diagnosis (Pre, Peri, Post, Indeterminate)"),
         "histological_type": col("categorical", "feature", "baseline", "Histological type"),
         "days_to_last_followup": col("numeric", "time", "outcome", "Days to last follow-up (clinical file)", unit="days"),
         "os_event": col("binary", "outcome", "outcome", "Overall survival event (curated, TCGA-CDR)"),

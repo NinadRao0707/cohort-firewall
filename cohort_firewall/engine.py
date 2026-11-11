@@ -26,11 +26,14 @@ def evaluate_dataset(dataset_bytes: bytes, dictionary: dict | None, spec: dict |
     try:
         raw = pd.read_csv(io.BytesIO(dataset_bytes), dtype=str, keep_default_na=False)
         placeholder = [t for t in tokens if t.strip()]
-        n_tokens = int(raw.isin(placeholder).sum().sum()) if placeholder else 0
+        hits = raw.isin(placeholder).sum() if placeholder else pd.Series(dtype=int)
+        n_tokens = int(hits.sum())
+        token_cols = [str(c) for c in hits[hits > 0].sort_values(ascending=False).index[:3]]
         df = pd.read_csv(io.BytesIO(dataset_bytes), na_values=tokens, keep_default_na=True)
         if n_tokens:
-            notes.append(f"{n_tokens} values written as placeholders such as '[Not Available]' or "
-                         f"'Not Reported' were treated as missing.")
+            from .sanitize import safe_ident
+            notes.append(f"{n_tokens} placeholder value(s) such as 'NA' or '[Not Available]' were treated as "
+                         f"missing (columns: {', '.join(safe_ident(c) for c in token_cols)}).")
     except Exception as e:
         return _short_circuit("DATA-LOAD", f"Dataset could not be read as CSV ({type(e).__name__}).",
                               dataset_bytes, dictionary, spec or {"question_text": question}, policy)

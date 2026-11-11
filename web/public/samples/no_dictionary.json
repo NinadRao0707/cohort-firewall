@@ -212,7 +212,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "d370bd2fffb2c9d9",
+    "cert_id": "de4a9bf060a48aa2",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -226,9 +226,9 @@
         "META-001",
         "META-009"
       ],
-      "issued_at": "2026-11-11T18:46:15+00:00"
+      "issued_at": "2026-11-11T18:52:24+00:00"
     },
-    "signature": "mMuo6pNcg4xQrej6uJg7OBsLHzj8HFeqmYF/9lp4IDaV6+1QXDfucF6oMbJibcWzkFJMEh+B1++NM5fVpQglAA==",
+    "signature": "u0cUa3bmJ+SrEgSCYKbtpAaYJDZFt9RNvhhgG+XMKlP2VpqYIGcqEfGAC9+TrtmfgSea9trrgOJ20pVulDQNDg==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

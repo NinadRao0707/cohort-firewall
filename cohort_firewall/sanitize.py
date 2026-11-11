@@ -5,7 +5,7 @@ passes through here before it can reach the LLM report writer or the UI.
 """
 import re
 
-_SAFE_IDENT = re.compile(r"[^A-Za-z0-9_\-]")
+_SAFE_IDENT = re.compile(r"[^A-Za-z0-9_\-.,()%+ ]")
 
 # Phrases that suggest a cell or description is trying to talk to a model or reviewer.
 INJECTION_PATTERNS = [
@@ -24,7 +24,7 @@ _INJ = re.compile("|".join(INJECTION_PATTERNS), re.IGNORECASE)
 
 def safe_ident(value: object, max_len: int = 48) -> str:
     """Reduce a column name or category label to a short, inert identifier."""
-    s = _SAFE_IDENT.sub("_", str(value))[:max_len]
+    s = re.sub(r"\s+", " ", _SAFE_IDENT.sub("_", str(value))).strip()[:max_len]
     return s or "_"
 
 

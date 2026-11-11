@@ -5,7 +5,7 @@
     "text": "A person must review the findings and decide whether the remedies are acceptable."
   },
   "notes": [
-    "3 values written as placeholders such as '[Not Available]' or 'Not Reported' were treated as missing."
+    "3 placeholder value(s) such as 'NA' or '[Not Available]' were treated as missing (columns: pathologic_stage)."
   ],
   "limitations": [
     "This is a research data-readiness screen. It is not a clinical tool and makes no claim of clinical validity, regulatory compliance, or production readiness.",
@@ -193,22 +193,22 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "89ad8474b21b2f0e",
+    "cert_id": "d3f8b5fbd82119f9",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
       "policy_version": "0.3.0",
       "policy_sha256": "045c4ddc3e0cad17a1db6a1444fb8df13407e73cb50510e3c7e868c1b72e7063",
-      "dataset_sha256": "f13a41d731ed373ea0d345191087c3c7f2d9640a8f2ae4cb15241d9fbc939cff",
-      "dictionary_sha256": "1abc681a85b444733f49dc76e424f2e82391a7c9074e8040a6a6e4d88ab7ce4c",
+      "dataset_sha256": "a9f1d42f34bf97ff1732f8b09f8d85b16f3e0b44f37313ffef7c015b20d0116f",
+      "dictionary_sha256": "deae70759cf656277cb2c0ff7f717f6d885cdd8b8ee6c1ed774fb62d695a4df3",
       "spec_sha256": "ac145857bc26cf08e13976005afcbdb9a77896c3abcd406beef7435ab7a79281",
       "verdict": "CONDITIONAL",
       "rule_ids": [
         "CMP-004"
       ],
-      "issued_at": "2026-11-11T18:46:15+00:00"
+      "issued_at": "2026-11-11T18:52:24+00:00"
     },
-    "signature": "K9tq/ArYsCbciJtRSsg8sd38xiCbPiCmc5h4HN27n+IKUl/d25kDuO+XUQbesFDbmC8pp9tmuCElfljJytlXAw==",
+    "signature": "kl66igJEWRU2NZQcbHCz97CNX6ppXug2fXo4WJNFGU4ZhHvIHq5zcS8IJFcXwuOjZ2h/aUsoSAS4hfgl94TtAg==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

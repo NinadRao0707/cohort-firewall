@@ -53,7 +53,7 @@ export const VERDICT_COPY: Record<Verdict, { label: string; line: string }> = {
   CONDITIONAL: { label: "Conditional", line: "Usable for this question after the changes listed below." },
   INSUFFICIENT_EVIDENCE: {
     label: "Insufficient evidence",
-    line: "The dataset isn't documented well enough to decide. Nothing passes by default.",
+    line: "The tool can't confirm something this question needs, so it doesn't pass by default.",
   },
   BLOCKED: { label: "Blocked", line: "This dataset can't be used for this question." },
 };

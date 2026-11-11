@@ -10,6 +10,7 @@ const NAMES: Record<string, string> = {
   outcome_events: "Enough outcome events",
   leakage: "Outcome leakage",
   temporal: "Follow-up length",
+  units: "Patients counted once",
   subgroups: "Subgroup coverage",
   phi: "Direct identifiers",
   injection: "Embedded instructions",
