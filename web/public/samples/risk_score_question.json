@@ -208,7 +208,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "74f3ac56bfb45cd8",
+    "cert_id": "85efcd33c4a42071",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -221,9 +221,9 @@
       "rule_ids": [
         "SCOPE-002"
       ],
-      "issued_at": "2026-11-11T18:52:24+00:00"
+      "issued_at": "2026-11-11T18:57:17+00:00"
     },
-    "signature": "R4zLqshrc8zXLReQU6Sa02VqQuREjzUQ4AYM42kWpp0JUffy9L2u/aa5ARfXHkCb2Kc4zrzAAHWSfl++C/ZkCw==",
+    "signature": "Rgqs9XAXpyZoNW/qDkMqsJrKwd/JHSzYOOqdmbYbCkvnDO9W1Qo55mL+K0y+huXt0CvC/ko+XXth+6JyjP4EDQ==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

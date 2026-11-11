@@ -10,10 +10,7 @@ import json
 import sys
 from pathlib import Path
 
-from .analyses import evaluate_analyses, load_reference_analyses
-from .diff import diff_releases
-from .findings import build_findings
-from .releases import frozen_checksums, load_release
+from .run import run_tower
 
 
 def main(argv=None):
@@ -32,20 +29,11 @@ def main(argv=None):
         if not p.exists():
             sys.exit(f"Not found: {p}")
 
-    rel_a = load_release(path_a, "frozen-A" if args.a is None else path_a.name, include_rna=not args.no_rna)
-    rel_b = load_release(path_b, path_b.name, include_rna=not args.no_rna)
-    frozen = frozen_checksums(repo)
-    unverified = sorted(f for f, h in rel_a.file_hashes.items() if frozen.get(f) != h["file"])
-    print(f"Baseline {rel_a.name}: {len(rel_a.files)} files, "
+    doc = run_tower(repo, path_b, args.a, team=args.team, include_rna=not args.no_rna)
+    unverified = doc["baseline_unverified_files"]
+    print(f"Baseline {doc['data']['releases'][0]['name']}: "
           f"{'all match frozen checksums' if not unverified else 'UNVERIFIED: ' + ', '.join(unverified)}")
-    print(f"New release {rel_b.name}: {len(rel_b.files)} files")
-
-    changes = diff_releases(rel_a, rel_b)
-    analyses = load_reference_analyses(repo)
-    runs = evaluate_analyses(analyses, path_a, path_b, changes)
-    question = (f"Is release {rel_b.name} still fit for the protected analyses "
-                f"({', '.join(a.id for a in analyses)}) that were run on {rel_a.name}?")
-    doc = build_findings(rel_a, rel_b, changes, runs, unverified, args.team, question)
+    print(f"New release {doc['data']['releases'][1]['name']}: {len(doc['data']['releases'][1]['files'])} files")
     args.out.write_text(json.dumps(doc, indent=2))
 
     print(f"\n{len(doc['findings'])} findings, {len(doc['repairs'])} proposed repairs")

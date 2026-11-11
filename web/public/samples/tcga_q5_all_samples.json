@@ -204,7 +204,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "e66cf499691080d3",
+    "cert_id": "d6417f8b4c98e69a",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -218,9 +218,9 @@
         "CMP-002",
         "UNIT-001"
       ],
-      "issued_at": "2026-11-11T18:52:25+00:00"
+      "issued_at": "2026-11-11T18:57:18+00:00"
     },
-    "signature": "7G2FZwblPBz8GWqhdzQm38zRse+gOKZV/+5i0NA7s/bcxz9qZrkcreiTjXyhgB9dgmBCxh3GIGc92l3n3V1OBg==",
+    "signature": "Hf+uvU/6tgLCM/kusZdFXO/IK4zgZEW8fjMGuh5sONHvLxi+vh/cvyn0DGZunsgeehvZdjmyoyxZs8qBx4sdBA==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

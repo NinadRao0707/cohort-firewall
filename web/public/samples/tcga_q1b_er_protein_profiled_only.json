@@ -190,7 +190,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "4a3bfc05f6b25b32",
+    "cert_id": "64e8ca743c724129",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -201,9 +201,9 @@
       "spec_sha256": "6e0a5f880b9f8d4d5a5a3a10ee852b472be28b62378c068b26cc2e98e2df64f4",
       "verdict": "READY",
       "rule_ids": [],
-      "issued_at": "2026-11-11T18:52:24+00:00"
+      "issued_at": "2026-11-11T18:57:18+00:00"
     },
-    "signature": "vj4OR90AOVSk1epfq2t2E9DGQS9GzeCrfchB8oV8uWPolHAZ51+PazQXIYkj5fKOlY9ca9nqEO5wcaSGs8O9DQ==",
+    "signature": "RzQ7MYmPvpU2GcE14AvDvHVWMVO44EVUrYoLVD0T/x4iw3q7sXAKjhwB+3fwqG4aZEhbI/zMITbe3rGw7kFzAA==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

@@ -18,6 +18,10 @@ from pydantic import BaseModel
 
 from cohort_firewall import certificate
 from cohort_firewall.engine import DEFAULT_POLICY, evaluate_dataset
+from cohort_firewall.tower.run import list_releases, run_tower
+
+CHALLENGE_REPO = Path(os.environ.get("CF_CHALLENGE_REPO", "~/oncosys-hackathon-challenge")).expanduser()
+TOWER_OUT = Path(__file__).resolve().parent.parent / "outputs"
 
 MAX_UPLOAD_BYTES = 25 * 1024 * 1024
 
@@ -99,6 +103,32 @@ def public_key():
 def policy():
     """The active rules, published so anyone can see exactly what decides a verdict."""
     return {"yaml": Path(DEFAULT_POLICY).read_text()}
+
+
+@app.get("/tower/releases")
+def tower_releases():
+    """Releases found in the challenge repo's data/tcga-brca/releases/ folder."""
+    return {"challenge_repo": str(CHALLENGE_REPO), "releases": list_releases(CHALLENGE_REPO)}
+
+
+class TowerRequest(BaseModel):
+    release: str
+    include_rna: bool = True
+
+
+@app.post("/tower/run")
+def tower_run(req: TowerRequest):
+    names = {r["name"] for r in list_releases(CHALLENGE_REPO)}
+    if req.release not in names:   # only listed folders: no arbitrary paths from the browser
+        raise HTTPException(404, f"Unknown release '{req.release}'. Put it under data/tcga-brca/releases/.")
+    path_b = CHALLENGE_REPO / "data" / "tcga-brca" / "releases" / req.release
+    try:
+        doc = run_tower(CHALLENGE_REPO, path_b, include_rna=req.include_rna)
+    except FileNotFoundError as e:
+        raise HTTPException(400, f"Missing input: {e}. Run fetch.py in the challenge repo first.")
+    TOWER_OUT.mkdir(exist_ok=True)
+    (TOWER_OUT / f"findings-{req.release}.json").write_text(json.dumps(doc, indent=2))
+    return doc
 
 
 @app.get("/health")

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { InputPanel, type Submission } from "@/components/InputPanel";
+import { Nav } from "@/components/Nav";
 import { Results } from "@/components/Results";
 import { evaluate, loadSample } from "@/lib/api";
 import type { EvaluateResponse } from "@/lib/types";
@@ -45,6 +46,7 @@ export default function Home() {
         <h1>Cohort Firewall</h1>
         <p>Check whether an oncology dataset can answer your AI question before anyone trains on it.</p>
       </header>
+      <Nav current="question" />
       <div className="layout">
         <InputPanel busy={busy} onSubmit={onSubmit} onSample={(n) => run(() => loadSample(n))} />
         <section className="output" aria-live="polite" ref={outputRef}>

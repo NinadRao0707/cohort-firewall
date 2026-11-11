@@ -49,6 +49,17 @@ if (TCGA / "tcga_brca_raw.csv").exists():
 else:
     print("skip TCGA: run data/flatten_tcga.py first")
 
+import os  # noqa: E402
+from cohort_firewall.tower.run import run_tower  # noqa: E402
+challenge = Path(os.environ.get("CF_CHALLENGE_REPO", "~/oncosys-hackathon-challenge")).expanduser()
+practice = challenge / "data" / "tcga-brca" / "releases" / "practice-B"
+if practice.exists():
+    doc = run_tower(challenge, practice)
+    (OUT / "tower_practice-B.json").write_text(json.dumps(doc, indent=2, default=str))
+    print(f"{'tower_practice-B':45s} {doc['verdict']}")
+else:
+    print(f"skip Control Tower sample: {practice} not found")
+
 for label, folder in SYNTHEA.items():
     data, dct = folder / "breast_cohort.csv", folder / "breast_cohort.dictionary.json"
     if not data.exists():

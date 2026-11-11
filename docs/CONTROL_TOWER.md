@@ -14,6 +14,12 @@ python ~/oncosys-hackathon-challenge/format/validate.py findings.json
 The baseline defaults to the frozen release (`data/tcga-brca/raw`) and is checked against
 `sources.csv`. If it doesn't match, every verdict is Insufficient Evidence (TWR-PROV-1).
 
+## Web reviewer screen
+Start the API (`uvicorn api.main:app --reload`, with `CF_CHALLENGE_REPO` if the challenge repo
+isn't at `~/oncosys-hackathon-challenge`) and the web app (`cd web && npm run dev`), then open
+http://localhost:3000/tower. Pick a release folder from `data/tcga-brca/releases/`, compare, and
+download `findings.json`. A saved findings.json can also be opened without the API.
+
 ## How it works
 1. **Fingerprint** every sample in every file from its exact text values. Large matrices are
    streamed, so the 64 MB RNA file needs about 65 MB of memory.

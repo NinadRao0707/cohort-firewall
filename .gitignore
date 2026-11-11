@@ -10,3 +10,4 @@ node_modules/
 data/variants/
 data/tcga*/
 findings.json
+outputs/

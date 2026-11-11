@@ -1,0 +1,58 @@
+import { apiConfigured } from "./api";
+
+const API = process.env.NEXT_PUBLIC_API_URL ?? "";
+
+export type ShareVerdict = "Ready" | "Conditional" | "Blocked" | "Insufficient Evidence";
+
+export interface EvidenceRef { kind: string; id: string; release?: string; file?: string; note?: string }
+
+export interface TowerFinding {
+  id: string; kind?: string; summary: string;
+  severity: "high" | "medium" | "low" | "none"; confidence: "high" | "medium" | "low";
+  evidence: EvidenceRef[]; affects_analyses?: string[]; not_affected_analyses?: string[];
+  limitation?: string; needs_human_review?: boolean;
+}
+
+export interface TowerAnalysis {
+  id: string; status: "unchanged" | "changed" | "not_rerun"; description?: string; inputs?: string[];
+  reason?: string; verdict?: ShareVerdict;
+  verdict_rules?: { rule_id: string; verdict: ShareVerdict; reason: string; remedy: string }[];
+  affected_by?: string[]; needs_human_review?: boolean;
+  before?: Record<string, unknown>; after?: Record<string, unknown>;
+}
+
+export interface TowerRepair {
+  id: string; action: string; targets: EvidenceRef[]; justification: string; addresses: string[];
+}
+
+export interface FindingsDoc {
+  format_version: string;
+  producer: { team: string; product: string; track: string };
+  data: { dataset?: string; releases: { name: string; files: { file: string; sha256: string; hash_of?: string }[] }[] };
+  question: string; verdict?: ShareVerdict;
+  findings: TowerFinding[]; analyses?: TowerAnalysis[]; repairs?: TowerRepair[];
+  limitations?: string[]; certificate?: unknown; baseline_unverified_files?: string[];
+}
+
+export async function listReleases(): Promise<{ name: string; files: string[] }[]> {
+  const res = await fetch(`${API}/tower/releases`);
+  if (!res.ok) throw new Error(`Could not list releases (${res.status}).`);
+  return (await res.json()).releases;
+}
+
+export async function runTower(release: string, includeRna: boolean): Promise<FindingsDoc> {
+  const res = await fetch(`${API}/tower/run`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ release, include_rna: includeRna }),
+  });
+  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail ?? `Run failed (${res.status}).`);
+  return res.json();
+}
+
+export async function loadTowerSample(): Promise<FindingsDoc> {
+  const res = await fetch("/samples/tower_practice-B.json");
+  if (!res.ok) throw new Error("No saved Control Tower sample. Run scripts/export_web_samples.py.");
+  return res.json();
+}
+
+export { apiConfigured };

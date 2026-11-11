@@ -211,7 +211,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "8bb46f0582815143",
+    "cert_id": "489171c66c5e6f5e",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -224,9 +224,9 @@
       "rule_ids": [
         "LEAK-002"
       ],
-      "issued_at": "2026-11-11T18:52:24+00:00"
+      "issued_at": "2026-11-11T18:57:17+00:00"
     },
-    "signature": "UkTRIQWiPuLLT+QAGF35HwT+8IKIyEblPDgiWglm9fBkgsz3HWA4tFD0jvyEKuVbYecK1GHVSZnZIgVafozjDQ==",
+    "signature": "J4YXfxyg+Y/JeVs/ShXvTZgQX4fJIO65Xpydmjl7C+RjzeUC24iNUm9WfOuUGodKhcm+JWjDpAczhgyJnqvxCw==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

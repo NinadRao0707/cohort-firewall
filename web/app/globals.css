@@ -168,3 +168,33 @@ button.link:hover { text-decoration-color: currentColor; }
   margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--rule);
   color: var(--ink-soft); font-size: 0.8125rem; max-width: 80ch;
 }
+
+/* ---- tabs and Control Tower ---- */
+.tabs { display: flex; gap: 4px; margin: -8px 0 28px; border-bottom: 1px solid var(--rule); }
+.tabs a { padding: 10px 14px; color: var(--ink-soft); text-decoration: none; font-weight: 600;
+  border-bottom: 3px solid transparent; margin-bottom: -1px; }
+.tabs a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--ink); }
+select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--rule);
+  border-radius: 4px; padding: 8px 10px; width: 100%; }
+.analyses { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.analysis { --v: var(--ink-soft); padding: 16px 0 16px 16px; border-left: 4px solid var(--v); }
+.analysis[data-verdict="READY"] { --v: var(--ready); }
+.analysis[data-verdict="CONDITIONAL"] { --v: var(--conditional); }
+.analysis[data-verdict="BLOCKED"] { --v: var(--blocked); }
+.analysis[data-verdict="INSUFFICIENT_EVIDENCE"] { --v: var(--insufficient); }
+.analysis-head { display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; }
+.analysis-id { font-weight: 700; font-size: 1.125rem; }
+.analysis-verdict { font: 600 1.25rem var(--serif); color: var(--v); }
+.analysis-desc { margin: 6px 0 4px; max-width: 72ch; }
+.rules { margin: 10px 0; }
+.rules em { font-style: normal; font-weight: 600; }
+.compare { margin-top: 12px; }
+.compare tr[data-moved="true"] td:last-child { color: var(--blocked); font-weight: 600; }
+.finding[data-severity="high"] { --v: var(--blocked); }
+.finding[data-severity="medium"] { --v: var(--conditional); }
+.finding[data-severity="low"] { --v: var(--ink-soft); }
+.finding-level { text-transform: capitalize; }
+.finding-limit { margin: 6px 0 0; font-size: 0.875rem; color: var(--ink-soft); max-width: 72ch; }
+.finding-limit span { font-weight: 600; }
+.evidence { margin: 6px 0 0; padding-left: 18px; font-size: 0.875rem; display: grid; gap: 2px; }
+code { font-family: var(--mono); font-size: 0.85em; }
