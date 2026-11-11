@@ -42,13 +42,13 @@ value edits instead. The tool also shows *what* changed, not which release is co
 repair needs a person's decision.
 
 ## Setup from a fresh clone (macOS or Linux)
-Tested with: Python _FILL IN (`python3 --version`)_, Node.js _FILL IN (`node --version`)_.
+Tested with: Python 3.13.12, Node.js v26.13.0 (macOS).
 
 **1. The event's challenge repo, next to this one**
 ```bash
 cd ~
 git clone https://github.com/disleveK/oncosys-hackathon-challenge.git
-git clone <THIS REPO URL> cohort-firewall
+git clone https://github.com/NinadRao0707/cohort-firewall.git cohort-firewall
 ```
 
 **2. Python environment and the frozen data**
