@@ -1,0 +1,5 @@
+{"name": "rehearsal-C", "seed": 4401,
+ "changes": [
+   {"type": "relabel_clinical", "file": "clinical.tsv", "column": "breast_carcinoma_estrogen_receptor_status", "new_value": "Negative", "count": 3},
+   {"type": "swap_samples", "file": "protein_rppa.tsv.gz", "count": 2, "opposite_er": false}
+ ]}

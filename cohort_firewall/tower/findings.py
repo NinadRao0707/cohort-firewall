@@ -84,8 +84,16 @@ def _evidence(change: Change, rel_b: str, limit: int = 25) -> list[dict]:
     return refs or [{"kind": "file", "id": change.file, "release": rel_b}]
 
 
+DERIVED = {"coverage_loss", "count_masks_membership"}
+
+
 def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: list[AnalysisRun],
-                   baseline_unverified: list[str], team: str, question: str) -> dict:
+                   baseline_unverified: list[str], team: str, question: str,
+                   include_summaries: bool = True) -> dict:
+    """include_summaries=False leaves out findings that only summarize other findings
+    (coverage per subgroup, count-masked membership), for checkers that score each finding."""
+    if not include_summaries:
+        changes = [c for c in changes if c.type not in DERIVED]
     ids_by_change: dict[int, str] = {}
     findings, repairs = [], []
 
@@ -141,6 +149,7 @@ def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: 
             "affects_analyses": affects, "not_affected_analyses": not_affected,
             "limitation": LIMITATION.get(ch.type, "Detected by comparing exact values between releases."),
             "needs_human_review": severity in {"high", "medium"} or bool(affects),
+            **({"x_summary_of_other_findings": True} if ch.type in DERIVED else {}),
         })
         action, targets, why = None, [], ""
         if ch.type == "swap":

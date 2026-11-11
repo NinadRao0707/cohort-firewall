@@ -114,6 +114,7 @@ def tower_releases():
 class TowerRequest(BaseModel):
     release: str
     include_rna: bool = True
+    include_summaries: bool = True
 
 
 @app.post("/tower/run")
@@ -123,7 +124,8 @@ def tower_run(req: TowerRequest):
         raise HTTPException(404, f"Unknown release '{req.release}'. Put it under data/tcga-brca/releases/.")
     path_b = CHALLENGE_REPO / "data" / "tcga-brca" / "releases" / req.release
     try:
-        doc = run_tower(CHALLENGE_REPO, path_b, include_rna=req.include_rna)
+        doc = run_tower(CHALLENGE_REPO, path_b, include_rna=req.include_rna,
+                        include_summaries=req.include_summaries)
     except FileNotFoundError as e:
         raise HTTPException(400, f"Missing input: {e}. Run fetch.py in the challenge repo first.")
     TOWER_OUT.mkdir(exist_ok=True)

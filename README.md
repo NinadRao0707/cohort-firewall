@@ -1,93 +1,153 @@
-# Cohort Firewall
+# Cohort Firewall: Cohort Control Tower with readiness verdicts
 
-Decides whether an oncology dataset is ready for a **specific** proposed AI question:
-**Ready**, **Conditional**, **Blocked**, or **Insufficient Evidence**.
+**Track:** Cohort Firewall · **Product:** Cohort Control Tower (featured), extended with readiness verdicts
+**Team:** _FILL IN: names of all 3-5 members_
+**Demo video:** _FILL IN: link_
 
-Built for the OncoSys AI / The Open Accelerator AI Healthcare Hackathon at Northeastern (Cohort Firewall track).
+> Research data-quality and data-readiness tool. Not a clinical tool: no diagnosis, treatment
+> recommendation, or patient risk score, and no claim of clinical validity, regulatory compliance,
+> or production readiness.
 
-> Research data-readiness screen. Not a clinical tool: no diagnosis, treatment recommendation, or
-> patient risk score, and no claim of clinical validity, regulatory compliance, or production readiness.
+## The user and the one workflow
+**User:** a research engineer responsible for the TCGA-BRCA dataset, which gets new releases.
 
-## Data
-- **Judged results:** the event's frozen TCGA-BRCA release from the Cancer AI Lab starter repository.
-  Raw TCGA files are never committed; fetch them with the starter's script and verify its pinned checksums.
-- **Engine tests only:** a stand-in cohort from `data/make_demo_cohort.py` (random values, CC0) and
-  optional Synthea output (MITRE's open-source synthetic patient generator). Neither contains real patients.
+**Workflow they finish:** a new release arrives. They open **Release check**, pick the release and
+compare it with the event's frozen release. The tool shows:
+1. what changed, found without being told what to look for: swapped samples, profiles copied
+   onto other IDs, samples removed or added, a sample count that stayed the same while membership
+   changed, clinical labels that changed, and genuine coverage lost per ER status and PAM50 subtype;
+2. which protected analyses each change affects **and which it doesn't**; affected analyses are
+   rerun with before/after results, unaffected ones are **not rerun** and the tool says why;
+3. a verdict per analysis (Ready / Conditional / Blocked / Insufficient Evidence) with the rule,
+   the evidence and the fix, and where a person must review before use;
+4. proposed repairs and a `findings.json` (shared format v0.2) to hand to a Repair Review Desk.
 
-## Featured product: Cohort Control Tower
-Compare a new TCGA-BRCA release with the frozen one, find what changed, rerun only the affected
-reference analyses, give each a readiness verdict, and write `findings.json` (shared format v0.2).
-See `docs/CONTROL_TOWER.md`.
+The same verdict engine also answers **Question check**: is the frozen release fit for a specific
+research question? (For example: a fairness check across race is Insufficient Evidence because
+the release doesn't record race.)
 
+## One result a judge can verify
+On the public practice release, the tool reports exactly the answer key's changes, with no
+unexplained findings. To reproduce, run steps 1-3 below and then:
 ```bash
-python -m cohort_firewall.tower --challenge-repo ~/oncosys-hackathon-challenge \
-  --b ~/oncosys-hackathon-challenge/data/tcga-brca/releases/practice-B --out findings.json
+python scripts/grade_tower.py outputs/findings-practice-B.json ~/oncosys-hackathon-challenge/data/tcga-brca/releases/practice-B/CHANGES.json
+```
+Every finding lists the sample barcodes and file it rests on; every analysis shows its before and
+after values, computed by the event's own `reference_analyses.py`.
+
+## One limitation a judge can inspect
+Shown in the product under **Limitations of this check** and on every finding. The main one:
+change detection compares exact values, so a swap or copy that also edits values is reported as
+value edits instead. The tool also shows *what* changed, not which release is correct: every
+repair needs a person's decision.
+
+## Setup from a fresh clone (macOS or Linux)
+Tested with: Python _FILL IN (`python3 --version`)_, Node.js _FILL IN (`node --version`)_.
+
+**1. The event's challenge repo, next to this one**
+```bash
+cd ~
+git clone https://github.com/disleveK/oncosys-hackathon-challenge.git
+git clone <THIS REPO URL> cohort-firewall
 ```
 
-## Readiness on the judged TCGA-BRCA data
+**2. Python environment and the frozen data**
 ```bash
-python data/flatten_tcga.py --challenge-repo ~/oncosys-hackathon-challenge   # verifies checksums first
+cd ~/cohort-firewall
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cd ~/oncosys-hackathon-challenge
+python data/tcga-brca/fetch.py
+python data/tcga-brca/make_release.py
+```
+`fetch.py` should print six `ok` lines. If it fails with `CERTIFICATE_VERIFY_FAILED` on macOS
+(python.org installer), run `open "/Applications/Python 3.13/Install Certificates.command"` (adjust
+the version), or `export SSL_CERT_FILE="$(python -m certifi)"`, and fetch again.
+
+**3. Compare a release (command line)**
+```bash
+cd ~/cohort-firewall
+python -m cohort_firewall.tower --b ~/oncosys-hackathon-challenge/data/tcga-brca/releases/practice-B --out outputs/findings-practice-B.json
+python ~/oncosys-hackathon-challenge/format/validate.py outputs/findings-practice-B.json
+```
+If the challenge repo is elsewhere, add `--challenge-repo <path>` (and set `CF_CHALLENGE_REPO`
+for the API). To compare **any new release**, put its folder in
+`oncosys-hackathon-challenge/data/tcga-brca/releases/<name>/` (for example with
+`make_release.py --config <file>`) or pass its path with `--b`.
+
+**4. The web app (two terminals)**
+```bash
+cd ~/cohort-firewall && source .venv/bin/activate
+python data/make_variants.py
+python data/flatten_tcga.py --challenge-repo ~/oncosys-hackathon-challenge
+python scripts/export_web_samples.py
+uvicorn api.main:app --reload
+```
+`export_web_samples.py` rebuilds the saved sample results and signs them with a key generated on
+your machine (in `keys/`, git-ignored), so **Verify signature** works on a fresh clone.
+```bash
+cd ~/cohort-firewall/web
+npm install
+cp .env.local.example .env.local
+npm run dev
+```
+Open http://localhost:3000/tower (Release check) or http://localhost:3000 (Question check).
+
+**5. Question check on the frozen release (command line)**
+```bash
 python scripts/run_tcga_specs.py
 ```
-Seven research questions against the same frozen release, from Ready to Blocked. Output in `data/tcga/` is git-ignored.
 
-## Core idea
-
-Readiness is a property of a dataset *and* a question together. The same cohort can be Ready
-for 2-year recurrence modeling, Conditional for 5-year survival (follow-up too short), and
-Blocked for a treatment recommendation (out of scope).
-
-```
-CSV + data dictionary ─┐
-question ── LLM parser ─┴─► QuestionSpec (validated) ─► deterministic checks (pandas)
-                                                              │ metrics
-                                        rules/policy_v0_1.yaml ─► verdict + findings
-                                                              │
-                         LLM wording (guarded) or template ◄──┤
-                         Ed25519-signed certificate      ◄────┘
-```
-
-The LLM parses the question and words the report. **It never decides the verdict.**
-
-## Quickstart (works offline, no API key)
-
+## Tests
 ```bash
-pip install -r requirements.txt
-python data/make_demo_cohort.py      # stand-in Synthea-shaped breast cohort
-python data/make_variants.py         # 22 seeded-defect test cases
-python tests/test_variants.py        # expected vs actual verdict table
-uvicorn api.main:app --reload        # http://localhost:8000/docs
+python tests/test_tower.py
+python data/make_variants.py && python tests/test_variants.py
+bash scripts/rehearse.sh
 ```
+- `test_tower.py`: 10 Control Tower scenarios on synthetic releases (no TCGA data needed).
+- `test_variants.py`: 22 seeded-defect readiness cases on a synthetic stand-in cohort.
+- `rehearse.sh`: builds three private releases with the event's `make_release.py --config`, using
+  change types practice-B does not use, runs the Control Tower and grades it.
 
-Optional: `export ANTHROPIC_API_KEY=...` and pass `use_llm_parser=true` / `use_llm_report=true`.
-Optional: `SUPABASE_URL` + `SUPABASE_SERVICE_KEY` to log runs (schema in `supabase/schema.sql`).
+## How it decides
+Checks only measure; a versioned rule file decides (`rules/tower_v0_1.yaml` for releases,
+`rules/policy_v0_1.yaml` for questions). Worst finding wins: Blocked > Insufficient Evidence >
+Conditional > Ready. Anything the tool cannot verify, including a baseline that doesn't match the
+event's frozen checksums, is Insufficient Evidence: nothing passes by default. Every result carries
+an Ed25519-signed certificate binding the release checksums, the question and the rule version.
+Details: `docs/CONTROL_TOWER.md`, `docs/DESIGN.md`.
 
-## Repo map
+## Data
+- **Judged results:** the event's frozen TCGA-BRCA release, fetched by the challenge repo's
+  `fetch.py` and verified against its `sources.csv`. No raw TCGA files are in this repository;
+  `data/tcga/` and `outputs/` are git-ignored. Small derived outputs (`examples/outputs/`,
+  `web/public/samples/`) hold sample barcodes and summary numbers only. The data is de-identified
+  but patient-derived: research use only, no re-identification.
+- **Engine tests only (synthetic, no real patients):** a stand-in cohort generated by
+  `data/make_demo_cohort.py`, and optional Synthea output (MITRE's synthetic patient generator).
+  _FILL IN if organizers asked: "disclosed to organizers at kickoff on Nov 11."_
 
+## AI features
+None are required to run the tool. The Question check can optionally use a language model to turn
+a plain-English question into a structured spec and to word the report (`cohort_firewall/llm.py`),
+with a key the user supplies (`ANTHROPIC_API_KEY`); no key is in this repository. The model never
+decides a verdict, and report text that changes the verdict or drops a Blocked finding is rejected.
+
+## Repository map
 | Path | What it is |
 |---|---|
-| `cohort_firewall/spec.py` | QuestionSpec schema + strict validation |
-| `cohort_firewall/checks.py` | 12 deterministic checks, each returns metrics only |
-| `rules/policy_v0_1.yaml` | Policy-as-code: metrics → verdict, thresholds, reasons, remedies |
-| `cohort_firewall/policy.py` | Rule evaluator, precedence, default-deny |
-| `cohort_firewall/certificate.py` | Signed readiness certificate + verify |
-| `cohort_firewall/llm.py` | Question parser and report wording (Claude API) |
-| `cohort_firewall/report.py` | Template report + guard that rejects LLM text that alters the verdict |
-| `api/main.py` | FastAPI: `/evaluate`, `/verify`, `/public-key`, `/policy` |
-| `data/flatten_synthea.py` | Synthea CSV export → one patient-level cohort table + dictionary |
-| `data/make_variants.py` | Seeded-defect cases (the evaluation) |
-| `examples/specs/` | Four questions against the same cohort |
-| `web/` | Next.js UI (runs on sample results without the API) |
-| `scripts/smoke_api.sh` | First real test of the API endpoints |
-| `scripts/try_parser.py` | Trial of the Claude question parser on 5 questions |
-| `scripts/create_github_issues.sh` | Creates the pre-kickoff task list as GitHub issues |
-| `docs/` | Design, kickoff questions, demo script, Synthea setup, pre-kickoff plan |
+| `cohort_firewall/tower/` | Control Tower: release loading, change detection, analysis impact, findings.json |
+| `cohort_firewall/` | Readiness engine: question spec, checks, policy evaluator, certificates, report |
+| `rules/` | The two versioned policy files |
+| `api/main.py` | FastAPI: `/tower/releases`, `/tower/run`, `/evaluate`, `/verify`, `/policy` |
+| `web/` | Next.js reviewer screens: Release check and Question check |
+| `data/flatten_tcga.py` | Verified, barcode-joined readiness table from the frozen release |
+| `scripts/` | Graders, rehearsal runner, sample exporter, TCGA question runner |
+| `rehearsal/` | Private release configs for rehearsal |
+| `examples/` | Question specs and a saved practice-B findings.json |
+| `tests/` | Synthetic-release and seeded-defect tests |
+| `docs/` | Design, Control Tower notes, demo script |
 
-## Status (pre-kickoff)
-
-Tested offline: spec validation, all checks, policy engine, certificates, template reports,
-16-case suite, Synthea flattener on a fixture, and the web UI's result views (server-rendered
-and screenshotted in light, dark and phone widths).
-
-Written but not yet run: FastAPI layer (`scripts/smoke_api.sh` tests it), Claude API calls
-(`scripts/try_parser.py`), Supabase logging, and a full `next build` of the web app.
+## Third-party code and licenses
+See `THIRD_PARTY.md`.

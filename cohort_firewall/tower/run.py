@@ -10,7 +10,8 @@ from .releases import frozen_checksums, load_release
 
 
 def run_tower(challenge_repo: Path, path_b: Path, path_a: Path | None = None,
-              team: str = "Cohort Firewall", include_rna: bool = True) -> dict:
+              team: str = "Cohort Firewall", include_rna: bool = True,
+              include_summaries: bool = True) -> dict:
     repo = Path(challenge_repo).expanduser()
     a = Path(path_a).expanduser() if path_a else repo / "data" / "tcga-brca" / "raw"
     b = Path(path_b).expanduser()
@@ -26,7 +27,8 @@ def run_tower(challenge_repo: Path, path_b: Path, path_a: Path | None = None,
     runs = evaluate_analyses(analyses, a, b, changes)
     question = (f"Is release {rel_b.name} still fit for the protected analyses "
                 f"({', '.join(x.id for x in analyses)}) that were run on {rel_a.name}?")
-    doc = build_findings(rel_a, rel_b, changes, runs, unverified, team, question)
+    doc = build_findings(rel_a, rel_b, changes, runs, unverified, team, question,
+                         include_summaries=include_summaries)
     doc["baseline_unverified_files"] = unverified
     return doc
 

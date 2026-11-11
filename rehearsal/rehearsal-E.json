@@ -1,0 +1,6 @@
+{"name": "rehearsal-E", "seed": 4403,
+ "changes": [
+   {"type": "swap_samples", "file": "rna_hiseq.tsv.gz", "count": 1, "opposite_er": true},
+   {"type": "relabel_clinical", "file": "clinical.tsv", "column": "histological_type", "new_value": "Mucinous Carcinoma", "count": 2},
+   {"type": "replace_with_duplicates", "file": "protein_rppa.tsv.gz", "count": 2, "subtype": "Basal"}
+ ]}
