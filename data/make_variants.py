@@ -181,6 +181,16 @@ def case_unlikely_value_unused_field(df, d):
     return df, d, s, "READY", []
 
 
+def case_descriptive_with_stray_horizon(df, d):
+    # A descriptive question that arrives with a leftover horizon and no time column must not be blocked.
+    s = {"title": "Stand-in: subtype mix with a stray horizon",
+         "question_text": "Share of tumors by stage at diagnosis, for a descriptive research figure.",
+         "task_type": "descriptive", "intended_use": "research",
+         "population_filters": [{"column": "cancer_type", "op": "==", "value": "breast"}],
+         "time_horizon_months": 24, "feature_columns": ["stage"], "subgroup_columns": [], "parse_confidence": 1.0}
+    return df, d, s, "READY", []
+
+
 def case_placeholder_missing(df, d):
     # TCGA-style "[Not Available]" strings must count as missing, not as a category.
     df = df.copy()

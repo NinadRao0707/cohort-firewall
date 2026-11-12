@@ -1,4 +1,5 @@
 {
+  "title": "Stand-in: BRCA predictor not in data",
   "question_text": "Does germline BRCA1/2 status improve 2-year recurrence prediction in breast cancer patients diagnosed since 2012?",
   "task_type": "binary_classification",
   "intended_use": "research",

@@ -26,7 +26,7 @@ interface Filter { column: string; op: string; value: string; values: string[] }
 const EMPTY: Spec = {
   question_text: "", task_type: "binary_classification", intended_use: "research",
   population_filters: [], outcome_column: "", outcome_positive_value: 1, time_column: "",
-  time_horizon_months: 24, feature_columns: [], subgroup_columns: [], acceptable_limitations: [],
+  time_horizon_months: null, feature_columns: [], subgroup_columns: [], acceptable_limitations: [],
 };
 
 export function QuestionCard({ busy, onSubmit }: { busy: boolean; onSubmit: (datasetId: string, spec: Spec) => void }) {
@@ -67,7 +67,8 @@ export function QuestionCard({ busy, onSubmit }: { busy: boolean; onSubmit: (dat
     const ex = examples.find((e) => e.id === id);
     if (!ex) return;
     const s = ex.spec;
-    setSpec({ ...EMPTY, ...s, acceptable_limitations: s.acceptable_limitations ?? [] });
+    setSpec({ ...EMPTY, ...s, outcome_column: s.outcome_column ?? "", time_column: s.time_column ?? "",
+              time_horizon_months: s.time_horizon_months ?? null, acceptable_limitations: s.acceptable_limitations ?? [] });
     setFilters((s.population_filters ?? []).map((f) => ({
       column: f.column, op: f.op,
       value: Array.isArray(f.value) ? "" : String(f.value),
@@ -91,8 +92,8 @@ export function QuestionCard({ busy, onSubmit }: { busy: boolean; onSubmit: (dat
     onSubmit(datasetId, {
       ...spec, population_filters,
       outcome_column: needsOutcome ? spec.outcome_column : null,
-      time_column: spec.time_column || null,
-      time_horizon_months: spec.time_horizon_months ? Number(spec.time_horizon_months) : null,
+      time_column: needsOutcome ? spec.time_column || null : null,
+      time_horizon_months: needsOutcome && spec.time_horizon_months ? Number(spec.time_horizon_months) : null,
       parse_confidence: 1,
     });
   }
@@ -113,7 +114,7 @@ export function QuestionCard({ busy, onSubmit }: { busy: boolean; onSubmit: (dat
           <span>Start from an example card</span>
           <select defaultValue="" onChange={(e) => loadExample(e.target.value)}>
             <option value="" disabled>Choose an example…</option>
-            {examples.map((e) => <option key={e.id} value={e.id}>{e.spec.question_text.slice(0, 80)}…</option>)}
+            {examples.map((e) => <option key={e.id} value={e.id}>{(e.spec as Spec & { title?: string }).title ?? e.spec.question_text.slice(0, 80)}</option>)}
           </select>
         </label>
       )}
@@ -187,14 +188,15 @@ export function QuestionCard({ busy, onSubmit }: { busy: boolean; onSubmit: (dat
             {outcomes.map((c) => <option key={c.name} value={c.name}>{c.name}: {c.description}</option>)}
           </select>
         )}
-        <div className="filter-row">
+        {needsOutcome && <div className="filter-row">
           <select value={spec.time_column ?? ""} onChange={(e) => set("time_column", e.target.value)} aria-label="Follow-up time column">
             <option value="">Follow-up time column (optional)…</option>
             {times.map((c) => <option key={c.name} value={c.name}>{c.name}{c.unit ? ` (${c.unit})` : ""}</option>)}
           </select>
           <label className="inline">Horizon <input type="number" min={1} value={spec.time_horizon_months ?? ""}
                  onChange={(e) => set("time_horizon_months", e.target.value ? Number(e.target.value) : null)} /> months</label>
-        </div>
+        </div>}
+        {!needsOutcome && <small>Descriptive questions have no outcome or time horizon.</small>}
       </fieldset>
 
       <fieldset className="field">

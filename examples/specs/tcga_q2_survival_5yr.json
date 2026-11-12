@@ -1,4 +1,5 @@
 {
+  "title": "TCGA: 5-year overall survival",
   "question_text": "Is the frozen TCGA-BRCA release suitable for a research study of 5-year overall survival in primary breast tumors by stage, receptor status and age?",
   "task_type": "survival",
   "intended_use": "research",

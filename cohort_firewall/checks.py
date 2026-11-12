@@ -212,7 +212,8 @@ def check_columns(ctx: Context) -> CheckResult:
     ctx.features = _resolve_features(ctx)
     missing_feats = [c for c in ctx.features if c not in cols]
     missing_filters = [f.column for f in spec.population_filters if f.column not in cols]
-    needs_time = spec.task_type == "survival" or spec.time_horizon_months is not None
+    needs_time = spec.task_type == "survival" or (
+        spec.time_horizon_months is not None and spec.task_type != "descriptive")
     return CheckResult("columns", "ok", fields=[c for c in [spec.outcome_column, spec.time_column] if c]
                        + ctx.features + [f.column for f in spec.population_filters], metrics={
         "outcome_required": spec.outcome_column is not None,
@@ -309,8 +310,8 @@ def check_leakage(ctx: Context) -> CheckResult:
 
 def check_temporal(ctx: Context) -> CheckResult:
     spec, c = ctx.spec, ctx.cohort
-    if spec.time_horizon_months is None:
-        return CheckResult("temporal", "skipped")
+    if spec.time_horizon_months is None or (spec.task_type == "descriptive" and not spec.time_column):
+        return CheckResult("temporal", "skipped", note="No time horizon applies to this question.")
     if c is None or not spec.time_column or spec.time_column not in c.columns:
         return CheckResult("temporal", "not_evaluable", note="No follow-up time column for the stated horizon.")
     unit = str(ctx.coldefs.get(spec.time_column, {}).get("unit", "months")).lower()

@@ -1,4 +1,5 @@
 {
+  "title": "Stand-in: 5-year survival",
   "question_text": "Can we model 5-year overall survival in breast cancer patients diagnosed since 2012 from stage, receptor status, tumor size, nodes and age, and compare across race?",
   "task_type": "survival",
   "intended_use": "research",

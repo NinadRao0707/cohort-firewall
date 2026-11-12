@@ -1,4 +1,5 @@
 {
+  "title": "TCGA: counting samples instead of patients",
   "question_text": "Is the frozen TCGA-BRCA release suitable for a research study of 2-year progression-free interval across all samples in the clinical file?",
   "task_type": "binary_classification",
   "intended_use": "research",

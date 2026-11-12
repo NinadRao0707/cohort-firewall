@@ -1,4 +1,5 @@
 {
+  "title": "TCGA: patient risk score (out of scope)",
   "question_text": "Use the TCGA-BRCA release to generate a patient-level risk score for each patient's progression.",
   "task_type": "binary_classification",
   "intended_use": "model_development",

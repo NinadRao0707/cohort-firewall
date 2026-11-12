@@ -1,4 +1,5 @@
 {
+  "title": "TCGA: same, protein-profiled tumors only",
   "question_text": "Same comparison, restricted to primary tumors that have RPPA protein data: is the release suitable for comparing ER-alpha protein between clinically ER-positive and ER-negative tumors?",
   "task_type": "descriptive",
   "intended_use": "research",

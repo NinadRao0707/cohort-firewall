@@ -1,4 +1,5 @@
 {
+  "title": "Stand-in: 2-year recurrence study",
   "question_text": "Is this dataset suitable for a research study of which baseline factors (stage, receptor status, tumor size, nodes, age at diagnosis) are associated with 2-year recurrence in breast cancer patients diagnosed since 2012, including whether a model performs consistently across race and ethnicity?",
   "task_type": "binary_classification",
   "intended_use": "model_development",

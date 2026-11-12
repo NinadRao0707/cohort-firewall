@@ -1,4 +1,5 @@
 {
+  "title": "TCGA: PAM50 subtype mix (two subtype calls)",
   "question_text": "Is the frozen TCGA-BRCA release suitable for a descriptive research figure: the share of primary breast tumors in each PAM50 molecular subtype?",
   "task_type": "descriptive",
   "intended_use": "research",

@@ -1,4 +1,5 @@
 {
+  "title": "TCGA: 2-year progression, fairness across race",
   "question_text": "Is the frozen TCGA-BRCA release suitable for developing a research model of 2-year progression-free interval from stage, receptor status and age, and checking whether it performs consistently across race?",
   "task_type": "binary_classification",
   "intended_use": "model_development",

@@ -1,4 +1,5 @@
 {
+  "title": "Stand-in: treatment recommendation (out of scope)",
   "question_text": "Based on her ER and HER2 status, which treatment should this patient receive?",
   "task_type": "binary_classification",
   "intended_use": "clinical_decision_support",

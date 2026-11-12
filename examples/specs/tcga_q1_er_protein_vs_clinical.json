@@ -1,4 +1,5 @@
 {
+  "title": "TCGA: ER protein vs clinical ER status",
   "question_text": "Is the frozen TCGA-BRCA release suitable for a descriptive research comparison of ER-alpha protein levels between clinically ER-positive and ER-negative primary tumors?",
   "task_type": "descriptive",
   "intended_use": "research",
