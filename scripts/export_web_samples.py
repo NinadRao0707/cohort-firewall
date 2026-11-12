@@ -39,7 +39,8 @@ for case in CASES:
 
 TCGA = ROOT / "data" / "tcga"
 TCGA_SPECS = ["tcga_q1_er_protein_vs_clinical", "tcga_q1b_er_protein_profiled_only", "tcga_q2_survival_5yr",
-              "tcga_q3_pfi_2yr_by_race", "tcga_q5_all_samples", "tcga_q6_patient_risk_score"]
+              "tcga_q3_pfi_2yr_by_race", "tcga_q5_all_samples", "tcga_q6_patient_risk_score",
+              "tcga_q7_pam50_subtype_mix"]
 if (TCGA / "tcga_brca_raw.csv").exists():
     data = (TCGA / "tcga_brca_raw.csv").read_bytes()
     dct = json.loads((TCGA / "tcga_brca_raw.dictionary.json").read_text())

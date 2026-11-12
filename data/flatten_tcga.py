@@ -32,7 +32,22 @@ CLINICAL = {  # output column -> clinical.tsv column
     "gender": "gender", "menopause_status": "menopause_status",
     "histological_type": "histological_type",
     "days_to_last_followup": "days_to_last_followup",
+    "vital_status": "vital_status",
+    # Second sources for the same facts (TCGA 2012 Nature paper calls), used for consistency checks
+    "er_status_nature2012": "ER_Status_nature2012",
+    "pr_status_nature2012": "PR_Status_nature2012",
+    "pam50_nature2012": "PAM50_mRNA_nature2012",
 }
+RANGES = {"age_at_diagnosis": [18, 100], "days_to_last_followup": [0, 12000], "os_days": [0, 12000],
+          "pfi_days": [0, 12000], "dss_days": [0, 12000], "dfi_days": [0, 12000]}
+CONSISTENCY = [
+    {"a": "er_status", "b": "er_status_nature2012", "label": "ER status: clinical file vs 2012 paper"},
+    {"a": "pr_status", "b": "pr_status_nature2012", "label": "PR status: clinical file vs 2012 paper"},
+    {"a": "pam50_subtype", "b": "pam50_nature2012", "normalize": "pam50",
+     "label": "PAM50 subtype: RNA-seq call vs 2012 microarray call"},
+    {"a": "vital_status", "b": "os_event", "map": {"DECEASED": "1.0", "LIVING": "0.0"},
+     "label": "Vital status (clinical) vs overall-survival event (curated)"},
+]
 SURVIVAL = {"os_event": "OS", "os_days": "OS.time", "pfi_event": "PFI", "pfi_days": "PFI.time",
             "dss_event": "DSS", "dss_days": "DSS.time", "dfi_event": "DFI", "dfi_days": "DFI.time"}
 LAYERS = ["has_survival", "has_mutation", "has_copy_number", "has_rna", "has_protein"]
@@ -152,7 +167,13 @@ def main():
         "pfi_2yr": col("binary", "outcome", "outcome", "PFI event within 730 days; blank if follow-up shorter and no event"),
         "er_alpha_rppa": col("numeric", "feature", "baseline", "ER-alpha protein level (RPPA); blank if not profiled"),
         "slides_for_sample": col("numeric", "availability", "baseline", "Slides in IDC matching this sample"),
+        "vital_status": col("categorical", "outcome", "outcome", "Vital status in the clinical file (LIVING, DECEASED)"),
+        "er_status_nature2012": col("categorical", "feature", "baseline", "ER status from the 2012 TCGA paper (second source)"),
+        "pr_status_nature2012": col("categorical", "feature", "baseline", "PR status from the 2012 TCGA paper (second source)"),
+        "pam50_nature2012": col("categorical", "feature", "baseline", "PAM50 call from the 2012 paper's microarray data (second source)"),
     }
+    for c, r in RANGES.items():
+        cols[c]["valid_range"] = r
     for c in LAYERS:
         cols[c] = col("binary", "availability", "baseline", f"Sample appears in the {c[4:]} file")
     dictionary = {"dataset": {
@@ -163,6 +184,7 @@ def main():
         "license_note": "TCGA open access, redistribution terms being confirmed by organizers; not redistributed here.",
         "patient_derived": True, "identifiable": False, "access": "open",
         "source_files": source_files,
+        "consistency_pairs": CONSISTENCY,
     }, "columns": cols}
 
     a.out.mkdir(parents=True, exist_ok=True)
@@ -170,6 +192,19 @@ def main():
     out.to_csv(a.out / f"{stem}.csv", index=False)
     (a.out / f"{stem}.dictionary.json").write_text(json.dumps(dictionary, indent=2))
     prim = out[out.sample_type == "Primary Tumor"]
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from cohort_firewall.checks import _norm
+    print("\nAgreement between sources (primary tumors, both values present):")
+    for pair in CONSISTENCY:
+        xa = prim[pair["a"]].map(lambda v: _norm(v, pair.get("normalize"), pair.get("map")))
+        xb = prim[pair["b"]].map(lambda v: _norm(v, pair.get("normalize"), None))
+        both = xa.notna() & xb.notna()
+        if both.sum():
+            print(f"  {pair['label']}: {int((xa[both] != xb[both]).sum())} of {int(both.sum())} disagree "
+                  f"({(xa[both] != xb[both]).mean():.0%}); values {sorted(set(xa[both]))[:6]} vs {sorted(set(xb[both]))[:6]}")
+        else:
+            print(f"  {pair['label']}: no records with both values")
     print(f"\nwrote {len(out)} samples ({out.patient_id.nunique()} patients) to {a.out}/{stem}.csv")
     print(f"primary tumors: {len(prim)}; with protein: {int(prim.has_protein.sum())}; "
           f"PFI 2yr events/known: {int(prim.pfi_2yr.sum())}/{int(prim.pfi_2yr.notna().sum())}; "

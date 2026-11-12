@@ -28,6 +28,13 @@ outcome, predictors, subgroups, acceptable limitations) with no code or API key,
 changes when the card changes. For example, a fairness check across race is Insufficient Evidence
 because the release doesn't record race.
 
+Every finding carries its evidence record: the check performed, the data fields and rows used,
+the measured value and the decision rule, how it affects this question, materiality, confidence,
+the check's limitation, the next step and the evidence that would change the verdict. Findings
+download as the event's `findings_template.csv` columns. Checks cover missing values, unlikely
+values, inconsistent records (two sources for the same fact), unclear fields, bias across
+subgroups, unfair shortcuts (leakage) and missing source details.
+
 Both screens end with a **review step**: a person records approve / approve with conditions /
 reject / ask for more evidence, after confirming they reviewed each finding. Blocked and
 Insufficient Evidence results can't be approved. The review is signed and saved with the evidence
@@ -114,7 +121,7 @@ python tests/test_review.py
 bash scripts/rehearse.sh
 ```
 - `test_tower.py`: 10 Control Tower scenarios on synthetic releases (no TCGA data needed).
-- `test_variants.py`: 22 seeded-defect readiness cases on a synthetic stand-in cohort.
+- `test_variants.py`: 25 seeded-defect readiness cases on a synthetic stand-in cohort.
 - `test_review.py`: 13 review-step rules (approval limits, acknowledgements, forged results).
 - `rehearse.sh`: builds three private releases with the event's `make_release.py --config`, using
   change types practice-B does not use, runs the Control Tower and grades it.

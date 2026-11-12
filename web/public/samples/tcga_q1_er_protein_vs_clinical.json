@@ -7,7 +7,9 @@
   "accepted_limitations": [],
   "ignored_acceptances": [],
   "notes": [
-    "3 placeholder value(s) such as 'NA' or '[Not Available]' were treated as missing (columns: pathologic_stage)."
+    "3 placeholder value(s) such as 'NA' or '[Not Available]' were treated as missing (columns: pathologic_stage).",
+    "Not used by this question, but noticed: PAM50 subtype: RNA-seq call vs 2012 microarray call: 52 of 501 (10%).",
+    "Not used by this question, but noticed: days_to_last_followup: 1 value(s) outside 0 to 12000 (e.g. -31)."
   ],
   "limitations": [
     "This is a research data-readiness screen. It is not a clinical tool and makes no claim of clinical validity, regulatory compliance, or production readiness.",
@@ -22,9 +24,28 @@
       "check": "completeness",
       "verdict": "CONDITIONAL",
       "reason": "Predictor 'er_alpha_rppa' is missing for 33% of the cohort.",
-      "remedy": "Plan and document an imputation strategy, or drop the predictor."
+      "remedy": "Plan and document an imputation strategy, or drop the predictor.",
+      "reconsider": "A documented imputation plan, or the result with and without that predictor.",
+      "rule_condition": "max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL",
+      "measured": {
+        "max_feature_missing_rate": 0.333
+      },
+      "fields_used": [
+        "er_status",
+        "er_alpha_rppa"
+      ],
+      "finding_id": "F1",
+      "check_performed": "Missing values",
+      "rows_or_groups_affected": "about 348 of 1046 records",
+      "effect_on_intended_use": "Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.",
+      "materiality": "medium",
+      "confidence": "high",
+      "evidence_or_source": "Measured max_feature_missing_rate = 0.333. Rule CMP-004 (max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on tcga_brca_raw.",
+      "limitation": "Counts missing values; it can't tell why they are missing.",
+      "needs_human_review": true
     }
   ],
+  "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Missing values,er_status; er_alpha_rppa,about 348 of 1046 records,[CMP-004] Predictor 'er_alpha_rppa' is missing for 33% of the cohort.,Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured max_feature_missing_rate = 0.333. Rule CMP-004 (max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on tcga_brca_raw.\",Counts missing values; it can't tell why they are missing.,\"Plan and document an imputation strategy, or drop the predictor. To reconsider: A documented imputation plan, or the result with and without that predictor.\",yes\r\n",
   "checks": [
     {
       "check": "metadata",
@@ -43,7 +64,16 @@
         "undocumented_column_share": 0.0,
         "undocumented_columns": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "dataset.source",
+        "dataset.provenance",
+        "dataset.license",
+        "dataset.patient_derived",
+        "dataset.identifiable",
+        "dataset.access",
+        "dataset.source_files"
+      ]
     },
     {
       "check": "scope",
@@ -53,7 +83,11 @@
         "keyword_guard_hit": false,
         "intended_use": "research"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "question_text",
+        "intended_use"
+      ]
     },
     {
       "check": "spec_quality",
@@ -61,7 +95,10 @@
       "metrics": {
         "parse_confidence": 1.0
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "parse_confidence"
+      ]
     },
     {
       "check": "columns",
@@ -75,7 +112,13 @@
         "time_present": true,
         "n_features": 2
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "er_status",
+        "er_alpha_rppa",
+        "sample_type",
+        "er_status"
+      ]
     },
     {
       "check": "cohort",
@@ -84,7 +127,11 @@
         "n_total": 1247,
         "n_cohort": 1046
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "sample_type",
+        "er_status"
+      ]
     },
     {
       "check": "completeness",
@@ -94,25 +141,32 @@
         "max_feature_missing_rate": 0.333,
         "worst_feature": "er_alpha_rppa"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "er_status",
+        "er_alpha_rppa"
+      ]
     },
     {
       "check": "outcome_events",
       "status": "skipped",
       "metrics": {},
-      "note": ""
+      "note": "",
+      "fields": []
     },
     {
       "check": "leakage",
       "status": "skipped",
       "metrics": {},
-      "note": ""
+      "note": "",
+      "fields": []
     },
     {
       "check": "temporal",
       "status": "skipped",
       "metrics": {},
-      "note": ""
+      "note": "",
+      "fields": []
     },
     {
       "check": "units",
@@ -123,7 +177,10 @@
         "n_patients_repeated": 0,
         "example_repeated": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "patient_id"
+      ]
     },
     {
       "check": "subgroups",
@@ -135,7 +192,45 @@
         "small_subgroups": [],
         "smallest_subgroup_n": 238
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "er_status"
+      ]
+    },
+    {
+      "check": "consistency",
+      "status": "ok",
+      "metrics": {
+        "n_pairs_relevant": 1,
+        "max_disagreement_rate": 0.0,
+        "disagreements": [
+          "ER status: clinical file vs 2012 paper: 0 of 778 (0%)"
+        ],
+        "n_rows_disagreeing": 0,
+        "elsewhere": [
+          "PAM50 subtype: RNA-seq call vs 2012 microarray call: 52 of 501 (10%)"
+        ],
+        "unmatched_vocabularies": []
+      },
+      "note": "",
+      "fields": [
+        "er_status",
+        "er_status_nature2012"
+      ]
+    },
+    {
+      "check": "plausibility",
+      "status": "ok",
+      "metrics": {
+        "n_columns_out_of_range": 0,
+        "out_of_range": [],
+        "elsewhere": [
+          "days_to_last_followup: 1 value(s) outside 0 to 12000 (e.g. -31)"
+        ],
+        "n_rows_out_of_range": 0
+      },
+      "note": "",
+      "fields": []
     },
     {
       "check": "phi",
@@ -144,7 +239,10 @@
         "n_phi_columns": 0,
         "phi_columns": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all columns"
+      ]
     },
     {
       "check": "injection",
@@ -153,7 +251,11 @@
         "n_injection_hits": 0,
         "injection_locations": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all text columns",
+        "dictionary descriptions"
+      ]
     }
   ],
   "spec": {
@@ -196,24 +298,24 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "ff05c380be4992b8",
+    "cert_id": "0e898250b79a3fd6",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.4.0",
-      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
-      "dataset_sha256": "a9f1d42f34bf97ff1732f8b09f8d85b16f3e0b44f37313ffef7c015b20d0116f",
-      "dictionary_sha256": "deae70759cf656277cb2c0ff7f717f6d885cdd8b8ee6c1ed774fb62d695a4df3",
+      "policy_version": "0.5.0",
+      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
+      "dataset_sha256": "d0c44cc4fca5e160f4cc855a9731173c78990b7935304ead70d09e64190812fa",
+      "dictionary_sha256": "adb6b17fbed5e5e3261844460c25a6fb9e43b0df404841d85dac0556b21964f3",
       "spec_sha256": "c2a276fd1c9f6a793a65ed5579223257e065ba8ac3d417b0b82395d7db871fa7",
       "verdict": "CONDITIONAL",
       "rule_ids": [
         "CMP-004"
       ],
-      "issued_at": "2026-11-12T16:26:36+00:00"
+      "issued_at": "2026-11-12T16:43:14+00:00"
     },
-    "signature": "m5N2Dk85+g1fA5qVOQsXTtXMZSvR47rUiIm+KA5CFUAP+eSM7SW5IUPTDousPmBjjZnwTiVJ4o2liw7CebcGDA==",
+    "signature": "SuKhQvCreqNi+so1WV9lNdW8shkVQJM6mMnaWcErpo/+cSF/f9tQW6U0TspxkRB2U1DmyHrxlHTRU4ARJbJNDQ==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.4.0"
+  "policy_version": "0.5.0"
 }

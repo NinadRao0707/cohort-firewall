@@ -20,9 +20,31 @@
       "check": "phi",
       "verdict": "BLOCKED",
       "reason": "Column(s) look like direct identifiers: first_name (flagged by its name), last_name (flagged by its name), ssn (flagged by its name), birthdate (flagged by its name), zip (flagged by its name).",
-      "remedy": "Remove identifiers (names, SSNs, contact details, full dates, sub-state geography) before evaluation."
+      "remedy": "Remove identifiers (names, SSNs, contact details, full dates, sub-state geography) before evaluation.",
+      "reconsider": "The dataset with identifiers removed.",
+      "rule_condition": "n_phi_columns > 0 -> BLOCKED",
+      "measured": {
+        "n_phi_columns": 5
+      },
+      "fields_used": [
+        "first_name",
+        "last_name",
+        "ssn",
+        "birthdate",
+        "zip"
+      ],
+      "finding_id": "F1",
+      "check_performed": "Direct identifiers",
+      "rows_or_groups_affected": "first_name (flagged by its name), last_name (flagged by its name), ssn (flagged by its name), birthdate (flagged by its name), zip (flagged by its name)",
+      "effect_on_intended_use": "Identifiers aren't permitted and create a re-identification risk. The data can't support this question as asked.",
+      "materiality": "high",
+      "confidence": "medium",
+      "evidence_or_source": "Measured n_phi_columns = 5. Rule PHI-001 (n_phi_columns > 0 -> BLOCKED), policy v0.5.0, on demo_breast_cohort.",
+      "limitation": "Pattern-based; a pass does not prove that no personal information is present.",
+      "needs_human_review": true
     }
   ],
+  "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Direct identifiers,first_name; last_name; ssn; birthdate; zip,\"first_name (flagged by its name), last_name (flagged by its name), ssn (flagged by its name), birthdate (flagged by its name), zip (flagged by its name)\",\"[PHI-001] Column(s) look like direct identifiers: first_name (flagged by its name), last_name (flagged by its name), ssn (flagged by its name), birthdate (flagged by its name), zip (flagged by its name).\",Identifiers aren't permitted and create a re-identification risk. The data can't support this question as asked.,high,medium,\"Measured n_phi_columns = 5. Rule PHI-001 (n_phi_columns > 0 -> BLOCKED), policy v0.5.0, on demo_breast_cohort.\",Pattern-based; a pass does not prove that no personal information is present.,\"Remove identifiers (names, SSNs, contact details, full dates, sub-state geography) before evaluation. To reconsider: The dataset with identifiers removed.\",yes\r\n",
   "checks": [
     {
       "check": "metadata",
@@ -41,7 +63,16 @@
         "undocumented_column_share": 0.0,
         "undocumented_columns": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "dataset.source",
+        "dataset.provenance",
+        "dataset.license",
+        "dataset.patient_derived",
+        "dataset.identifiable",
+        "dataset.access",
+        "dataset.source_files"
+      ]
     },
     {
       "check": "scope",
@@ -51,7 +82,11 @@
         "keyword_guard_hit": false,
         "intended_use": "model_development"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "question_text",
+        "intended_use"
+      ]
     },
     {
       "check": "spec_quality",
@@ -59,7 +94,10 @@
       "metrics": {
         "parse_confidence": 1.0
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "parse_confidence"
+      ]
     },
     {
       "check": "columns",
@@ -73,7 +111,20 @@
         "time_present": true,
         "n_features": 7
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "recurrence_2yr",
+        "follow_up_months",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive",
+        "cancer_type",
+        "diagnosis_year"
+      ]
     },
     {
       "check": "cohort",
@@ -82,7 +133,11 @@
         "n_total": 2400,
         "n_cohort": 2400
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "cancer_type",
+        "diagnosis_year"
+      ]
     },
     {
       "check": "completeness",
@@ -92,7 +147,17 @@
         "max_feature_missing_rate": 0.0,
         "worst_feature": "age_at_diagnosis"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive",
+        "recurrence_2yr"
+      ]
     },
     {
       "check": "outcome_events",
@@ -104,7 +169,17 @@
         "n_parameters": 9,
         "events_per_parameter": 52.11
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "recurrence_2yr",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive"
+      ]
     },
     {
       "check": "leakage",
@@ -117,7 +192,17 @@
         "max_single_feature_auc": 0.698,
         "dictionary_available": true
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "recurrence_2yr",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive"
+      ]
     },
     {
       "check": "temporal",
@@ -129,13 +214,18 @@
         "time_unit": "months",
         "n_negative_times": 0
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "follow_up_months",
+        "recurrence_2yr"
+      ]
     },
     {
       "check": "units",
       "status": "skipped",
       "metrics": {},
-      "note": "No patient identifier column declared."
+      "note": "No patient identifier column declared.",
+      "fields": []
     },
     {
       "check": "subgroups",
@@ -147,7 +237,30 @@
         "small_subgroups": [],
         "smallest_subgroup_n": 291
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "race",
+        "ethnicity"
+      ]
+    },
+    {
+      "check": "consistency",
+      "status": "skipped",
+      "metrics": {},
+      "note": "",
+      "fields": []
+    },
+    {
+      "check": "plausibility",
+      "status": "ok",
+      "metrics": {
+        "n_columns_out_of_range": 0,
+        "out_of_range": [],
+        "elsewhere": [],
+        "n_rows_out_of_range": 0
+      },
+      "note": "",
+      "fields": []
     },
     {
       "check": "phi",
@@ -162,7 +275,14 @@
           "zip (flagged by its name)"
         ]
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "first_name",
+        "last_name",
+        "ssn",
+        "birthdate",
+        "zip"
+      ]
     },
     {
       "check": "injection",
@@ -171,7 +291,11 @@
         "n_injection_hits": 0,
         "injection_locations": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all text columns",
+        "dictionary descriptions"
+      ]
     }
   ],
   "spec": {
@@ -217,24 +341,24 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "e0a6eaeb9b801c6c",
+    "cert_id": "75be9b09e6b8df8b",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.4.0",
-      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
+      "policy_version": "0.5.0",
+      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
       "dataset_sha256": "fd323369fcc7c1e20633cec6935513123f2422b5731df362d15af043f034fa00",
-      "dictionary_sha256": "7588e6edfc8dfc9c549924846dbc1218ffbea62822d0baf03d489b088cae5f76",
+      "dictionary_sha256": "cc2d1de66d8b616e2fae076def8c636640d31dc2fc0d73236223d06b7e141726",
       "spec_sha256": "843d4731ec71bef6469c594caf0270965ec21dab11db52fa14373ace058b3e95",
       "verdict": "BLOCKED",
       "rule_ids": [
         "PHI-001"
       ],
-      "issued_at": "2026-11-12T16:26:36+00:00"
+      "issued_at": "2026-11-12T16:43:14+00:00"
     },
-    "signature": "98TcMJKCeRTldW9pFZaAd4wKty4sJU5PyZlHCBqr2aTlHWbBIXI57l6sfjhIqAMNgzfws26gKzh4P9OQ4s4+DA==",
+    "signature": "ivZIen1wuOjHP/M6uNxjNzwHxBTzejRJF/I2/mxoEF2EKR4OuJqM1pB3ORTR5xcXGvUY0BzuPuZetZw7NPh3Dw==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.4.0"
+  "policy_version": "0.5.0"
 }

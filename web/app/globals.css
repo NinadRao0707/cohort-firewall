@@ -219,3 +219,7 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="file"]) {
 .review-record p { margin: 0; }
 .panel > .toggle { margin-bottom: 16px; }
 .review-step form > button, .card-form > button[type="submit"] { justify-self: start; }
+.evidence-grid { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; margin: 8px 0 0;
+  font-size: 0.875rem; max-width: 72ch; }
+.evidence-grid dt { color: var(--ink-soft); }
+.evidence-grid dd { margin: 0; overflow-wrap: anywhere; }

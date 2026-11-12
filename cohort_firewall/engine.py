@@ -8,6 +8,7 @@ import pandas as pd
 
 from . import ENGINE_VERSION
 from .certificate import issue
+from .evidence import enrich, template_csv
 from .checks import run_checks
 from .policy import Policy, evaluate
 from .report import build_report
@@ -56,6 +57,15 @@ def evaluate_dataset(dataset_bytes: bytes, dictionary: dict | None, spec: dict |
 
     results = run_checks(df, dictionary, qs, policy.parameters)
     ev = evaluate(results, policy, accepted=set(qs.acceptable_limitations))
+    checks = [r.to_dict() for r in results]
+    label = ((dictionary or {}).get("dataset") or {}).get("name", "the supplied dataset")
+    ev["findings"] = enrich(ev["findings"], checks, policy.version, label)
+    # Problems in fields this question doesn't use: reported, never counted (question-specific verdicts).
+    for c in checks:
+        for item in (c.get("metrics") or {}).get("elsewhere", []) or []:
+            notes.append(f"Not used by this question, but noticed: {item}.")
+        for item in (c.get("metrics") or {}).get("unmatched_vocabularies", []) or []:
+            notes.append(f"Couldn't compare {item}: the two sources use different value names.")
     cert = issue(dataset_bytes=dataset_bytes, dictionary=dictionary, spec_json=qs.canonical_json(),
                  policy_version=policy.version, policy_sha256=policy.sha256,
                  verdict=ev["verdict"], rule_ids=[f["rule_id"] for f in ev["findings"]])
@@ -68,7 +78,8 @@ def evaluate_dataset(dataset_bytes: bytes, dictionary: dict | None, spec: dict |
         "notes": notes,
         "limitations": LIMITATIONS,
         "findings": ev["findings"],
-        "checks": [r.to_dict() for r in results],
+        "findings_template_csv": template_csv(ev["findings"]),
+        "checks": checks,
         "spec": qs.to_dict(),
         "report": build_report(ev, qs.question_text, use_llm=use_llm_report),
         "certificate": cert,

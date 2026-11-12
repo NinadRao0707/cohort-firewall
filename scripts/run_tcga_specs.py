@@ -40,3 +40,4 @@ for spec_path in sorted((ROOT / "examples" / "specs").glob("tcga_*.json")):
         print(f"  note: {n}")
     if a.save:
         (a.save / f"{spec_path.stem}.json").write_text(json.dumps(out, indent=2, default=str))
+        (a.save / f"{spec_path.stem}.findings.csv").write_text(out["findings_template_csv"])

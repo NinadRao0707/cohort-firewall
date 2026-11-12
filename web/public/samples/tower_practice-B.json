@@ -812,7 +812,7 @@
     "tower_policy": "0.1.0"
   },
   "certificate": {
-    "cert_id": "af712214e3639946",
+    "cert_id": "0670a61cace7424f",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -827,9 +827,9 @@
         "TWR-MEM-1",
         "TWR-SWAP-1"
       ],
-      "issued_at": "2026-11-12T16:26:46+00:00"
+      "issued_at": "2026-11-12T16:43:25+00:00"
     },
-    "signature": "/F1iiEfKNqYajR/kw+LUkPsE0dyFUSiFPk4hAzNstJrmhQCQ1YthXcIWqzrxiBmUJt1mI+jglSly9yCdhuYYCQ==",
+    "signature": "LAgYUOTaIAR0fF7kk/Y5KhKZjPutENFIcqUKUneTr2pxG2nDhLKVBAhf0w92wdRT26+203AHEzTmne7E4USbAA==",
     "alg": "Ed25519"
   },
   "baseline_unverified_files": [],

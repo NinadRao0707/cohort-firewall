@@ -20,9 +20,28 @@
       "check": "temporal",
       "verdict": "CONDITIONAL",
       "reason": "Only 27% of the cohort is observed through the 60-month horizon (median follow-up 47.0 months).",
-      "remedy": "Use censoring-aware methods (survival analysis) or shorten the horizon."
+      "remedy": "Use censoring-aware methods (survival analysis) or shorten the horizon.",
+      "reconsider": "A censoring-aware analysis, or a shorter horizon.",
+      "rule_condition": "horizon_coverage >= 0.2 and horizon_coverage < 0.5 -> CONDITIONAL",
+      "measured": {
+        "horizon_coverage": 0.268
+      },
+      "fields_used": [
+        "follow_up_months",
+        "death_event"
+      ],
+      "finding_id": "F1",
+      "check_performed": "Follow-up length",
+      "rows_or_groups_affected": "about 1757 of 2400 records not followed to the horizon",
+      "effect_on_intended_use": "Patients not followed to the horizon have unknown outcomes; ignoring that biases results. Usable for this question only after the next step is taken and reported.",
+      "materiality": "medium",
+      "confidence": "high",
+      "evidence_or_source": "Measured horizon_coverage = 0.268. Rule TIME-002 (horizon_coverage >= 0.2 and horizon_coverage < 0.5 -> CONDITIONAL), policy v0.5.0, on demo_breast_cohort.",
+      "limitation": "Uses the declared follow-up column and unit.",
+      "needs_human_review": true
     }
   ],
+  "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Follow-up length,follow_up_months; death_event,about 1757 of 2400 records not followed to the horizon,[TIME-002] Only 27% of the cohort is observed through the 60-month horizon (median follow-up 47.0 months).,Patients not followed to the horizon have unknown outcomes; ignoring that biases results. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured horizon_coverage = 0.268. Rule TIME-002 (horizon_coverage >= 0.2 and horizon_coverage < 0.5 -> CONDITIONAL), policy v0.5.0, on demo_breast_cohort.\",Uses the declared follow-up column and unit.,\"Use censoring-aware methods (survival analysis) or shorten the horizon. To reconsider: A censoring-aware analysis, or a shorter horizon.\",yes\r\n",
   "checks": [
     {
       "check": "metadata",
@@ -41,7 +60,16 @@
         "undocumented_column_share": 0.0,
         "undocumented_columns": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "dataset.source",
+        "dataset.provenance",
+        "dataset.license",
+        "dataset.patient_derived",
+        "dataset.identifiable",
+        "dataset.access",
+        "dataset.source_files"
+      ]
     },
     {
       "check": "scope",
@@ -51,7 +79,11 @@
         "keyword_guard_hit": false,
         "intended_use": "research"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "question_text",
+        "intended_use"
+      ]
     },
     {
       "check": "spec_quality",
@@ -59,7 +91,10 @@
       "metrics": {
         "parse_confidence": 1.0
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "parse_confidence"
+      ]
     },
     {
       "check": "columns",
@@ -73,7 +108,20 @@
         "time_present": true,
         "n_features": 7
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "death_event",
+        "follow_up_months",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive",
+        "cancer_type",
+        "diagnosis_year"
+      ]
     },
     {
       "check": "cohort",
@@ -82,7 +130,11 @@
         "n_total": 2400,
         "n_cohort": 2400
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "cancer_type",
+        "diagnosis_year"
+      ]
     },
     {
       "check": "completeness",
@@ -92,7 +144,17 @@
         "max_feature_missing_rate": 0.0,
         "worst_feature": "age_at_diagnosis"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive",
+        "death_event"
+      ]
     },
     {
       "check": "outcome_events",
@@ -104,7 +166,17 @@
         "n_parameters": 9,
         "events_per_parameter": 11.33
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "death_event",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive"
+      ]
     },
     {
       "check": "leakage",
@@ -117,7 +189,17 @@
         "max_single_feature_auc": 0.719,
         "dictionary_available": true
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "death_event",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive"
+      ]
     },
     {
       "check": "temporal",
@@ -129,13 +211,18 @@
         "time_unit": "months",
         "n_negative_times": 0
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "follow_up_months",
+        "death_event"
+      ]
     },
     {
       "check": "units",
       "status": "skipped",
       "metrics": {},
-      "note": "No patient identifier column declared."
+      "note": "No patient identifier column declared.",
+      "fields": []
     },
     {
       "check": "subgroups",
@@ -147,7 +234,29 @@
         "small_subgroups": [],
         "smallest_subgroup_n": 291
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "race"
+      ]
+    },
+    {
+      "check": "consistency",
+      "status": "skipped",
+      "metrics": {},
+      "note": "",
+      "fields": []
+    },
+    {
+      "check": "plausibility",
+      "status": "ok",
+      "metrics": {
+        "n_columns_out_of_range": 0,
+        "out_of_range": [],
+        "elsewhere": [],
+        "n_rows_out_of_range": 0
+      },
+      "note": "",
+      "fields": []
     },
     {
       "check": "phi",
@@ -156,7 +265,10 @@
         "n_phi_columns": 0,
         "phi_columns": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all columns"
+      ]
     },
     {
       "check": "injection",
@@ -165,7 +277,11 @@
         "n_injection_hits": 0,
         "injection_locations": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all text columns",
+        "dictionary descriptions"
+      ]
     }
   ],
   "spec": {
@@ -210,24 +326,24 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "55b8abe188d0d40f",
+    "cert_id": "f9b3053662cacb3f",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.4.0",
-      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
+      "policy_version": "0.5.0",
+      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
       "dataset_sha256": "31275bc4e6681487c7e17cd7939b7e5d1dd855d369321a7e890bb19b6b037e32",
-      "dictionary_sha256": "18974ae121fbb69ea7c0047c1e86d3d931b86ef025d219e6466a0cc07208754f",
+      "dictionary_sha256": "c02c9a8546824f97ab9b4101d03b77945bf02c43b431ee06569b7172f99c3dad",
       "spec_sha256": "9af79c4f1be0afaa66093389af351dd424987e58ae9d1aec0a57c3c0f8b48524",
       "verdict": "CONDITIONAL",
       "rule_ids": [
         "TIME-002"
       ],
-      "issued_at": "2026-11-12T16:26:36+00:00"
+      "issued_at": "2026-11-12T16:43:14+00:00"
     },
-    "signature": "OLm5c4s0xMCjQDTNrstbKHx9d0MZYitZ3f5luVO0/+H3dKDXjwhxDPvremfA3goWx0e//lpf7uLNAe/qpV6EBg==",
+    "signature": "LTYdiqQB8Ihch7qn35wU0MF86nt8VtKvPPpH1JUIc9nLv3dVYe0KNjk05WOq3TmEHc48PWxnZ5OUTG3zXd9bAQ==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.4.0"
+  "policy_version": "0.5.0"
 }

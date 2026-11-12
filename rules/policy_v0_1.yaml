@@ -1,4 +1,4 @@
-# Cohort Firewall policy, version 0.4.0
+# Cohort Firewall policy, version 0.5.0
 #
 # Checks measure. This file decides. The LLM never sees or changes it.
 # Verdict precedence (worst wins): BLOCKED > INSUFFICIENT_EVIDENCE > CONDITIONAL > READY
@@ -11,7 +11,7 @@
 # Thresholds are hackathon defaults, chosen to be explainable, not clinical standards.
 # Change them here, bump the version, and every certificate records which version decided.
 
-version: "0.4.0"
+version: "0.5.0"
 
 parameters:
   leakage_auc_threshold: 0.95   # single feature separating the outcome this well is suspicious
@@ -34,6 +34,8 @@ acceptable:
   UNIT-001: "Some patients contribute more than one sample (sample-level analysis)"
   META-006: "Some columns are not documented in the dictionary"
   INJ-001: "Instruction-like text in free-text fields (fields excluded from use)"
+  CONS-001: "Two sources disagree on a label for some records (one source chosen and documented)"
+  PLAUS-001: "A few implausible values (excluded or corrected, and reported)"
 
 rules:
   # ---- provenance and metadata ---------------------------------------------------------
@@ -43,6 +45,7 @@ rules:
     verdict: INSUFFICIENT_EVIDENCE
     reason: "No data dictionary was supplied, so column meaning, timing and provenance cannot be verified."
     remedy: "Upload a data dictionary (dataset source, license, provenance, and per-column role/timing)."
+    reconsider: "A data dictionary for this release."
 
   - id: META-002
     check: metadata
@@ -52,6 +55,7 @@ rules:
     verdict: INSUFFICIENT_EVIDENCE
     reason: "The dataset license is missing or not on the allowed list."
     remedy: "Declare an open license (e.g. Apache-2.0, CC-BY-4.0, CC0-1.0) or mark it event-approved."
+    reconsider: "The dataset's license, or written approval from the organizers."
 
   - id: META-003
     check: metadata
@@ -59,6 +63,7 @@ rules:
     verdict: BLOCKED
     reason: "The dataset declares that it contains identifiable patient data, which this event does not permit."
     remedy: "Use de-identified, synthetic, or event-approved non-sensitive data."
+    reconsider: "A de-identified version of the data, with identifiers removed."
 
   - id: META-004
     check: metadata
@@ -68,6 +73,7 @@ rules:
     verdict: INSUFFICIENT_EVIDENCE
     reason: "The dictionary does not state whether the data comes from real patients."
     remedy: "Set dataset.patient_derived to true (real, e.g. TCGA) or false (synthetic)."
+    reconsider: "A statement of whether the records come from real patients."
 
   - id: META-007
     check: metadata
@@ -77,6 +83,7 @@ rules:
     verdict: INSUFFICIENT_EVIDENCE
     reason: "The data is patient-derived but its de-identification status is not declared."
     remedy: "Set dataset.identifiable to false only if the source certifies de-identification."
+    reconsider: "Confirmation from the source that the data is de-identified."
 
   - id: META-008
     check: metadata
@@ -84,6 +91,7 @@ rules:
     verdict: BLOCKED
     reason: "The dataset is controlled or restricted access, which this event does not permit."
     remedy: "Use the open-access release provided by the organizers."
+    reconsider: "The open-access release instead."
 
   - id: META-005
     check: metadata
@@ -93,6 +101,7 @@ rules:
     verdict: INSUFFICIENT_EVIDENCE
     reason: "Dataset source or provenance is not documented."
     remedy: "Add dataset.source and dataset.provenance (how and when the data was produced)."
+    reconsider: "Where and how the data was produced."
 
   - id: META-009
     check: metadata
@@ -100,6 +109,7 @@ rules:
     verdict: INSUFFICIENT_EVIDENCE
     reason: "Source file(s) could not be verified against the release checksums: {unverified_source_files}."
     remedy: "Re-fetch the release and rebuild the table so every source file matches its pinned checksum."
+    reconsider: "Re-fetched files that match the pinned checksums."
 
   - id: META-006
     check: metadata
@@ -109,6 +119,7 @@ rules:
     verdict: CONDITIONAL
     reason: "{undocumented_column_share:.0%} of columns are not described in the dictionary (e.g. {undocumented_columns})."
     remedy: "Document every column's role and timing before modeling."
+    reconsider: "Descriptions for the undocumented columns."
 
   # ---- scope (event rule: no clinical decision-making) ---------------------------------
   - id: SCOPE-001
@@ -117,6 +128,7 @@ rules:
     verdict: BLOCKED
     reason: "The question is framed for {intended_use}, which is outside the permitted scope (no diagnosis, treatment recommendation, or patient risk score)."
     remedy: "Reframe as a research or model-development question about the cohort, not an individual patient decision."
+    reconsider: "A rewritten question about the cohort, not an individual patient."
 
   - id: SCOPE-002
     check: scope
@@ -124,6 +136,7 @@ rules:
     verdict: BLOCKED
     reason: "The question asks for an individual diagnosis, treatment choice, or patient risk score (deterministic guard)."
     remedy: "Reword it as a cohort-level research question that does not produce a result for a specific patient."
+    reconsider: "A rewritten question that produces no result for a specific patient."
 
   - id: SPEC-001
     check: spec_quality
@@ -131,6 +144,7 @@ rules:
     verdict: INSUFFICIENT_EVIDENCE
     reason: "The question could not be turned into a precise specification (confidence {parse_confidence})."
     remedy: "State the outcome, population, time horizon and intended use explicitly."
+    reconsider: "A question card with the outcome, group and intended use stated."
 
   # ---- can this dataset answer this question at all? -----------------------------------
   - id: COL-001
@@ -141,6 +155,7 @@ rules:
     verdict: BLOCKED
     reason: "The outcome the question needs is not in the dataset."
     remedy: "Use a dataset that records the outcome, or change the question."
+    reconsider: "A dataset that records the outcome."
 
   - id: COL-002
     check: columns
@@ -148,6 +163,7 @@ rules:
     verdict: BLOCKED
     reason: "Required predictor(s) are not in the dataset: {missing_features}."
     remedy: "Drop those predictors from the question or use a dataset that contains them."
+    reconsider: "A dataset with those fields, or a question that doesn't need them."
 
   - id: COL-003
     check: columns
@@ -155,6 +171,7 @@ rules:
     verdict: BLOCKED
     reason: "The target population cannot be selected because a filter column is missing."
     remedy: "Use a dataset with the attributes that define the population."
+    reconsider: "A dataset with the fields that define the group."
 
   - id: COL-004
     check: columns
@@ -162,6 +179,7 @@ rules:
     verdict: BLOCKED
     reason: "The question has a time horizon but the dataset has no follow-up time column."
     remedy: "Use a dataset with follow-up or time-to-event data."
+    reconsider: "Follow-up times for the group."
 
   - id: COH-001
     check: cohort
@@ -169,6 +187,7 @@ rules:
     verdict: BLOCKED
     reason: "No records match the target population."
     remedy: "Check the population filters."
+    reconsider: "Population conditions that match some records."
 
   # ---- completeness ----------------------------------------------------------------------
   - id: CMP-001
@@ -177,6 +196,7 @@ rules:
     verdict: BLOCKED
     reason: "The outcome is missing for {outcome_missing_rate:.0%} of the cohort."
     remedy: "Use a dataset with more complete outcome ascertainment."
+    reconsider: "Outcome data for more than half of the group."
 
   - id: CMP-002
     check: completeness
@@ -186,6 +206,7 @@ rules:
     verdict: CONDITIONAL
     reason: "The outcome is missing for {outcome_missing_rate:.0%} of the cohort."
     remedy: "Explain why outcomes are missing and analyze whether missingness is related to patient characteristics."
+    reconsider: "An explanation of why outcomes are missing, and a check that missingness is unrelated to the predictors."
 
   - id: CMP-003
     check: completeness
@@ -193,6 +214,7 @@ rules:
     verdict: BLOCKED
     reason: "Predictor '{worst_feature}' is missing for {max_feature_missing_rate:.0%} of the cohort."
     remedy: "Drop the predictor or use a more complete dataset."
+    reconsider: "A more complete version of that field, or the question without it."
 
   - id: CMP-004
     check: completeness
@@ -202,6 +224,7 @@ rules:
     verdict: CONDITIONAL
     reason: "Predictor '{worst_feature}' is missing for {max_feature_missing_rate:.0%} of the cohort."
     remedy: "Plan and document an imputation strategy, or drop the predictor."
+    reconsider: "A documented imputation plan, or the result with and without that predictor."
 
   # ---- enough signal -----------------------------------------------------------------------
   - id: EVT-001
@@ -210,6 +233,7 @@ rules:
     verdict: BLOCKED
     reason: "Only {minority_class_n} records in the smaller outcome class; too few to develop or evaluate a model."
     remedy: "Use a larger cohort or a more common outcome."
+    reconsider: "At least 20 records in the smaller outcome group."
 
   - id: EVT-002
     check: outcome_events
@@ -219,6 +243,7 @@ rules:
     verdict: CONDITIONAL
     reason: "{events_per_parameter} events per model parameter ({n_parameters} parameters); high overfitting risk."
     remedy: "Reduce predictors, use penalized models, and report validation with uncertainty."
+    reconsider: "Fewer predictors or more events, or a penalized model with validation."
 
   # ---- leakage -------------------------------------------------------------------------------
   - id: LEAK-001
@@ -227,6 +252,7 @@ rules:
     verdict: CONDITIONAL
     reason: "Predictor(s) recorded after the index date per the dictionary: {declared_post_index_features}."
     remedy: "Remove post-index predictors from the feature set."
+    reconsider: "Confirmation that the field is measured before the outcome, or the question without it."
 
   - id: LEAK-002
     check: leakage
@@ -234,6 +260,7 @@ rules:
     verdict: CONDITIONAL
     reason: "Predictor(s) separate the outcome almost perfectly on their own (max AUC {max_single_feature_auc}): {empirically_leaky_features}."
     remedy: "Confirm these are measured before the outcome; if not, remove them."
+    reconsider: "Confirmation that those fields are measured before the outcome."
 
   # ---- time horizon ----------------------------------------------------------------------------
   - id: TIME-001
@@ -242,6 +269,7 @@ rules:
     verdict: BLOCKED
     reason: "Only {horizon_coverage:.0%} of the cohort is observed through the {horizon_months:g}-month horizon."
     remedy: "Shorten the horizon or use data with longer follow-up."
+    reconsider: "Longer follow-up, or a shorter horizon."
 
   - id: TIME-002
     check: temporal
@@ -251,6 +279,7 @@ rules:
     verdict: CONDITIONAL
     reason: "Only {horizon_coverage:.0%} of the cohort is observed through the {horizon_months:g}-month horizon (median follow-up {median_follow_up_months} months)."
     remedy: "Use censoring-aware methods (survival analysis) or shorten the horizon."
+    reconsider: "A censoring-aware analysis, or a shorter horizon."
 
   - id: TIME-003
     check: temporal
@@ -258,6 +287,7 @@ rules:
     verdict: CONDITIONAL
     reason: "{n_negative_times} record(s) have a negative follow-up time, which is impossible and suggests a data-entry error."
     remedy: "Exclude or correct records with negative follow-up times and report how many."
+    reconsider: "Corrected follow-up times for those records."
 
   # ---- unit of analysis -------------------------------------------------------------------------
   - id: UNIT-001
@@ -266,6 +296,24 @@ rules:
     verdict: CONDITIONAL
     reason: "{n_patients_repeated} patient(s) appear more than once ({n_rows} rows for {n_patients} patients), so counting rows counts some people twice (e.g. {example_repeated})."
     remedy: "Choose one sample per patient (for example the primary tumor) or analyze at sample level and say so."
+    reconsider: "One sample per patient, or a stated sample-level analysis."
+
+  # ---- inconsistent records and unlikely values ------------------------------------------------
+  - id: CONS-001
+    check: consistency
+    when: [{metric: max_disagreement_rate, op: ">", value: 0.05}]
+    verdict: CONDITIONAL
+    reason: "Two sources for a field this question uses disagree: {disagreements}."
+    remedy: "Choose one source for the label, say why, and report how results change with the other."
+    reconsider: "A sensitivity analysis showing the conclusion holds under both sources."
+
+  - id: PLAUS-001
+    check: plausibility
+    when: [{metric: n_columns_out_of_range, op: ">", value: 0}]
+    verdict: CONDITIONAL
+    reason: "Implausible values in fields this question uses: {out_of_range}."
+    remedy: "Check those records against the source; exclude or correct them and report how many."
+    reconsider: "The corrected or excluded records listed, and the analysis rerun without them."
 
   # ---- representativeness (STANDING Together-inspired) -----------------------------------------
   - id: SUB-001
@@ -274,6 +322,7 @@ rules:
     verdict: INSUFFICIENT_EVIDENCE
     reason: "Subgroup attribute(s) needed to evaluate fairness are not recorded: {missing_subgroup_columns}."
     remedy: "Use a dataset that records these attributes, or justify why subgroup evaluation is not needed."
+    reconsider: "A dataset that records the attribute, or a reason subgroup evaluation isn't needed."
 
   - id: SUB-002
     check: subgroups
@@ -281,6 +330,7 @@ rules:
     verdict: CONDITIONAL
     reason: "Some subgroups are too small to evaluate model behavior reliably: {small_subgroups}."
     remedy: "Report subgroup performance with uncertainty, or obtain more data for these groups."
+    reconsider: "More records for those groups, or results reported with uncertainty."
 
   # ---- privacy and integrity -------------------------------------------------------------------
   - id: PHI-001
@@ -289,6 +339,7 @@ rules:
     verdict: BLOCKED
     reason: "Column(s) look like direct identifiers: {phi_columns}."
     remedy: "Remove identifiers (names, SSNs, contact details, full dates, sub-state geography) before evaluation."
+    reconsider: "The dataset with identifiers removed."
 
   - id: INJ-001
     check: injection
@@ -296,3 +347,4 @@ rules:
     verdict: CONDITIONAL
     reason: "Instruction-like text found in the data or dictionary at {injection_locations}. It was quarantined and had no effect on this verdict."
     remedy: "Review and clean those fields; free text in a training set can carry prompt-injection payloads."
+    reconsider: "Cleaned free-text fields, or the question without them."

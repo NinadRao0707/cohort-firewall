@@ -20,9 +20,35 @@
       "check": "leakage",
       "verdict": "CONDITIONAL",
       "reason": "Predictor(s) separate the outcome almost perfectly on their own (max AUC 0.971): ca15_3_rise_followup.",
-      "remedy": "Confirm these are measured before the outcome; if not, remove them."
+      "remedy": "Confirm these are measured before the outcome; if not, remove them.",
+      "reconsider": "Confirmation that those fields are measured before the outcome.",
+      "rule_condition": "n_empirically_leaky_features > 0 -> CONDITIONAL",
+      "measured": {
+        "n_empirically_leaky_features": 1
+      },
+      "fields_used": [
+        "recurrence_2yr",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive",
+        "ca15_3_rise_followup"
+      ],
+      "finding_id": "F1",
+      "check_performed": "Unfair shortcuts (leakage)",
+      "rows_or_groups_affected": "ca15_3_rise_followup",
+      "effect_on_intended_use": "A field recorded after the outcome lets a model cheat; it won't work on new patients. Usable for this question only after the next step is taken and reported.",
+      "materiality": "medium",
+      "confidence": "medium",
+      "evidence_or_source": "Measured n_empirically_leaky_features = 1. Rule LEAK-002 (n_empirically_leaky_features > 0 -> CONDITIONAL), policy v0.5.0, on demo_breast_cohort.",
+      "limitation": "Single-field check; strong legitimate predictors can also score high, and leakage spread across several fields can be missed.",
+      "needs_human_review": true
     }
   ],
+  "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Unfair shortcuts (leakage),recurrence_2yr; age_at_diagnosis; stage; er_status; pr_status; her2_status; tumor_size_mm; nodes_positive; ca15_3_rise_followup,ca15_3_rise_followup,[LEAK-002] Predictor(s) separate the outcome almost perfectly on their own (max AUC 0.971): ca15_3_rise_followup.,A field recorded after the outcome lets a model cheat; it won't work on new patients. Usable for this question only after the next step is taken and reported.,medium,medium,\"Measured n_empirically_leaky_features = 1. Rule LEAK-002 (n_empirically_leaky_features > 0 -> CONDITIONAL), policy v0.5.0, on demo_breast_cohort.\",\"Single-field check; strong legitimate predictors can also score high, and leakage spread across several fields can be missed.\",\"Confirm these are measured before the outcome; if not, remove them. To reconsider: Confirmation that those fields are measured before the outcome.\",yes\r\n",
   "checks": [
     {
       "check": "metadata",
@@ -41,7 +67,16 @@
         "undocumented_column_share": 0.0,
         "undocumented_columns": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "dataset.source",
+        "dataset.provenance",
+        "dataset.license",
+        "dataset.patient_derived",
+        "dataset.identifiable",
+        "dataset.access",
+        "dataset.source_files"
+      ]
     },
     {
       "check": "scope",
@@ -51,7 +86,11 @@
         "keyword_guard_hit": false,
         "intended_use": "model_development"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "question_text",
+        "intended_use"
+      ]
     },
     {
       "check": "spec_quality",
@@ -59,7 +98,10 @@
       "metrics": {
         "parse_confidence": 1.0
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "parse_confidence"
+      ]
     },
     {
       "check": "columns",
@@ -73,7 +115,21 @@
         "time_present": true,
         "n_features": 8
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "recurrence_2yr",
+        "follow_up_months",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive",
+        "ca15_3_rise_followup",
+        "cancer_type",
+        "diagnosis_year"
+      ]
     },
     {
       "check": "cohort",
@@ -82,7 +138,11 @@
         "n_total": 2400,
         "n_cohort": 2400
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "cancer_type",
+        "diagnosis_year"
+      ]
     },
     {
       "check": "completeness",
@@ -92,7 +152,18 @@
         "max_feature_missing_rate": 0.0,
         "worst_feature": "age_at_diagnosis"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive",
+        "ca15_3_rise_followup",
+        "recurrence_2yr"
+      ]
     },
     {
       "check": "outcome_events",
@@ -104,7 +175,18 @@
         "n_parameters": 10,
         "events_per_parameter": 46.9
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "recurrence_2yr",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive",
+        "ca15_3_rise_followup"
+      ]
     },
     {
       "check": "leakage",
@@ -119,7 +201,18 @@
         "max_single_feature_auc": 0.971,
         "dictionary_available": true
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "recurrence_2yr",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive",
+        "ca15_3_rise_followup"
+      ]
     },
     {
       "check": "temporal",
@@ -131,13 +224,18 @@
         "time_unit": "months",
         "n_negative_times": 0
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "follow_up_months",
+        "recurrence_2yr"
+      ]
     },
     {
       "check": "units",
       "status": "skipped",
       "metrics": {},
-      "note": "No patient identifier column declared."
+      "note": "No patient identifier column declared.",
+      "fields": []
     },
     {
       "check": "subgroups",
@@ -149,7 +247,30 @@
         "small_subgroups": [],
         "smallest_subgroup_n": 291
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "race",
+        "ethnicity"
+      ]
+    },
+    {
+      "check": "consistency",
+      "status": "skipped",
+      "metrics": {},
+      "note": "",
+      "fields": []
+    },
+    {
+      "check": "plausibility",
+      "status": "ok",
+      "metrics": {
+        "n_columns_out_of_range": 0,
+        "out_of_range": [],
+        "elsewhere": [],
+        "n_rows_out_of_range": 0
+      },
+      "note": "",
+      "fields": []
     },
     {
       "check": "phi",
@@ -158,7 +279,10 @@
         "n_phi_columns": 0,
         "phi_columns": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all columns"
+      ]
     },
     {
       "check": "injection",
@@ -167,7 +291,11 @@
         "n_injection_hits": 0,
         "injection_locations": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all text columns",
+        "dictionary descriptions"
+      ]
     }
   ],
   "spec": {
@@ -214,24 +342,24 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "b86e1219e35baac8",
+    "cert_id": "00bb9ca083488a4f",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.4.0",
-      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
+      "policy_version": "0.5.0",
+      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
       "dataset_sha256": "331839182916f8854ac8d8a5e0184a6e61ab69f0ac8b55d24a483d79f322307d",
-      "dictionary_sha256": "6fba5ce27505a409805a3d4aab453eb9b7e6dac83dd458f0c503e29e6ccfac8a",
+      "dictionary_sha256": "2d41a1cb147a2f70db24151f138a73ea001c74bb5b10aa9b758595f0c89626d8",
       "spec_sha256": "03fd1ec0cbbde8ade1f26f6bc44f0047bd5c3a9e4102bd85c7298017c4806146",
       "verdict": "CONDITIONAL",
       "rule_ids": [
         "LEAK-002"
       ],
-      "issued_at": "2026-11-12T16:26:36+00:00"
+      "issued_at": "2026-11-12T16:43:14+00:00"
     },
-    "signature": "LpwRdBjPIvJXk3umiNjUW8FxjTpK90PQr0iPDOrZU/Bc636Csc6jMzh0dDlXctFZacBG7zUZ7/XYP4j+sF4XBw==",
+    "signature": "bzzplom948fLl4DpA73KN9GWD6/bs1c0vVzTNx2XJ+sNkT3/5AOlTLaEUJhRtNahVo2lm0WPkln3WoMgVBXUBA==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.4.0"
+  "policy_version": "0.5.0"
 }

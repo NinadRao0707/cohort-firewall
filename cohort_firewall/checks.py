@@ -68,9 +68,11 @@ class CheckResult:
     status: str
     metrics: dict[str, Any] = field(default_factory=dict)
     note: str = ""
+    fields: list[str] = field(default_factory=list)   # data fields this check read
 
     def to_dict(self):
-        return {"check": self.check, "status": self.status, "metrics": self.metrics, "note": self.note}
+        return {"check": self.check, "status": self.status, "metrics": self.metrics, "note": self.note,
+                "fields": [safe_ident(f) for f in self.fields]}
 
 
 @dataclass
@@ -174,7 +176,9 @@ def check_metadata(ctx: Context) -> CheckResult:
     access = str(meta.get("access", "open")).strip().lower()
     src = meta.get("source_files") or []
     unverified = [safe_ident(f.get("file", "?")) for f in src if isinstance(f, dict) and f.get("verified") is False]
-    return CheckResult("metadata", "ok", {
+    return CheckResult("metadata", "ok", fields=["dataset.source", "dataset.provenance", "dataset.license",
+                                                 "dataset.patient_derived", "dataset.identifiable", "dataset.access",
+                                                 "dataset.source_files"], metrics={
         "n_unverified_source_files": len(unverified),
         "unverified_source_files": unverified,
         "has_dictionary": True,
@@ -192,7 +196,7 @@ def check_metadata(ctx: Context) -> CheckResult:
 
 def check_scope(ctx: Context) -> CheckResult:
     hit = _CLIN.search(ctx.spec.question_text or "")
-    return CheckResult("scope", "ok", {
+    return CheckResult("scope", "ok", fields=["question_text", "intended_use"], metrics={
         "clinical_use": ctx.spec.intended_use in CLINICAL_USES,
         "keyword_guard_hit": bool(hit),
         "intended_use": ctx.spec.intended_use,
@@ -200,7 +204,7 @@ def check_scope(ctx: Context) -> CheckResult:
 
 
 def check_spec_quality(ctx: Context) -> CheckResult:
-    return CheckResult("spec_quality", "ok", {"parse_confidence": ctx.spec.parse_confidence})
+    return CheckResult("spec_quality", "ok", {"parse_confidence": ctx.spec.parse_confidence}, fields=["parse_confidence"])
 
 
 def check_columns(ctx: Context) -> CheckResult:
@@ -209,7 +213,8 @@ def check_columns(ctx: Context) -> CheckResult:
     missing_feats = [c for c in ctx.features if c not in cols]
     missing_filters = [f.column for f in spec.population_filters if f.column not in cols]
     needs_time = spec.task_type == "survival" or spec.time_horizon_months is not None
-    return CheckResult("columns", "ok", {
+    return CheckResult("columns", "ok", fields=[c for c in [spec.outcome_column, spec.time_column] if c]
+                       + ctx.features + [f.column for f in spec.population_filters], metrics={
         "outcome_required": spec.outcome_column is not None,
         "outcome_present": spec.outcome_column in cols if spec.outcome_column else True,
         "n_missing_features": len(missing_feats),
@@ -228,7 +233,8 @@ def check_cohort(ctx: Context) -> CheckResult:
     for f in ctx.spec.population_filters:
         mask &= _apply_filter(df, f).fillna(False).astype(bool)
     ctx.cohort = df[mask]
-    return CheckResult("cohort", "ok", {"n_total": int(len(df)), "n_cohort": int(mask.sum())})
+    return CheckResult("cohort", "ok", {"n_total": int(len(df)), "n_cohort": int(mask.sum())},
+                       fields=[f.column for f in ctx.spec.population_filters])
 
 
 def check_completeness(ctx: Context) -> CheckResult:
@@ -239,7 +245,7 @@ def check_completeness(ctx: Context) -> CheckResult:
     rates = {f: float(c[f].isna().mean()) for f in present}
     worst = max(rates, key=rates.get) if rates else None
     oc = ctx.spec.outcome_column
-    return CheckResult("completeness", "ok", {
+    return CheckResult("completeness", "ok", fields=present + ([oc] if oc in c.columns else []), metrics={
         "outcome_missing_rate": round(float(c[oc].isna().mean()), 3) if oc in c.columns else None,
         "max_feature_missing_rate": round(rates[worst], 3) if worst else 0.0,
         "worst_feature": safe_ident(worst) if worst else None,
@@ -258,7 +264,7 @@ def check_outcome_events(ctx: Context) -> CheckResult:
     present = [f for f in ctx.features if f in c.columns]
     n_params = max(_n_parameters(c, present), 1)
     minority = min(events, nonevents)
-    return CheckResult("outcome_events", "ok", {
+    return CheckResult("outcome_events", "ok", fields=[spec.outcome_column] + present, metrics={
         "n_events": events, "n_nonevents": nonevents, "minority_class_n": minority,
         "n_parameters": n_params, "events_per_parameter": round(minority / n_params, 2),
     })
@@ -282,7 +288,7 @@ def check_leakage(ctx: Context) -> CheckResult:
                 aucs[f] = a
     leaky = sorted([f for f, a in aucs.items() if a >= thr], key=lambda f: -aucs[f])
     top = max(aucs, key=aucs.get) if aucs else None
-    return CheckResult("leakage", "ok", {
+    return CheckResult("leakage", "ok", fields=[spec.outcome_column] + [f for f in ctx.features if f in c.columns], metrics={
         "n_declared_post_index_features": len(declared),
         "declared_post_index_features": [safe_ident(f) for f in declared],
         "n_empirically_leaky_features": len(leaky),
@@ -309,7 +315,7 @@ def check_temporal(ctx: Context) -> CheckResult:
     if spec.outcome_column in c.columns:
         y = _binary_outcome(ctx, c).fillna(False).astype(bool)
         observed |= y & (t < spec.time_horizon_months)
-    return CheckResult("temporal", "ok", {
+    return CheckResult("temporal", "ok", fields=[spec.time_column] + ([spec.outcome_column] if spec.outcome_column else []), metrics={
         "horizon_months": spec.time_horizon_months,
         "horizon_coverage": round(float(observed.mean()), 3) if len(c) else 0.0,
         "median_follow_up_months": round(float(t.median()), 1) if len(c) and t.notna().any() else None,
@@ -326,7 +332,7 @@ def check_units(ctx: Context) -> CheckResult:
         return CheckResult("units", "skipped", note="No patient identifier column declared.")
     n_rows, n_pat = int(len(c)), int(c[pid].nunique())
     dup = c[pid][c[pid].duplicated(keep=False)]
-    return CheckResult("units", "ok", {
+    return CheckResult("units", "ok", fields=[pid], metrics={
         "n_rows": n_rows, "n_patients": n_pat, "n_patients_repeated": int(dup.nunique()),
         "example_repeated": [safe_ident(x) for x in dup.drop_duplicates().head(5)],
     })
@@ -350,7 +356,7 @@ def check_subgroups(ctx: Context) -> CheckResult:
                 small.append(f"{safe_ident(s)}={safe_ident(cat)} (n={int(n)})")
             if smallest is None or n < smallest:
                 smallest = int(n)
-    return CheckResult("subgroups", "ok", {
+    return CheckResult("subgroups", "ok", fields=list(spec.subgroup_columns), metrics={
         "n_missing_subgroup_columns": len(missing),
         "missing_subgroup_columns": [safe_ident(s) for s in missing],
         "n_small_subgroups": len(small), "small_subgroups": small[:10],
@@ -378,7 +384,7 @@ def check_phi(ctx: Context) -> CheckResult:
     why = {"column_name": "flagged by its name", "ssn": "values look like SSNs",
            "phone": "values look like phone numbers", "email": "values look like email addresses",
            "full_date": "values look like full dates", "zip5": "values look like ZIP codes"}
-    return CheckResult("phi", "ok", {
+    return CheckResult("phi", "ok", fields=list(hits) or ["all columns"], metrics={
         "n_phi_columns": len(hits),
         "phi_columns": [f"{safe_ident(c)} ({why.get(k, k)})" for c, k in hits.items()],
     })
@@ -401,15 +407,109 @@ def check_injection(ctx: Context) -> CheckResult:
     if any(looks_like_injection(str(v)) for v in meta.values()):
         locations.append("dictionary:dataset_metadata")
     # Note: only locations are reported. Flagged text is never echoed downstream.
-    return CheckResult("injection", "ok", {
+    return CheckResult("injection", "ok", fields=["all text columns", "dictionary descriptions"], metrics={
         "n_injection_hits": len(locations), "injection_locations": locations[:10],
+    })
+
+
+def _used_columns(ctx: Context) -> set[str]:
+    sp = ctx.spec
+    return set(ctx.features) | set(sp.subgroup_columns) | {f.column for f in sp.population_filters} | \
+        {c for c in (sp.outcome_column, sp.time_column) if c}
+
+
+_PAM50 = {"luma": "luma", "luminala": "luma", "lumb": "lumb", "luminalb": "lumb", "basal": "basal",
+          "basallike": "basal", "her2": "her2", "her2enriched": "her2", "normal": "normal", "normallike": "normal"}
+
+
+def _norm(v, how: str | None, mapping: dict | None):
+    if v is None or (isinstance(v, float) and np.isnan(v)) or (isinstance(v, str) and v.strip() in MISSING_TEXT):
+        return None
+    if mapping is not None:
+        return mapping.get(str(v), mapping.get(str(v).strip()))
+    t = re.sub(r"[^a-z0-9]", "", str(v).lower())
+    if how == "pam50":
+        return _PAM50.get(t, t)
+    try:
+        return str(float(v)) if re.fullmatch(r"-?\d+(\.\d+)?", str(v).strip()) else t
+    except ValueError:
+        return t
+
+
+MISSING_TEXT = {"", "NA", "nan", "[Not Available]", "[Not Evaluated]", "[Unknown]", "Unknown"}
+
+
+def check_consistency(ctx: Context) -> CheckResult:
+    """Inconsistent records: two sources for the same fact that disagree (declared in the dictionary
+    as dataset.consistency_pairs). Pairs the question doesn't use are reported as notes only."""
+    pairs = ((ctx.dictionary or {}).get("dataset", {}) or {}).get("consistency_pairs") or []
+    c = ctx.cohort
+    if not pairs or c is None:
+        return CheckResult("consistency", "skipped")
+    used = _used_columns(ctx)
+    relevant, elsewhere, unmatched, fields = [], [], [], []
+    for p in pairs:
+        a, b = p.get("a"), p.get("b")
+        if a not in c.columns or b not in c.columns:
+            continue
+        mapping = p.get("map")
+        na = c[a].map(lambda v: _norm(v, p.get("normalize"), mapping))
+        nb = c[b].map(lambda v: _norm(v, p.get("normalize"), None))
+        both = na.notna() & nb.notna()
+        va, vb = set(na[both]), set(nb[both])
+        if both.sum() == 0 or len(va & vb) < 0.5 * min(len(va), len(vb)):
+            unmatched.append(safe_ident(p.get("label", f"{a} vs {b}"), 90))
+            continue
+        n_dis = int((na[both] != nb[both]).sum())
+        item = {"label": p.get("label", f"{a} vs {b}"), "a": a, "b": b, "n_compared": int(both.sum()),
+                "n_disagree": n_dis, "rate": round(n_dis / int(both.sum()), 3)}
+        (relevant if (a in used or b in used) else elsewhere).append(item)
+        if a in used or b in used:
+            fields += [a, b]
+    worst = max(relevant, key=lambda x: x["rate"]) if relevant else None
+    return CheckResult("consistency", "ok", fields=fields, metrics={
+        "n_pairs_relevant": len(relevant),
+        "max_disagreement_rate": worst["rate"] if worst else 0.0,
+        "disagreements": [f"{safe_ident(x['label'], 90)}: {x['n_disagree']} of {x['n_compared']} ({x['rate']:.0%})"
+                          for x in sorted(relevant, key=lambda x: -x["rate"])],
+        "n_rows_disagreeing": worst["n_disagree"] if worst else 0,
+        "elsewhere": [f"{safe_ident(x['label'], 90)}: {x['n_disagree']} of {x['n_compared']} ({x['rate']:.0%})"
+                      for x in elsewhere if x["n_disagree"]],
+        "unmatched_vocabularies": unmatched,
+    })
+
+
+def check_plausibility(ctx: Context) -> CheckResult:
+    """Unlikely values: numbers outside the range the dictionary declares possible (valid_range).
+    The follow-up time column is left to the temporal check, so one problem isn't reported twice."""
+    c = ctx.cohort
+    ranged = {n: m["valid_range"] for n, m in ctx.coldefs.items() if isinstance(m.get("valid_range"), list)}
+    if c is None or not ranged:
+        return CheckResult("plausibility", "skipped")
+    used = _used_columns(ctx) - {ctx.spec.time_column}
+    hits, elsewhere, fields = [], [], []
+    for name, (lo, hi) in ranged.items():
+        if name not in c.columns:
+            continue
+        v = pd.to_numeric(c[name], errors="coerce")
+        bad = ((v < lo) | (v > hi)) & v.notna()
+        if not bad.any():
+            continue
+        item = f"{safe_ident(name)}: {int(bad.sum())} value(s) outside {lo} to {hi} (e.g. {v[bad].iloc[0]:g})"
+        if name in used:
+            hits.append(item); fields.append(name)
+        else:
+            elsewhere.append(item)
+    return CheckResult("plausibility", "ok", fields=fields, metrics={
+        "n_columns_out_of_range": len(hits), "out_of_range": hits, "elsewhere": elsewhere,
+        "n_rows_out_of_range": sum(int(h.split(": ")[1].split(" ")[0]) for h in hits),
     })
 
 
 ALL_CHECKS = [
     check_metadata, check_scope, check_spec_quality, check_columns, check_cohort,
     check_completeness, check_outcome_events, check_leakage, check_temporal,
-    check_units, check_subgroups, check_phi, check_injection,
+    check_units, check_subgroups, check_consistency, check_plausibility, check_phi, check_injection,
 ]
 
 

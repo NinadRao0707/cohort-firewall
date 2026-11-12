@@ -5,7 +5,7 @@ passes through here before it can reach the LLM report writer or the UI.
 """
 import re
 
-_SAFE_IDENT = re.compile(r"[^A-Za-z0-9_\-.,()%+ ]")
+_SAFE_IDENT = re.compile(r"[^A-Za-z0-9_\-.,()%+: ]")
 
 # Phrases that suggest a cell or description is trying to talk to a model or reviewer.
 INJECTION_PATTERNS = [

@@ -20,23 +20,87 @@
       "check": "outcome_events",
       "verdict": "BLOCKED",
       "reason": "Only 17 records in the smaller outcome class; too few to develop or evaluate a model.",
-      "remedy": "Use a larger cohort or a more common outcome."
+      "remedy": "Use a larger cohort or a more common outcome.",
+      "reconsider": "At least 20 records in the smaller outcome group.",
+      "rule_condition": "minority_class_n < 20 -> BLOCKED",
+      "measured": {
+        "minority_class_n": 17
+      },
+      "fields_used": [
+        "death_event",
+        "age_at_diagnosis",
+        "stage_group",
+        "er_status",
+        "pr_status",
+        "her2_ihc",
+        "tumor_size"
+      ],
+      "finding_id": "F1",
+      "check_performed": "Enough outcome events",
+      "rows_or_groups_affected": "17 events, 140 non-events",
+      "effect_on_intended_use": "Too few events make estimates unstable and models overfit. The data can't support this question as asked.",
+      "materiality": "high",
+      "confidence": "high",
+      "evidence_or_source": "Measured minority_class_n = 17. Rule EVT-001 (minority_class_n < 20 -> BLOCKED), policy v0.5.0, on synthea_breast_cohort.",
+      "limitation": "10 events per model parameter is a rule of thumb, not a sample-size calculation.",
+      "needs_human_review": true
     },
     {
       "rule_id": "CMP-004",
       "check": "completeness",
       "verdict": "CONDITIONAL",
       "reason": "Predictor 'tumor_size' is missing for 26% of the cohort.",
-      "remedy": "Plan and document an imputation strategy, or drop the predictor."
+      "remedy": "Plan and document an imputation strategy, or drop the predictor.",
+      "reconsider": "A documented imputation plan, or the result with and without that predictor.",
+      "rule_condition": "max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL",
+      "measured": {
+        "max_feature_missing_rate": 0.261
+      },
+      "fields_used": [
+        "age_at_diagnosis",
+        "stage_group",
+        "er_status",
+        "pr_status",
+        "her2_ihc",
+        "tumor_size",
+        "death_event"
+      ],
+      "finding_id": "F2",
+      "check_performed": "Missing values",
+      "rows_or_groups_affected": "about 41 of 157 records",
+      "effect_on_intended_use": "Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.",
+      "materiality": "medium",
+      "confidence": "high",
+      "evidence_or_source": "Measured max_feature_missing_rate = 0.261. Rule CMP-004 (max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.",
+      "limitation": "Counts missing values; it can't tell why they are missing.",
+      "needs_human_review": true
     },
     {
       "rule_id": "SUB-002",
       "check": "subgroups",
       "verdict": "CONDITIONAL",
       "reason": "Some subgroups are too small to evaluate model behavior reliably: race=black (n=12), race=asian (n=10), race=other (n=5), race=hawaiian (n=2), race=native (n=1).",
-      "remedy": "Report subgroup performance with uncertainty, or obtain more data for these groups."
+      "remedy": "Report subgroup performance with uncertainty, or obtain more data for these groups.",
+      "reconsider": "More records for those groups, or results reported with uncertainty.",
+      "rule_condition": "n_small_subgroups > 0 -> CONDITIONAL",
+      "measured": {
+        "n_small_subgroups": 5
+      },
+      "fields_used": [
+        "race"
+      ],
+      "finding_id": "F3",
+      "check_performed": "Subgroup coverage (bias)",
+      "rows_or_groups_affected": "race=black (n=12); race=asian (n=10); race=other (n=5); race=hawaiian (n=2); race=native (n=1)",
+      "effect_on_intended_use": "With few patients in a group, the model's behaviour in that group can't be judged. Usable for this question only after the next step is taken and reported.",
+      "materiality": "medium",
+      "confidence": "high",
+      "evidence_or_source": "Measured n_small_subgroups = 5. Rule SUB-002 (n_small_subgroups > 0 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.",
+      "limitation": "Minimum counts only; no comparison with a reference population.",
+      "needs_human_review": true
     }
   ],
+  "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Enough outcome events,death_event; age_at_diagnosis; stage_group; er_status; pr_status; her2_ihc; tumor_size,\"17 events, 140 non-events\",[EVT-001] Only 17 records in the smaller outcome class; too few to develop or evaluate a model.,Too few events make estimates unstable and models overfit. The data can't support this question as asked.,high,high,\"Measured minority_class_n = 17. Rule EVT-001 (minority_class_n < 20 -> BLOCKED), policy v0.5.0, on synthea_breast_cohort.\",\"10 events per model parameter is a rule of thumb, not a sample-size calculation.\",Use a larger cohort or a more common outcome. To reconsider: At least 20 records in the smaller outcome group.,yes\r\nF2,Missing values,age_at_diagnosis; stage_group; er_status; pr_status; her2_ihc; tumor_size; death_event,about 41 of 157 records,[CMP-004] Predictor 'tumor_size' is missing for 26% of the cohort.,Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured max_feature_missing_rate = 0.261. Rule CMP-004 (max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.\",Counts missing values; it can't tell why they are missing.,\"Plan and document an imputation strategy, or drop the predictor. To reconsider: A documented imputation plan, or the result with and without that predictor.\",yes\r\nF3,Subgroup coverage (bias),race,race=black (n=12); race=asian (n=10); race=other (n=5); race=hawaiian (n=2); race=native (n=1),\"[SUB-002] Some subgroups are too small to evaluate model behavior reliably: race=black (n=12), race=asian (n=10), race=other (n=5), race=hawaiian (n=2), race=native (n=1).\",\"With few patients in a group, the model's behaviour in that group can't be judged. Usable for this question only after the next step is taken and reported.\",medium,high,\"Measured n_small_subgroups = 5. Rule SUB-002 (n_small_subgroups > 0 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.\",Minimum counts only; no comparison with a reference population.,\"Report subgroup performance with uncertainty, or obtain more data for these groups. To reconsider: More records for those groups, or results reported with uncertainty.\",yes\r\n",
   "checks": [
     {
       "check": "metadata",
@@ -55,7 +119,16 @@
         "undocumented_column_share": 0.0,
         "undocumented_columns": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "dataset.source",
+        "dataset.provenance",
+        "dataset.license",
+        "dataset.patient_derived",
+        "dataset.identifiable",
+        "dataset.access",
+        "dataset.source_files"
+      ]
     },
     {
       "check": "scope",
@@ -65,7 +138,11 @@
         "keyword_guard_hit": false,
         "intended_use": "research"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "question_text",
+        "intended_use"
+      ]
     },
     {
       "check": "spec_quality",
@@ -73,7 +150,10 @@
       "metrics": {
         "parse_confidence": 1.0
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "parse_confidence"
+      ]
     },
     {
       "check": "columns",
@@ -87,7 +167,19 @@
         "time_present": true,
         "n_features": 6
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "death_event",
+        "follow_up_months",
+        "age_at_diagnosis",
+        "stage_group",
+        "er_status",
+        "pr_status",
+        "her2_ihc",
+        "tumor_size",
+        "cancer_type",
+        "diagnosis_year"
+      ]
     },
     {
       "check": "cohort",
@@ -96,7 +188,11 @@
         "n_total": 302,
         "n_cohort": 157
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "cancer_type",
+        "diagnosis_year"
+      ]
     },
     {
       "check": "completeness",
@@ -106,7 +202,16 @@
         "max_feature_missing_rate": 0.261,
         "worst_feature": "tumor_size"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "age_at_diagnosis",
+        "stage_group",
+        "er_status",
+        "pr_status",
+        "her2_ihc",
+        "tumor_size",
+        "death_event"
+      ]
     },
     {
       "check": "outcome_events",
@@ -118,7 +223,16 @@
         "n_parameters": 8,
         "events_per_parameter": 2.12
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "death_event",
+        "age_at_diagnosis",
+        "stage_group",
+        "er_status",
+        "pr_status",
+        "her2_ihc",
+        "tumor_size"
+      ]
     },
     {
       "check": "leakage",
@@ -131,7 +245,16 @@
         "max_single_feature_auc": 0.868,
         "dictionary_available": true
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "death_event",
+        "age_at_diagnosis",
+        "stage_group",
+        "er_status",
+        "pr_status",
+        "her2_ihc",
+        "tumor_size"
+      ]
     },
     {
       "check": "temporal",
@@ -143,13 +266,18 @@
         "time_unit": "months",
         "n_negative_times": 0
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "follow_up_months",
+        "death_event"
+      ]
     },
     {
       "check": "units",
       "status": "skipped",
       "metrics": {},
-      "note": "No patient identifier column declared."
+      "note": "No patient identifier column declared.",
+      "fields": []
     },
     {
       "check": "subgroups",
@@ -167,7 +295,24 @@
         ],
         "smallest_subgroup_n": 1
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "race"
+      ]
+    },
+    {
+      "check": "consistency",
+      "status": "skipped",
+      "metrics": {},
+      "note": "",
+      "fields": []
+    },
+    {
+      "check": "plausibility",
+      "status": "skipped",
+      "metrics": {},
+      "note": "",
+      "fields": []
     },
     {
       "check": "phi",
@@ -176,7 +321,10 @@
         "n_phi_columns": 0,
         "phi_columns": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all columns"
+      ]
     },
     {
       "check": "injection",
@@ -185,7 +333,11 @@
         "n_injection_hits": 0,
         "injection_locations": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all text columns",
+        "dictionary descriptions"
+      ]
     }
   ],
   "spec": {
@@ -229,12 +381,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "2cc5ad3ecc942eba",
+    "cert_id": "ca3e156110c3e0d4",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.4.0",
-      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
+      "policy_version": "0.5.0",
+      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
       "dataset_sha256": "36c4dd46760187e50e27ea25869566a09c8d6fd515e3a1d9f5975ccf64c751dc",
       "dictionary_sha256": "ffb6df259cfc22476a238af54dafa149c97d967140018c814cbbbdd29925a0fa",
       "spec_sha256": "a66507caa19364935f8c9a6aedb5c260877a976e6597378eab8c2346883ebc46",
@@ -244,11 +396,11 @@
         "EVT-001",
         "SUB-002"
       ],
-      "issued_at": "2026-11-12T16:26:47+00:00"
+      "issued_at": "2026-11-12T16:43:25+00:00"
     },
-    "signature": "V8naXpAmxP0STzYyOi08mwBrWwLW4LqC8Cta57oGmZTXUfG7gqid+6A86Wt15q4FuQLiE1Q2wpP3+9ehmFvpAg==",
+    "signature": "dNifggJ4cbEYfO35WjGZIOFi2/uMzVaxC9sM5QE1Ay87tV/6QFTXXwXZk0qdZSdLqzfjQL+MXlb+if7dmoiQBw==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.4.0"
+  "policy_version": "0.5.0"
 }

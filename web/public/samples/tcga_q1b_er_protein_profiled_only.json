@@ -7,7 +7,9 @@
   "accepted_limitations": [],
   "ignored_acceptances": [],
   "notes": [
-    "3 placeholder value(s) such as 'NA' or '[Not Available]' were treated as missing (columns: pathologic_stage)."
+    "3 placeholder value(s) such as 'NA' or '[Not Available]' were treated as missing (columns: pathologic_stage).",
+    "Not used by this question, but noticed: PAM50 subtype: RNA-seq call vs 2012 microarray call: 39 of 392 (10%).",
+    "Not used by this question, but noticed: days_to_last_followup: 1 value(s) outside 0 to 12000 (e.g. -31)."
   ],
   "limitations": [
     "This is a research data-readiness screen. It is not a clinical tool and makes no claim of clinical validity, regulatory compliance, or production readiness.",
@@ -17,6 +19,7 @@
     "Subgroup coverage uses minimum counts and does not compare against a reference population."
   ],
   "findings": [],
+  "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\n",
   "checks": [
     {
       "check": "metadata",
@@ -35,7 +38,16 @@
         "undocumented_column_share": 0.0,
         "undocumented_columns": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "dataset.source",
+        "dataset.provenance",
+        "dataset.license",
+        "dataset.patient_derived",
+        "dataset.identifiable",
+        "dataset.access",
+        "dataset.source_files"
+      ]
     },
     {
       "check": "scope",
@@ -45,7 +57,11 @@
         "keyword_guard_hit": false,
         "intended_use": "research"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "question_text",
+        "intended_use"
+      ]
     },
     {
       "check": "spec_quality",
@@ -53,7 +69,10 @@
       "metrics": {
         "parse_confidence": 1.0
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "parse_confidence"
+      ]
     },
     {
       "check": "columns",
@@ -67,7 +86,14 @@
         "time_present": true,
         "n_features": 2
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "er_status",
+        "er_alpha_rppa",
+        "sample_type",
+        "er_status",
+        "has_protein"
+      ]
     },
     {
       "check": "cohort",
@@ -76,7 +102,12 @@
         "n_total": 1247,
         "n_cohort": 698
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "sample_type",
+        "er_status",
+        "has_protein"
+      ]
     },
     {
       "check": "completeness",
@@ -86,25 +117,32 @@
         "max_feature_missing_rate": 0.0,
         "worst_feature": "er_status"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "er_status",
+        "er_alpha_rppa"
+      ]
     },
     {
       "check": "outcome_events",
       "status": "skipped",
       "metrics": {},
-      "note": ""
+      "note": "",
+      "fields": []
     },
     {
       "check": "leakage",
       "status": "skipped",
       "metrics": {},
-      "note": ""
+      "note": "",
+      "fields": []
     },
     {
       "check": "temporal",
       "status": "skipped",
       "metrics": {},
-      "note": ""
+      "note": "",
+      "fields": []
     },
     {
       "check": "units",
@@ -115,7 +153,10 @@
         "n_patients_repeated": 0,
         "example_repeated": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "patient_id"
+      ]
     },
     {
       "check": "subgroups",
@@ -127,7 +168,45 @@
         "small_subgroups": [],
         "smallest_subgroup_n": 169
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "er_status"
+      ]
+    },
+    {
+      "check": "consistency",
+      "status": "ok",
+      "metrics": {
+        "n_pairs_relevant": 1,
+        "max_disagreement_rate": 0.0,
+        "disagreements": [
+          "ER status: clinical file vs 2012 paper: 0 of 631 (0%)"
+        ],
+        "n_rows_disagreeing": 0,
+        "elsewhere": [
+          "PAM50 subtype: RNA-seq call vs 2012 microarray call: 39 of 392 (10%)"
+        ],
+        "unmatched_vocabularies": []
+      },
+      "note": "",
+      "fields": [
+        "er_status",
+        "er_status_nature2012"
+      ]
+    },
+    {
+      "check": "plausibility",
+      "status": "ok",
+      "metrics": {
+        "n_columns_out_of_range": 0,
+        "out_of_range": [],
+        "elsewhere": [
+          "days_to_last_followup: 1 value(s) outside 0 to 12000 (e.g. -31)"
+        ],
+        "n_rows_out_of_range": 0
+      },
+      "note": "",
+      "fields": []
     },
     {
       "check": "phi",
@@ -136,7 +215,10 @@
         "n_phi_columns": 0,
         "phi_columns": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all columns"
+      ]
     },
     {
       "check": "injection",
@@ -145,7 +227,11 @@
         "n_injection_hits": 0,
         "injection_locations": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all text columns",
+        "dictionary descriptions"
+      ]
     }
   ],
   "spec": {
@@ -193,22 +279,22 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "06903796efe273e1",
+    "cert_id": "2a0a1ce34b15e4de",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.4.0",
-      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
-      "dataset_sha256": "a9f1d42f34bf97ff1732f8b09f8d85b16f3e0b44f37313ffef7c015b20d0116f",
-      "dictionary_sha256": "deae70759cf656277cb2c0ff7f717f6d885cdd8b8ee6c1ed774fb62d695a4df3",
+      "policy_version": "0.5.0",
+      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
+      "dataset_sha256": "d0c44cc4fca5e160f4cc855a9731173c78990b7935304ead70d09e64190812fa",
+      "dictionary_sha256": "adb6b17fbed5e5e3261844460c25a6fb9e43b0df404841d85dac0556b21964f3",
       "spec_sha256": "ce381e96d79a7541db2bdc2316538efb55debde26e6d6da1d4eecbc148c5a810",
       "verdict": "READY",
       "rule_ids": [],
-      "issued_at": "2026-11-12T16:26:36+00:00"
+      "issued_at": "2026-11-12T16:43:14+00:00"
     },
-    "signature": "rWpnM6Dc6IdyW9k8z1nJGu33IQWXV0uHnZXntM5XoA7YJA6TCp/kth8Zr/LV3Bs7yWVsIB1UQZFzeOcGZJb0Bg==",
+    "signature": "ExT1U3ozEp90VeEP3WM5VnA0VWVHvgxKWB0yHPo8Dg7+VKiLKirOF7R2G98F1cR1rUdkSawirMTcD/TVWpAEAA==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.4.0"
+  "policy_version": "0.5.0"
 }

@@ -15,6 +15,7 @@
     "Subgroup coverage uses minimum counts and does not compare against a reference population."
   ],
   "findings": [],
+  "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\n",
   "checks": [
     {
       "check": "metadata",
@@ -33,7 +34,16 @@
         "undocumented_column_share": 0.0,
         "undocumented_columns": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "dataset.source",
+        "dataset.provenance",
+        "dataset.license",
+        "dataset.patient_derived",
+        "dataset.identifiable",
+        "dataset.access",
+        "dataset.source_files"
+      ]
     },
     {
       "check": "scope",
@@ -43,7 +53,11 @@
         "keyword_guard_hit": false,
         "intended_use": "model_development"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "question_text",
+        "intended_use"
+      ]
     },
     {
       "check": "spec_quality",
@@ -51,7 +65,10 @@
       "metrics": {
         "parse_confidence": 1.0
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "parse_confidence"
+      ]
     },
     {
       "check": "columns",
@@ -65,7 +82,20 @@
         "time_present": true,
         "n_features": 7
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "recurrence_2yr",
+        "follow_up_months",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive",
+        "cancer_type",
+        "diagnosis_year"
+      ]
     },
     {
       "check": "cohort",
@@ -74,7 +104,11 @@
         "n_total": 2400,
         "n_cohort": 2400
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "cancer_type",
+        "diagnosis_year"
+      ]
     },
     {
       "check": "completeness",
@@ -84,7 +118,17 @@
         "max_feature_missing_rate": 0.0,
         "worst_feature": "age_at_diagnosis"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive",
+        "recurrence_2yr"
+      ]
     },
     {
       "check": "outcome_events",
@@ -96,7 +140,17 @@
         "n_parameters": 9,
         "events_per_parameter": 52.11
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "recurrence_2yr",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive"
+      ]
     },
     {
       "check": "leakage",
@@ -109,7 +163,17 @@
         "max_single_feature_auc": 0.698,
         "dictionary_available": true
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "recurrence_2yr",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive"
+      ]
     },
     {
       "check": "temporal",
@@ -121,13 +185,18 @@
         "time_unit": "months",
         "n_negative_times": 0
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "follow_up_months",
+        "recurrence_2yr"
+      ]
     },
     {
       "check": "units",
       "status": "skipped",
       "metrics": {},
-      "note": "No patient identifier column declared."
+      "note": "No patient identifier column declared.",
+      "fields": []
     },
     {
       "check": "subgroups",
@@ -139,7 +208,30 @@
         "small_subgroups": [],
         "smallest_subgroup_n": 291
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "race",
+        "ethnicity"
+      ]
+    },
+    {
+      "check": "consistency",
+      "status": "skipped",
+      "metrics": {},
+      "note": "",
+      "fields": []
+    },
+    {
+      "check": "plausibility",
+      "status": "ok",
+      "metrics": {
+        "n_columns_out_of_range": 0,
+        "out_of_range": [],
+        "elsewhere": [],
+        "n_rows_out_of_range": 0
+      },
+      "note": "",
+      "fields": []
     },
     {
       "check": "phi",
@@ -148,7 +240,10 @@
         "n_phi_columns": 0,
         "phi_columns": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all columns"
+      ]
     },
     {
       "check": "injection",
@@ -157,7 +252,11 @@
         "n_injection_hits": 0,
         "injection_locations": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all text columns",
+        "dictionary descriptions"
+      ]
     }
   ],
   "spec": {
@@ -203,22 +302,22 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "bafe1ec09f4e8d44",
+    "cert_id": "7e5e67631f2f9b72",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.4.0",
-      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
+      "policy_version": "0.5.0",
+      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
       "dataset_sha256": "31275bc4e6681487c7e17cd7939b7e5d1dd855d369321a7e890bb19b6b037e32",
-      "dictionary_sha256": "18974ae121fbb69ea7c0047c1e86d3d931b86ef025d219e6466a0cc07208754f",
+      "dictionary_sha256": "c02c9a8546824f97ab9b4101d03b77945bf02c43b431ee06569b7172f99c3dad",
       "spec_sha256": "843d4731ec71bef6469c594caf0270965ec21dab11db52fa14373ace058b3e95",
       "verdict": "READY",
       "rule_ids": [],
-      "issued_at": "2026-11-12T16:26:36+00:00"
+      "issued_at": "2026-11-12T16:43:14+00:00"
     },
-    "signature": "FF6y5yho6V98vqgXLSoYC3fQL4fEcl9Rh/xKrKLJf8tvtg+TVo3Dr6W/bPu3GYUHnmQ8jbry+cV2WCgFBhmRAA==",
+    "signature": "wkZ7ofBaV4I1/DXVBbXuqJZWHeQMgt0I3X/87bN+YmpEeYPHnyCrV7BTmvNaQk399SUHcH8CL3hUTgAe+fq/BQ==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.4.0"
+  "policy_version": "0.5.0"
 }

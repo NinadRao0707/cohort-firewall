@@ -11,6 +11,8 @@ const NAMES: Record<string, string> = {
   leakage: "Outcome leakage",
   temporal: "Follow-up length",
   units: "Patients counted once",
+  consistency: "Records agree across sources",
+  plausibility: "Plausible values",
   subgroups: "Subgroup coverage",
   phi: "Direct identifiers",
   injection: "Embedded instructions",

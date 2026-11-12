@@ -31,7 +31,11 @@
       "type": "numeric",
       "role": "demographic",
       "timing": "baseline",
-      "description": "Age in years at diagnosis"
+      "description": "Age in years at diagnosis",
+      "valid_range": [
+        18,
+        105
+      ]
     },
     "sex": {
       "type": "categorical",
@@ -79,13 +83,21 @@
       "type": "numeric",
       "role": "feature",
       "timing": "baseline",
-      "description": "Tumor size at diagnosis (mm)"
+      "description": "Tumor size at diagnosis (mm)",
+      "valid_range": [
+        0,
+        250
+      ]
     },
     "nodes_positive": {
       "type": "numeric",
       "role": "feature",
       "timing": "baseline",
-      "description": "Positive lymph nodes at diagnosis"
+      "description": "Positive lymph nodes at diagnosis",
+      "valid_range": [
+        0,
+        60
+      ]
     },
     "surgery": {
       "type": "binary",

@@ -20,16 +20,57 @@
       "check": "completeness",
       "verdict": "CONDITIONAL",
       "reason": "Predictor 'tumor_size' is missing for 27% of the cohort.",
-      "remedy": "Plan and document an imputation strategy, or drop the predictor."
+      "remedy": "Plan and document an imputation strategy, or drop the predictor.",
+      "reconsider": "A documented imputation plan, or the result with and without that predictor.",
+      "rule_condition": "max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL",
+      "measured": {
+        "max_feature_missing_rate": 0.271
+      },
+      "fields_used": [
+        "age_at_diagnosis",
+        "stage_group",
+        "er_status",
+        "pr_status",
+        "her2_ihc",
+        "tumor_size",
+        "death_event"
+      ],
+      "finding_id": "F1",
+      "check_performed": "Missing values",
+      "rows_or_groups_affected": "about 309 of 1142 records",
+      "effect_on_intended_use": "Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.",
+      "materiality": "medium",
+      "confidence": "high",
+      "evidence_or_source": "Measured max_feature_missing_rate = 0.271. Rule CMP-004 (max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.",
+      "limitation": "Counts missing values; it can't tell why they are missing.",
+      "needs_human_review": true
     },
     {
       "rule_id": "SUB-002",
       "check": "subgroups",
       "verdict": "CONDITIONAL",
       "reason": "Some subgroups are too small to evaluate model behavior reliably: race=hawaiian (n=13), race=other (n=13), race=native (n=2).",
-      "remedy": "Report subgroup performance with uncertainty, or obtain more data for these groups."
+      "remedy": "Report subgroup performance with uncertainty, or obtain more data for these groups.",
+      "reconsider": "More records for those groups, or results reported with uncertainty.",
+      "rule_condition": "n_small_subgroups > 0 -> CONDITIONAL",
+      "measured": {
+        "n_small_subgroups": 3
+      },
+      "fields_used": [
+        "race"
+      ],
+      "finding_id": "F2",
+      "check_performed": "Subgroup coverage (bias)",
+      "rows_or_groups_affected": "race=hawaiian (n=13); race=other (n=13); race=native (n=2)",
+      "effect_on_intended_use": "With few patients in a group, the model's behaviour in that group can't be judged. Usable for this question only after the next step is taken and reported.",
+      "materiality": "medium",
+      "confidence": "high",
+      "evidence_or_source": "Measured n_small_subgroups = 3. Rule SUB-002 (n_small_subgroups > 0 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.",
+      "limitation": "Minimum counts only; no comparison with a reference population.",
+      "needs_human_review": true
     }
   ],
+  "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Missing values,age_at_diagnosis; stage_group; er_status; pr_status; her2_ihc; tumor_size; death_event,about 309 of 1142 records,[CMP-004] Predictor 'tumor_size' is missing for 27% of the cohort.,Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured max_feature_missing_rate = 0.271. Rule CMP-004 (max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.\",Counts missing values; it can't tell why they are missing.,\"Plan and document an imputation strategy, or drop the predictor. To reconsider: A documented imputation plan, or the result with and without that predictor.\",yes\r\nF2,Subgroup coverage (bias),race,race=hawaiian (n=13); race=other (n=13); race=native (n=2),\"[SUB-002] Some subgroups are too small to evaluate model behavior reliably: race=hawaiian (n=13), race=other (n=13), race=native (n=2).\",\"With few patients in a group, the model's behaviour in that group can't be judged. Usable for this question only after the next step is taken and reported.\",medium,high,\"Measured n_small_subgroups = 3. Rule SUB-002 (n_small_subgroups > 0 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.\",Minimum counts only; no comparison with a reference population.,\"Report subgroup performance with uncertainty, or obtain more data for these groups. To reconsider: More records for those groups, or results reported with uncertainty.\",yes\r\n",
   "checks": [
     {
       "check": "metadata",
@@ -48,7 +89,16 @@
         "undocumented_column_share": 0.0,
         "undocumented_columns": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "dataset.source",
+        "dataset.provenance",
+        "dataset.license",
+        "dataset.patient_derived",
+        "dataset.identifiable",
+        "dataset.access",
+        "dataset.source_files"
+      ]
     },
     {
       "check": "scope",
@@ -58,7 +108,11 @@
         "keyword_guard_hit": false,
         "intended_use": "research"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "question_text",
+        "intended_use"
+      ]
     },
     {
       "check": "spec_quality",
@@ -66,7 +120,10 @@
       "metrics": {
         "parse_confidence": 1.0
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "parse_confidence"
+      ]
     },
     {
       "check": "columns",
@@ -80,7 +137,19 @@
         "time_present": true,
         "n_features": 6
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "death_event",
+        "follow_up_months",
+        "age_at_diagnosis",
+        "stage_group",
+        "er_status",
+        "pr_status",
+        "her2_ihc",
+        "tumor_size",
+        "cancer_type",
+        "diagnosis_year"
+      ]
     },
     {
       "check": "cohort",
@@ -89,7 +158,11 @@
         "n_total": 2245,
         "n_cohort": 1142
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "cancer_type",
+        "diagnosis_year"
+      ]
     },
     {
       "check": "completeness",
@@ -99,7 +172,16 @@
         "max_feature_missing_rate": 0.271,
         "worst_feature": "tumor_size"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "age_at_diagnosis",
+        "stage_group",
+        "er_status",
+        "pr_status",
+        "her2_ihc",
+        "tumor_size",
+        "death_event"
+      ]
     },
     {
       "check": "outcome_events",
@@ -111,7 +193,16 @@
         "n_parameters": 8,
         "events_per_parameter": 12.12
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "death_event",
+        "age_at_diagnosis",
+        "stage_group",
+        "er_status",
+        "pr_status",
+        "her2_ihc",
+        "tumor_size"
+      ]
     },
     {
       "check": "leakage",
@@ -124,7 +215,16 @@
         "max_single_feature_auc": 0.842,
         "dictionary_available": true
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "death_event",
+        "age_at_diagnosis",
+        "stage_group",
+        "er_status",
+        "pr_status",
+        "her2_ihc",
+        "tumor_size"
+      ]
     },
     {
       "check": "temporal",
@@ -136,13 +236,18 @@
         "time_unit": "months",
         "n_negative_times": 0
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "follow_up_months",
+        "death_event"
+      ]
     },
     {
       "check": "units",
       "status": "skipped",
       "metrics": {},
-      "note": "No patient identifier column declared."
+      "note": "No patient identifier column declared.",
+      "fields": []
     },
     {
       "check": "subgroups",
@@ -158,7 +263,24 @@
         ],
         "smallest_subgroup_n": 2
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "race"
+      ]
+    },
+    {
+      "check": "consistency",
+      "status": "skipped",
+      "metrics": {},
+      "note": "",
+      "fields": []
+    },
+    {
+      "check": "plausibility",
+      "status": "skipped",
+      "metrics": {},
+      "note": "",
+      "fields": []
     },
     {
       "check": "phi",
@@ -167,7 +289,10 @@
         "n_phi_columns": 0,
         "phi_columns": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all columns"
+      ]
     },
     {
       "check": "injection",
@@ -176,7 +301,11 @@
         "n_injection_hits": 0,
         "injection_locations": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all text columns",
+        "dictionary descriptions"
+      ]
     }
   ],
   "spec": {
@@ -220,12 +349,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "a3558e0508f2a987",
+    "cert_id": "92d1cedaa0e8f308",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.4.0",
-      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
+      "policy_version": "0.5.0",
+      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
       "dataset_sha256": "af34aae37e9e542dca5b81039b8ee1a49f2263b85a5f13588e95f85aa89e289f",
       "dictionary_sha256": "ffb6df259cfc22476a238af54dafa149c97d967140018c814cbbbdd29925a0fa",
       "spec_sha256": "a66507caa19364935f8c9a6aedb5c260877a976e6597378eab8c2346883ebc46",
@@ -234,11 +363,11 @@
         "CMP-004",
         "SUB-002"
       ],
-      "issued_at": "2026-11-12T16:26:47+00:00"
+      "issued_at": "2026-11-12T16:43:25+00:00"
     },
-    "signature": "grFWiW8rW6Q0w+SE98lAvUIykw+vlR/LzQyWScGWwlVM9AFXUHo/o0IT2qoqxm8QDec12bAcvVCEF4BwmrDOCA==",
+    "signature": "c/+RLSO2cWB1XkiQSuuU9S/AhqtjwnpFLbFQdXbu4/qOY4Bbvfnwi+vU2VCQbKsQhcxD+w+GgMaSUs3nAy0hBw==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.4.0"
+  "policy_version": "0.5.0"
 }

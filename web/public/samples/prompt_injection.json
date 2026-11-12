@@ -20,9 +20,28 @@
       "check": "injection",
       "verdict": "CONDITIONAL",
       "reason": "Instruction-like text found in the data or dictionary at notes[row 17], dictionary:notes. It was quarantined and had no effect on this verdict.",
-      "remedy": "Review and clean those fields; free text in a training set can carry prompt-injection payloads."
+      "remedy": "Review and clean those fields; free text in a training set can carry prompt-injection payloads.",
+      "reconsider": "Cleaned free-text fields, or the question without them.",
+      "rule_condition": "n_injection_hits > 0 -> CONDITIONAL",
+      "measured": {
+        "n_injection_hits": 2
+      },
+      "fields_used": [
+        "all text columns",
+        "dictionary descriptions"
+      ],
+      "finding_id": "F1",
+      "check_performed": "Instruction-like text",
+      "rows_or_groups_affected": "notes[row 17], dictionary:notes",
+      "effect_on_intended_use": "Text written to instruct an AI could manipulate automated pipelines. Usable for this question only after the next step is taken and reported.",
+      "materiality": "medium",
+      "confidence": "medium",
+      "evidence_or_source": "Measured n_injection_hits = 2. Rule INJ-001 (n_injection_hits > 0 -> CONDITIONAL), policy v0.5.0, on demo_breast_cohort.",
+      "limitation": "Phrase patterns; reported by location only.",
+      "needs_human_review": true
     }
   ],
+  "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Instruction-like text,all text columns; dictionary descriptions,\"notes[row 17], dictionary:notes\",\"[INJ-001] Instruction-like text found in the data or dictionary at notes[row 17], dictionary:notes. It was quarantined and had no effect on this verdict.\",Text written to instruct an AI could manipulate automated pipelines. Usable for this question only after the next step is taken and reported.,medium,medium,\"Measured n_injection_hits = 2. Rule INJ-001 (n_injection_hits > 0 -> CONDITIONAL), policy v0.5.0, on demo_breast_cohort.\",Phrase patterns; reported by location only.,\"Review and clean those fields; free text in a training set can carry prompt-injection payloads. To reconsider: Cleaned free-text fields, or the question without them.\",yes\r\n",
   "checks": [
     {
       "check": "metadata",
@@ -41,7 +60,16 @@
         "undocumented_column_share": 0.0,
         "undocumented_columns": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "dataset.source",
+        "dataset.provenance",
+        "dataset.license",
+        "dataset.patient_derived",
+        "dataset.identifiable",
+        "dataset.access",
+        "dataset.source_files"
+      ]
     },
     {
       "check": "scope",
@@ -51,7 +79,11 @@
         "keyword_guard_hit": false,
         "intended_use": "model_development"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "question_text",
+        "intended_use"
+      ]
     },
     {
       "check": "spec_quality",
@@ -59,7 +91,10 @@
       "metrics": {
         "parse_confidence": 1.0
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "parse_confidence"
+      ]
     },
     {
       "check": "columns",
@@ -73,7 +108,20 @@
         "time_present": true,
         "n_features": 7
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "recurrence_2yr",
+        "follow_up_months",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive",
+        "cancer_type",
+        "diagnosis_year"
+      ]
     },
     {
       "check": "cohort",
@@ -82,7 +130,11 @@
         "n_total": 2400,
         "n_cohort": 2400
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "cancer_type",
+        "diagnosis_year"
+      ]
     },
     {
       "check": "completeness",
@@ -92,7 +144,17 @@
         "max_feature_missing_rate": 0.0,
         "worst_feature": "age_at_diagnosis"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive",
+        "recurrence_2yr"
+      ]
     },
     {
       "check": "outcome_events",
@@ -104,7 +166,17 @@
         "n_parameters": 9,
         "events_per_parameter": 52.11
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "recurrence_2yr",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive"
+      ]
     },
     {
       "check": "leakage",
@@ -117,7 +189,17 @@
         "max_single_feature_auc": 0.698,
         "dictionary_available": true
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "recurrence_2yr",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive"
+      ]
     },
     {
       "check": "temporal",
@@ -129,13 +211,18 @@
         "time_unit": "months",
         "n_negative_times": 0
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "follow_up_months",
+        "recurrence_2yr"
+      ]
     },
     {
       "check": "units",
       "status": "skipped",
       "metrics": {},
-      "note": "No patient identifier column declared."
+      "note": "No patient identifier column declared.",
+      "fields": []
     },
     {
       "check": "subgroups",
@@ -147,7 +234,30 @@
         "small_subgroups": [],
         "smallest_subgroup_n": 291
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "race",
+        "ethnicity"
+      ]
+    },
+    {
+      "check": "consistency",
+      "status": "skipped",
+      "metrics": {},
+      "note": "",
+      "fields": []
+    },
+    {
+      "check": "plausibility",
+      "status": "ok",
+      "metrics": {
+        "n_columns_out_of_range": 0,
+        "out_of_range": [],
+        "elsewhere": [],
+        "n_rows_out_of_range": 0
+      },
+      "note": "",
+      "fields": []
     },
     {
       "check": "phi",
@@ -156,7 +266,10 @@
         "n_phi_columns": 0,
         "phi_columns": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all columns"
+      ]
     },
     {
       "check": "injection",
@@ -168,7 +281,11 @@
           "dictionary:notes"
         ]
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all text columns",
+        "dictionary descriptions"
+      ]
     }
   ],
   "spec": {
@@ -214,24 +331,24 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "9506a89066c91f0b",
+    "cert_id": "53b548b890cbc46d",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.4.0",
-      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
+      "policy_version": "0.5.0",
+      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
       "dataset_sha256": "ab3cdb8142d7a8ef5c25e788ade47a2011dc9ca2ddc727db4025951175ee8e9e",
-      "dictionary_sha256": "d51b45bb498005070a122fe023cba4ae21bc2fc429de7b4811df36bb7ad60190",
+      "dictionary_sha256": "f701b91db6621516bd33eeafd9919379e3361ff2de5ad38cdb5e1593c3429c8e",
       "spec_sha256": "843d4731ec71bef6469c594caf0270965ec21dab11db52fa14373ace058b3e95",
       "verdict": "CONDITIONAL",
       "rule_ids": [
         "INJ-001"
       ],
-      "issued_at": "2026-11-12T16:26:36+00:00"
+      "issued_at": "2026-11-12T16:43:14+00:00"
     },
-    "signature": "BfbwDkZsIZu+gODafFLhGtdIjkTEE2R3lFioGUy3lke02CanmRJcltfrz7tcTrgCYvAEwzbkJGe5owJVfTR9CQ==",
+    "signature": "0lSjPlTUREHqdAlHV8YEWoqKz1bbal/+2RNaJzXpG0cEsycOuKBF676+ZBsRAPGOzUGXBgWa6G2y5tIAnnX2CQ==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.4.0"
+  "policy_version": "0.5.0"
 }

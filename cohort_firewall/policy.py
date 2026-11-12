@@ -86,9 +86,14 @@ def evaluate(results: list[CheckResult], policy: Policy, expected: set[str] | No
                              "reason": f"Rule {rule['id']} references a metric the check did not produce.",
                              "remedy": "Fix the rule/engine mismatch."})
         elif fired:
+            cond = " and ".join(f"{c['metric']} {c['op']} {c['value']}" for c in rule["when"])
             findings.append({"rule_id": rule["id"], "check": rule["check"], "verdict": rule["verdict"],
                              "reason": _fmt(rule["reason"], r.metrics),
-                             "remedy": _fmt(rule.get("remedy", ""), r.metrics)})
+                             "remedy": _fmt(rule.get("remedy", ""), r.metrics),
+                             "reconsider": _fmt(rule.get("reconsider", ""), r.metrics),
+                             "rule_condition": f"{cond} -> {rule['verdict']}",
+                             "measured": {c["metric"]: r.metrics.get(c["metric"]) for c in rule["when"]},
+                             "fields_used": [f for f in getattr(r, "fields", [])]})
 
     accepted = set(accepted or set())
     allowed = set((policy.acceptable or {}).keys())

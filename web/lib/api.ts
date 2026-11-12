@@ -49,6 +49,7 @@ export const SAMPLES: { name: string; label: string }[] = [
   { name: "tcga_q3_pfi_2yr_by_race", label: "TCGA: 2-year PFI across race" },
   { name: "tcga_q5_all_samples", label: "TCGA: all samples, not patients" },
   { name: "tcga_q6_patient_risk_score", label: "TCGA: patient risk score" },
+  { name: "tcga_q7_pam50_subtype_mix", label: "TCGA: PAM50 subtype mix (two calls)" },
   { name: "clean", label: "2-year recurrence study" },
   { name: "q3_survival", label: "5-year survival model" },
   { name: "q2_clinical", label: "Treatment recommendation" },

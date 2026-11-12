@@ -8,6 +8,18 @@ export interface Finding {
   remedy: string;
   accepted?: boolean;
   accepted_as?: string;
+  reconsider?: string;
+  rule_condition?: string;
+  measured?: Record<string, unknown>;
+  finding_id?: string;
+  check_performed?: string;
+  fields_used?: string[];
+  rows_or_groups_affected?: string;
+  effect_on_intended_use?: string;
+  materiality?: string;
+  confidence?: string;
+  evidence_or_source?: string;
+  limitation?: string;
 }
 
 export interface CheckResult {
@@ -45,6 +57,7 @@ export interface EvaluateResponse {
   checks: CheckResult[];
   spec: { question_text?: string } & Record<string, unknown>;
   report: { text: string; source: "llm" | "template" };
+  findings_template_csv?: string;
   certificate: Certificate;
   engine_version: string;
   policy_version: string;

@@ -153,6 +153,34 @@ def case_deidentification_undeclared(df, d):
     return df, d, spec("q1_recurrence_2yr"), "INSUFFICIENT_EVIDENCE", ["META-007"]
 
 
+def case_inconsistent_er_sources(df, d):
+    # A second ER source that disagrees with the clinical field for about 12% of records.
+    df = df.copy()
+    flip = RNG.random(len(df)) < 0.12
+    df["er_status_lab2"] = np.where(flip, np.where(df.er_status == "positive", "Negative", "Positive"),
+                                    df.er_status.str.capitalize())
+    d = copy.deepcopy(d)
+    d["columns"]["er_status_lab2"] = {"type": "categorical", "role": "feature", "timing": "baseline",
+                                      "description": "ER status from a second lab"}
+    d["dataset"]["consistency_pairs"] = [{"a": "er_status", "b": "er_status_lab2", "label": "ER status: clinical vs second lab"}]
+    return df, d, spec("q1_recurrence_2yr"), "CONDITIONAL", ["CONS-001"]
+
+
+def case_unlikely_values(df, d):
+    df = df.copy()
+    df.loc[df.index[:4], "age_at_diagnosis"] = [212, 160, -3, 0]
+    return df, d, spec("q1_recurrence_2yr"), "CONDITIONAL", ["PLAUS-001"]
+
+
+def case_unlikely_value_unused_field(df, d):
+    # Same kind of error in a field the question does not use: noted, verdict unchanged.
+    df = df.copy()
+    s = spec("q1_recurrence_2yr")
+    s["feature_columns"] = [f for f in s["feature_columns"] if f != "nodes_positive"]
+    df.loc[df.index[:3], "nodes_positive"] = [999, 500, 120]
+    return df, d, s, "READY", []
+
+
 def case_placeholder_missing(df, d):
     # TCGA-style "[Not Available]" strings must count as missing, not as a category.
     df = df.copy()

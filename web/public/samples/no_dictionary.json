@@ -20,16 +20,42 @@
       "check": "metadata",
       "verdict": "INSUFFICIENT_EVIDENCE",
       "reason": "No data dictionary was supplied, so column meaning, timing and provenance cannot be verified.",
-      "remedy": "Upload a data dictionary (dataset source, license, provenance, and per-column role/timing)."
+      "remedy": "Upload a data dictionary (dataset source, license, provenance, and per-column role/timing).",
+      "reconsider": "A data dictionary for this release.",
+      "rule_condition": "has_dictionary == False -> INSUFFICIENT_EVIDENCE",
+      "measured": {
+        "has_dictionary": false
+      },
+      "fields_used": [],
+      "finding_id": "F1",
+      "check_performed": "Documentation, license and provenance",
+      "rows_or_groups_affected": "whole dataset",
+      "effect_on_intended_use": "Without source, license and patient-data details, the data's permitted use can't be confirmed. This can't be confirmed, so the data does not pass for this question.",
+      "materiality": "high",
+      "confidence": "high",
+      "evidence_or_source": "Measured has_dictionary = False. Rule META-001 (has_dictionary == False -> INSUFFICIENT_EVIDENCE), policy v0.5.0, on the supplied dataset.",
+      "limitation": "Relies on what the data dictionary declares beyond the pinned checksums.",
+      "needs_human_review": true
     },
     {
       "rule_id": "META-009",
       "check": "metadata",
       "verdict": "INSUFFICIENT_EVIDENCE",
       "reason": "Rule META-009 references a metric the check did not produce.",
-      "remedy": "Fix the rule/engine mismatch."
+      "remedy": "Fix the rule/engine mismatch.",
+      "finding_id": "F2",
+      "check_performed": "Documentation, license and provenance",
+      "fields_used": [],
+      "rows_or_groups_affected": "whole dataset",
+      "effect_on_intended_use": "Without source, license and patient-data details, the data's permitted use can't be confirmed. This can't be confirmed, so the data does not pass for this question.",
+      "materiality": "high",
+      "confidence": "high",
+      "evidence_or_source": "Measured . Rule META-009 (), policy v0.5.0, on the supplied dataset.",
+      "limitation": "Relies on what the data dictionary declares beyond the pinned checksums.",
+      "needs_human_review": true
     }
   ],
+  "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,\"Documentation, license and provenance\",,whole dataset,\"[META-001] No data dictionary was supplied, so column meaning, timing and provenance cannot be verified.\",\"Without source, license and patient-data details, the data's permitted use can't be confirmed. This can't be confirmed, so the data does not pass for this question.\",high,high,\"Measured has_dictionary = False. Rule META-001 (has_dictionary == False -> INSUFFICIENT_EVIDENCE), policy v0.5.0, on the supplied dataset.\",Relies on what the data dictionary declares beyond the pinned checksums.,\"Upload a data dictionary (dataset source, license, provenance, and per-column role/timing). To reconsider: A data dictionary for this release.\",yes\r\nF2,\"Documentation, license and provenance\",,whole dataset,[META-009] Rule META-009 references a metric the check did not produce.,\"Without source, license and patient-data details, the data's permitted use can't be confirmed. This can't be confirmed, so the data does not pass for this question.\",high,high,\"Measured . Rule META-009 (), policy v0.5.0, on the supplied dataset.\",Relies on what the data dictionary declares beyond the pinned checksums.,Fix the rule/engine mismatch. To reconsider:,yes\r\n",
   "checks": [
     {
       "check": "metadata",
@@ -45,7 +71,8 @@
         "has_provenance": false,
         "undocumented_column_share": 1.0
       },
-      "note": "No data dictionary supplied."
+      "note": "No data dictionary supplied.",
+      "fields": []
     },
     {
       "check": "scope",
@@ -55,7 +82,11 @@
         "keyword_guard_hit": false,
         "intended_use": "model_development"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "question_text",
+        "intended_use"
+      ]
     },
     {
       "check": "spec_quality",
@@ -63,7 +94,10 @@
       "metrics": {
         "parse_confidence": 1.0
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "parse_confidence"
+      ]
     },
     {
       "check": "columns",
@@ -77,7 +111,20 @@
         "time_present": true,
         "n_features": 7
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "recurrence_2yr",
+        "follow_up_months",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive",
+        "cancer_type",
+        "diagnosis_year"
+      ]
     },
     {
       "check": "cohort",
@@ -86,7 +133,11 @@
         "n_total": 2400,
         "n_cohort": 2400
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "cancer_type",
+        "diagnosis_year"
+      ]
     },
     {
       "check": "completeness",
@@ -96,7 +147,17 @@
         "max_feature_missing_rate": 0.0,
         "worst_feature": "age_at_diagnosis"
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive",
+        "recurrence_2yr"
+      ]
     },
     {
       "check": "outcome_events",
@@ -108,7 +169,17 @@
         "n_parameters": 9,
         "events_per_parameter": 52.11
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "recurrence_2yr",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive"
+      ]
     },
     {
       "check": "leakage",
@@ -121,7 +192,17 @@
         "max_single_feature_auc": 0.698,
         "dictionary_available": false
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "recurrence_2yr",
+        "age_at_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "tumor_size_mm",
+        "nodes_positive"
+      ]
     },
     {
       "check": "temporal",
@@ -133,13 +214,18 @@
         "time_unit": "months",
         "n_negative_times": 0
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "follow_up_months",
+        "recurrence_2yr"
+      ]
     },
     {
       "check": "units",
       "status": "skipped",
       "metrics": {},
-      "note": "No patient identifier column declared."
+      "note": "No patient identifier column declared.",
+      "fields": []
     },
     {
       "check": "subgroups",
@@ -151,7 +237,25 @@
         "small_subgroups": [],
         "smallest_subgroup_n": 291
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "race",
+        "ethnicity"
+      ]
+    },
+    {
+      "check": "consistency",
+      "status": "skipped",
+      "metrics": {},
+      "note": "",
+      "fields": []
+    },
+    {
+      "check": "plausibility",
+      "status": "skipped",
+      "metrics": {},
+      "note": "",
+      "fields": []
     },
     {
       "check": "phi",
@@ -160,7 +264,10 @@
         "n_phi_columns": 0,
         "phi_columns": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all columns"
+      ]
     },
     {
       "check": "injection",
@@ -169,7 +276,11 @@
         "n_injection_hits": 0,
         "injection_locations": []
       },
-      "note": ""
+      "note": "",
+      "fields": [
+        "all text columns",
+        "dictionary descriptions"
+      ]
     }
   ],
   "spec": {
@@ -215,12 +326,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "567cc3e99d1f937d",
+    "cert_id": "2fadd15a372ca106",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.4.0",
-      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
+      "policy_version": "0.5.0",
+      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
       "dataset_sha256": "31275bc4e6681487c7e17cd7939b7e5d1dd855d369321a7e890bb19b6b037e32",
       "dictionary_sha256": null,
       "spec_sha256": "843d4731ec71bef6469c594caf0270965ec21dab11db52fa14373ace058b3e95",
@@ -229,11 +340,11 @@
         "META-001",
         "META-009"
       ],
-      "issued_at": "2026-11-12T16:26:36+00:00"
+      "issued_at": "2026-11-12T16:43:14+00:00"
     },
-    "signature": "jqIsw4/eCRkyOjmTGBH2GfQaOj4OJuyDJ6L0HIM8b06HOcWR5+FWRlYgFybOgIso6tjutpcSKZitjnoREX8RCw==",
+    "signature": "Wcd0A42x03HyjlxpGDb3nf1czjGRnMPbOMMuT7or2NCvVLdY4wUqifLclPEjc1ZUkGgp7SnN+xAAatVSNc5WDQ==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.4.0"
+  "policy_version": "0.5.0"
 }
