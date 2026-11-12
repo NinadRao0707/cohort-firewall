@@ -11,6 +11,7 @@ export interface TowerFinding {
   severity: "high" | "medium" | "low" | "none"; confidence: "high" | "medium" | "low";
   evidence: EvidenceRef[]; affects_analyses?: string[]; not_affected_analyses?: string[];
   limitation?: string; needs_human_review?: boolean;
+  x_severity_reason?: string; x_summary_of_other_findings?: boolean;
 }
 
 export interface TowerAnalysis {

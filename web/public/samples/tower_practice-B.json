@@ -89,6 +89,7 @@
       "summary": "TCGA-A8-A09K-01 and TCGA-B6-A0WX-01 exchanged profiles in protein_rppa.tsv.gz",
       "severity": "high",
       "confidence": "high",
+      "x_severity_reason": "High: measurements are attached to the wrong samples in data A1 uses, so its result can't be trusted (A1 difference 3.051 \u2192 3.019).",
       "evidence": [
         {
           "kind": "sample",
@@ -118,18 +119,14 @@
       "summary": "New sample TCGA-E2-A106-01 in protein_rppa.tsv.gz is an exact copy of TCGA-C8-A133-01",
       "severity": "high",
       "confidence": "high",
+      "x_severity_reason": "High: the same measurement is counted under two sample IDs in data A1 uses, so its result can't be trusted (A1 difference 3.051 \u2192 3.019).",
       "evidence": [
         {
           "kind": "sample",
           "id": "TCGA-E2-A106-01",
           "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
-        },
-        {
-          "kind": "sample",
-          "id": "TCGA-C8-A133-01",
-          "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
+          "file": "protein_rppa.tsv.gz",
+          "note": "carries the exact profile of TCGA-C8-A133-01, which is unchanged"
         }
       ],
       "affects_analyses": [
@@ -147,18 +144,14 @@
       "summary": "New sample TCGA-E2-A9RU-01 in protein_rppa.tsv.gz is an exact copy of TCGA-EW-A1PE-01",
       "severity": "high",
       "confidence": "high",
+      "x_severity_reason": "High: the same measurement is counted under two sample IDs in data A1 uses, so its result can't be trusted (A1 difference 3.051 \u2192 3.019).",
       "evidence": [
         {
           "kind": "sample",
           "id": "TCGA-E2-A9RU-01",
           "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
-        },
-        {
-          "kind": "sample",
-          "id": "TCGA-EW-A1PE-01",
-          "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
+          "file": "protein_rppa.tsv.gz",
+          "note": "carries the exact profile of TCGA-EW-A1PE-01, which is unchanged"
         }
       ],
       "affects_analyses": [
@@ -176,18 +169,14 @@
       "summary": "New sample TCGA-GM-A5PX-01 in protein_rppa.tsv.gz is an exact copy of TCGA-E9-A2JT-01",
       "severity": "high",
       "confidence": "high",
+      "x_severity_reason": "High: the same measurement is counted under two sample IDs in data A1 uses, so its result can't be trusted (A1 difference 3.051 \u2192 3.019).",
       "evidence": [
         {
           "kind": "sample",
           "id": "TCGA-GM-A5PX-01",
           "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
-        },
-        {
-          "kind": "sample",
-          "id": "TCGA-E9-A2JT-01",
-          "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
+          "file": "protein_rppa.tsv.gz",
+          "note": "carries the exact profile of TCGA-E9-A2JT-01, which is unchanged"
         }
       ],
       "affects_analyses": [
@@ -205,18 +194,14 @@
       "summary": "New sample TCGA-LL-A5YN-01 in protein_rppa.tsv.gz is an exact copy of TCGA-AR-A1AP-01",
       "severity": "high",
       "confidence": "high",
+      "x_severity_reason": "High: the same measurement is counted under two sample IDs in data A1 uses, so its result can't be trusted (A1 difference 3.051 \u2192 3.019).",
       "evidence": [
         {
           "kind": "sample",
           "id": "TCGA-LL-A5YN-01",
           "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
-        },
-        {
-          "kind": "sample",
-          "id": "TCGA-AR-A1AP-01",
-          "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
+          "file": "protein_rppa.tsv.gz",
+          "note": "carries the exact profile of TCGA-AR-A1AP-01, which is unchanged"
         }
       ],
       "affects_analyses": [
@@ -234,18 +219,14 @@
       "summary": "New sample TCGA-LL-A73Z-01 in protein_rppa.tsv.gz is an exact copy of TCGA-E9-A1N3-01",
       "severity": "high",
       "confidence": "high",
+      "x_severity_reason": "High: the same measurement is counted under two sample IDs in data A1 uses, so its result can't be trusted (A1 difference 3.051 \u2192 3.019).",
       "evidence": [
         {
           "kind": "sample",
           "id": "TCGA-LL-A73Z-01",
           "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
-        },
-        {
-          "kind": "sample",
-          "id": "TCGA-E9-A1N3-01",
-          "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
+          "file": "protein_rppa.tsv.gz",
+          "note": "carries the exact profile of TCGA-E9-A1N3-01, which is unchanged"
         }
       ],
       "affects_analyses": [
@@ -261,8 +242,9 @@
       "id": "F7",
       "kind": "membership_change",
       "summary": "protein_rppa.tsv.gz: sample count unchanged (747) but membership changed: 5 sample(s) removed and 5 added. A count check alone would miss this.",
-      "severity": "high",
+      "severity": "medium",
       "confidence": "high",
+      "x_severity_reason": "Medium: restates the removals and copies above; reported because the unchanged sample count would hide them from a count check.",
       "evidence": [
         {
           "kind": "sample",
@@ -339,8 +321,9 @@
       "id": "F8",
       "kind": "missing_data",
       "summary": "protein_rppa.tsv.gz: genuine profiles for breast_carcinoma_estrogen_receptor_status = 'Negative' fell from 170 to 166",
-      "severity": "medium",
+      "severity": "low",
       "confidence": "high",
+      "x_severity_reason": "Low: breast_carcinoma_estrogen_receptor_status = Negative lost 4 of 170 genuine profiles (2.4%); the lost profiles are in data A1 uses. Restates the changes above.",
       "evidence": [
         {
           "kind": "sample",
@@ -381,8 +364,9 @@
       "id": "F9",
       "kind": "missing_data",
       "summary": "protein_rppa.tsv.gz: genuine profiles for breast_carcinoma_estrogen_receptor_status = 'Positive' fell from 533 to 531",
-      "severity": "medium",
+      "severity": "low",
       "confidence": "high",
+      "x_severity_reason": "Low: breast_carcinoma_estrogen_receptor_status = Positive lost 2 of 533 genuine profiles (0.4%); the lost profiles are in data A1 uses. Restates the changes above.",
       "evidence": [
         {
           "kind": "sample",
@@ -411,8 +395,9 @@
       "id": "F10",
       "kind": "missing_data",
       "summary": "protein_rppa.tsv.gz: genuine profiles for PAM50Call_RNAseq = 'Basal' fell from 121 to 120",
-      "severity": "medium",
+      "severity": "low",
       "confidence": "high",
+      "x_severity_reason": "Low: PAM50Call_RNAseq = Basal lost 1 of 121 genuine profiles (0.8%); the lost profiles are in data A1 uses. Restates the changes above.",
       "evidence": [
         {
           "kind": "sample",
@@ -437,6 +422,7 @@
       "summary": "protein_rppa.tsv.gz: genuine profiles for PAM50Call_RNAseq = 'Her2' fell from 61 to 56",
       "severity": "medium",
       "confidence": "high",
+      "x_severity_reason": "Medium: PAM50Call_RNAseq = Her2 lost 5 of 61 genuine profiles (8.2%); the lost profiles are in data A1 uses. Restates the changes above.",
       "evidence": [
         {
           "kind": "sample",
@@ -483,8 +469,9 @@
       "id": "F12",
       "kind": "missing_data",
       "summary": "protein_rppa.tsv.gz: genuine profiles for PAM50Call_RNAseq = 'LumA' fell from 330 to 329",
-      "severity": "medium",
+      "severity": "low",
       "confidence": "high",
+      "x_severity_reason": "Low: PAM50Call_RNAseq = LumA lost 1 of 330 genuine profiles (0.3%); the lost profiles are in data A1 uses. Restates the changes above.",
       "evidence": [
         {
           "kind": "sample",
@@ -509,6 +496,7 @@
       "summary": "5 sample(s) disappeared from protein_rppa.tsv.gz",
       "severity": "medium",
       "confidence": "high",
+      "x_severity_reason": "Medium: removes samples from the data A1 uses, changing who or what is counted (A1 difference 3.051 \u2192 3.019).",
       "evidence": [
         {
           "kind": "sample",
@@ -584,12 +572,12 @@
       ],
       "affected_by": [
         "F1",
-        "F13",
         "F2",
         "F3",
         "F4",
         "F5",
-        "F6"
+        "F6",
+        "F13"
       ],
       "needs_human_review": true,
       "before": {
@@ -811,7 +799,7 @@
     "version": "0.1.0",
     "tower_policy": "0.1.0"
   },
-  "plain_summary": "Compared with frozen-A, release practice-B has 1 sample swap(s), 5 profile(s) copied onto other IDs, 1 membership change(s). Sample count unchanged (747) but membership changed: 5 sample(s) removed and 5 added. A count check alone would miss this. A1 is Blocked because of F1, F13, F2, F3; A2 is unaffected and was not rerun. A person must review before the new release is used.",
+  "plain_summary": "Compared with frozen-A, release practice-B has 1 sample swap(s), 5 profile(s) copied onto other IDs, 1 membership change(s). Sample count unchanged (747) but membership changed: 5 sample(s) removed and 5 added. A count check alone would miss this. A1 is Blocked because of F1, F2, F3, F4; A2 is unaffected and was not rerun. A person must review before the new release is used.",
   "next_steps": [
     {
       "rank": 1,
@@ -870,7 +858,7 @@
     }
   ],
   "certificate": {
-    "cert_id": "4e50f6ea9cb9a676",
+    "cert_id": "1695561a6b4d3ad9",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -885,14 +873,15 @@
         "TWR-MEM-1",
         "TWR-SWAP-1"
       ],
-      "issued_at": "2026-11-12T17:10:04+00:00"
+      "issued_at": "2026-11-12T18:53:08+00:00"
     },
-    "signature": "TYzWqs2UXJ5KouBPl25UTrqjdOn1bm3AYOqmMTxS1y+MSoRv/B1rz4h3bctDL9bJkpaUNelvLU//4WSeE3KmBA==",
+    "signature": "eC6zvZ3en/mnzUqQnUSzMh5oGtsAVMR3UceL98mAWqUX/rr7tiRHhXhEjsSxiZOgPMWWowczXOq/Wuj0/9ULAA==",
     "alg": "Ed25519"
   },
   "baseline_unverified_files": [],
+  "not_compared": [],
   "timing_seconds": {
     "baseline": 0.0,
-    "total": 10.3
+    "total": 10.2
   }
 }

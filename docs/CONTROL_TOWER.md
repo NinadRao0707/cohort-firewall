@@ -42,6 +42,23 @@ checked against `sources.csv`. If it doesn't match, every verdict is Insufficien
 A profile counts as copied only if it was unique in the baseline and most of the sample's values
 changed, so samples that happen to share values are never accused.
 
+**Evidence cites only samples that changed.** For a copy, the sample whose profile was copied is
+unchanged: it is named in the evidence note and the summary, never cited as a changed sample.
+
+## Severity
+Each finding is rated by how much it could change a protected analysis's answer, and the reason is
+written into the finding (`x_severity_reason`), with the analysis's headline value before and after
+when it was rerun.
+
+| Severity | When |
+|---|---|
+| High | A swap, a copy, or a change to a label an analysis groups by, in samples a protected analysis uses |
+| Medium | The same kinds of change in data no protected analysis uses; samples added, removed or edited in an analysis's data; a subgroup losing 5% or more of its genuine profiles |
+| Low | Changes no protected analysis reads; small subgroup losses; non-key clinical fields |
+
+Example: *"High: measurements are attached to the wrong samples in data A1 uses, so its result can't be
+trusted (A1 difference 3.051 → 3.019)."*
+
 ## Verdict rules
 | Rule | Verdict | When |
 |---|---|---|

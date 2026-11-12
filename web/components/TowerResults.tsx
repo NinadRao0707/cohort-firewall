@@ -64,7 +64,9 @@ function ChangeRow({ f }: { f: TowerFinding }) {
       </button>
       {open && (
         <div className="finding-body">
-          <p><span>Samples:</span> <code>{f.evidence.filter((e) => e.kind === "sample").map((e) => e.id).join(", ") || "file-level"}</code></p>
+          {f.x_severity_reason && <p><span>Why this severity:</span> {f.x_severity_reason.replace(/^(High|Medium|Low): /, "")}</p>}
+          <p><span>Samples that changed:</span> <code>{f.evidence.filter((e) => e.kind === "sample").map((e) => e.id).join(", ") || "file-level"}</code></p>
+          {f.evidence.filter((e) => e.note).map((e, i) => <p key={i} className="quiet">{e.id}: {e.note}</p>)}
           {f.limitation && <p><span>Limitation:</span> {f.limitation}</p>}
         </div>
       )}

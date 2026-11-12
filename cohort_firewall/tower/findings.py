@@ -77,6 +77,12 @@ def verdicts(runs: list[AnalysisRun], baseline_unverified: list[str]) -> dict[st
 
 
 def _evidence(change: Change, rel_b: str, limit: int = 25) -> list[dict]:
+    """Cite only samples that changed. For a copy, the sample whose profile was copied is unchanged:
+    it is named in the note, not cited as a changed sample."""
+    if change.type in {"copied_profile", "new_duplicate"} and len(change.samples) > 1:
+        src = change.samples[1]
+        return [{"kind": "sample", "id": change.samples[0], "release": rel_b, "file": change.file,
+                 "note": f"carries the exact profile of {src}, which is unchanged"}]
     refs = [{"kind": "sample", "id": s, "release": rel_b, "file": change.file} for s in change.samples[:limit]]
     if len(change.samples) > limit:
         refs.append({"kind": "file", "id": change.file, "release": rel_b,
@@ -85,6 +91,58 @@ def _evidence(change: Change, rel_b: str, limit: int = 25) -> list[dict]:
 
 
 DERIVED = {"coverage_loss", "count_masks_membership"}
+INTEGRITY = {"swap": "measurements are attached to the wrong samples",
+             "copied_profile": "a sample carries another sample's measurements",
+             "new_duplicate": "the same measurement is counted under two sample IDs"}
+
+
+def _moved(runs: list[AnalysisRun], ids: list[str]) -> str:
+    """The headline value each affected analysis moved by, e.g. 'A1 difference 3.051 → 3.019'."""
+    out = []
+    for r in runs:
+        if r.analysis.id not in ids or not r.before or not r.after:
+            continue
+        nums = {k: (r.before[k], r.after[k]) for k in r.before
+                if isinstance(r.before.get(k), (int, float)) and isinstance(r.after.get(k), (int, float))
+                and r.before[k] != r.after[k] and not k.startswith("n_")}
+        if not nums:
+            continue
+        k = "difference" if "difference" in nums else max(nums, key=lambda x: abs(nums[x][1] - nums[x][0]) / (abs(nums[x][0]) or 1))
+        out.append(f"{r.analysis.id} {k.replace('_', ' ')} {nums[k][0]:g} → {nums[k][1]:g}")
+    return f" ({'; '.join(out)})" if out else ""
+
+
+def _rate(ch: Change, affects: list[str], runs: list[AnalysisRun]) -> tuple[str, str]:
+    """Severity by how much the change could move a protected analysis's answer, with the reason."""
+    who = ", ".join(affects)
+    moved = _moved(runs, affects)
+    if ch.type in INTEGRITY:
+        if affects:
+            return "high", f"High: {INTEGRITY[ch.type]} in data {who} uses, so its result can't be trusted{moved}."
+        return "medium", (f"Medium: no protected analysis uses these samples, but any analysis of {ch.file} "
+                          f"would be wrong because {INTEGRITY[ch.type]}.")
+    if ch.type == "label_change":
+        cols = ", ".join(ch.detail.get("key_labels") or ch.detail.get("columns", [])[:3])
+        if ch.detail.get("key_labels") and affects:
+            return "high", f"High: {who} groups or filters by {cols}, which changed for this sample{moved}."
+        if ch.detail.get("key_labels"):
+            return "medium", f"Medium: {cols} is a key clinical label, but this sample isn't in a protected analysis."
+        return "low", f"Low: the changed fields ({cols}) aren't used to group or filter the protected analyses."
+    if ch.type == "coverage_loss":
+        d = ch.detail
+        drop = (d["before"] - d["after"]) / max(d["before"], 1)
+        level = "medium" if affects and drop >= 0.05 else "low"
+        where = f"the lost profiles are in data {who} uses" if affects else "no protected analysis uses these samples"
+        return level, (f"{level.title()}: {d['subgroup_column']} = {d['subgroup']} lost {d['before'] - d['after']} of "
+                       f"{d['before']} genuine profiles ({drop:.1%}); {where}. Restates the changes above.")
+    if ch.type == "count_masks_membership":
+        return "medium", ("Medium: restates the removals and copies above; reported because the unchanged "
+                          "sample count would hide them from a count check.")
+    if affects:
+        what = {"removed": "removes samples from", "added": "adds samples to", "values_missing": "loses values in",
+                "values_edited": "edits values in"}.get(ch.type, "changes")
+        return "medium", f"Medium: {what} the data {who} uses, changing who or what is counted{moved}."
+    return "low", f"Low: no protected analysis reads the samples or fields that changed in {ch.file}."
 
 
 def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: list[AnalysisRun],
@@ -126,25 +184,22 @@ def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: 
             summary = (f"Clinical fields changed for {ch.samples[0]}: " +
                        ", ".join(f"{c} {ch.detail['before'].get(c)!r} → {ch.detail['after'].get(c)!r}"
                                  for c in cols[:4]))
-            severity = "high" if ch.detail.get("key_labels") else "low"
         elif ch.type == "count_masks_membership":
             d = ch.detail
             summary = (f"{ch.file}: sample count unchanged ({d['n']}) but membership changed: "
                        f"{d['removed']} sample(s) removed and {d['added']} added. A count check alone would miss this.")
-            severity = "high"
         elif ch.type == "coverage_loss":
             d = ch.detail
             summary = (f"{ch.file}: genuine profiles for {d['subgroup_column']} = {d['subgroup']!r} "
                        f"fell from {d['before']} to {d['after']}")
-            drop = (d["before"] - d["after"]) / max(d["before"], 1)
-            severity = "high" if drop >= 0.1 else "medium"
         else:
             a = ch.samples[0] if ch.samples else ""
             b = ch.samples[1] if len(ch.samples) > 1 else ""
             summary = SUMMARY.get(ch.type, ch.type).format(a=a, b=b, file=ch.file, n=len(ch.samples))
-            severity = SEVERITY.get(ch.type, "medium")
+        severity, severity_reason = _rate(ch, affects, runs)
         findings.append({
             "id": fid, "kind": ch.kind, "summary": summary, "severity": severity, "confidence": "high",
+            "x_severity_reason": severity_reason,
             "evidence": _evidence(ch, rel_b.name),
             "affects_analyses": affects, "not_affected_analyses": not_affected,
             "limitation": LIMITATION.get(ch.type, "Detected by comparing exact values between releases."),

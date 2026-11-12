@@ -13,6 +13,11 @@ def ids(f):
     return {e["id"] for e in f.get("evidence", [])}
 
 
+def mentions(f, sid):
+    """A sample named anywhere in a finding: cited, or named in its summary or evidence notes."""
+    return sid in ids(f) or sid in f.get("summary", "") or any(sid in e.get("note", "") for e in f.get("evidence", []))
+
+
 def main(findings_path, changes_path):
     doc = json.load(open(findings_path))
     key = json.load(open(changes_path))
@@ -31,7 +36,8 @@ def main(findings_path, changes_path):
             rows.append((f"swap {ch['samples'][0]} <-> {ch['samples'][1]} ({file})", bool(ok)))
         elif t == "replace_with_duplicates":
             for d in ch["duplicates"]:
-                ok = find(lambda f, d=d: f.get("kind") == "duplicate" and {d["new_id"], d["copied_from"]} <= ids(f))
+                ok = find(lambda f, d=d: f.get("kind") == "duplicate" and d["new_id"] in ids(f)
+                          and mentions(f, d["copied_from"]))
                 rows.append((f"duplicate {d['new_id']} = copy of {d['copied_from']} ({file})", bool(ok)))
             for s in ch["removed"]:
                 ok = find(lambda f, s=s: f.get("kind") == "membership_change" and s in ids(f)
@@ -42,6 +48,12 @@ def main(findings_path, changes_path):
                 ok = find(lambda f, s=s: f.get("kind") in {"label_conflict", "other"} and s in ids(f)
                           and ch["column"] in f["summary"])
                 rows.append((f"relabel {s} {ch['column']}: {old!r} -> {ch['new_value']!r}", bool(ok)))
+    changed = set()
+    for ch in key["changes"]:
+        changed |= set(ch.get("samples", [])) | set(ch.get("removed", [])) | set(ch.get("before", {}))
+        changed |= {d["new_id"] for d in ch.get("duplicates", [])}
+    cited = {e["id"] for f in fs for e in f.get("evidence", []) if e.get("kind") == "sample"}
+    unchanged_cited = sorted(cited - changed)
     found = sum(ok for _, ok in rows)
     print(f"Answer key: {found}/{len(rows)} changes found")
     for what, ok in rows:
@@ -52,8 +64,10 @@ def main(findings_path, changes_path):
     for f in extra:
         print(f"  {f['id']} {f['summary']}")
     print(f"Summary findings (restate others): {len(summaries)}")
+    print(f"Samples cited that didn't change: {len(unchanged_cited)}"
+          + (f" ({', '.join(unchanged_cited[:8])})" if unchanged_cited else ""))
     print("Analyses:", ", ".join(f"{a['id']}={a['verdict']} ({a['status']})" for a in doc.get("analyses", [])))
-    return found == len(rows) and not extra
+    return found == len(rows) and not extra and not unchanged_cited
 
 
 if __name__ == "__main__":
