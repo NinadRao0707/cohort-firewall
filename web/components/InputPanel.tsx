@@ -58,17 +58,13 @@ export function InputPanel({ busy, onSubmit, onSample }: {
         {!apiConfigured && <p className="quiet">The API isn't connected. Try a sample result instead.</p>}
       </form>
 
-      <div className="samples">
-        <h3>Sample results</h3>
-        <p className="quiet">TCGA-BRCA (judged data) first, then stand-in and Synthea test cohorts.</p>
-        <ul>
-          {SAMPLES.map((s) => (
-            <li key={s.name}>
-              <button type="button" className="link" onClick={() => onSample(s.name)}>{s.label}</button>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <label className="field samples">
+        <span>Or open a saved result</span>
+        <select defaultValue="" onChange={(e) => e.target.value && onSample(e.target.value)}>
+          <option value="" disabled>Choose a saved result…</option>
+          {SAMPLES.map((x) => <option key={x.name} value={x.name}>{x.label}</option>)}
+        </select>
+      </label>
     </div>
   );
 }

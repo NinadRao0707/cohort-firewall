@@ -32,8 +32,7 @@ function statusOf(c: CheckResult, findings: Finding[]) {
 export function ChecksTable({ checks, findings }: { checks: CheckResult[]; findings: Finding[] }) {
   if (checks.length === 0) return null;
   return (
-    <section className="block">
-      <h3>All checks</h3>
+    <section aria-label="All checks">
       <div className="table-scroll">
         <table className="checks">
           <thead>

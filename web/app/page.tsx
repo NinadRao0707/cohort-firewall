@@ -48,14 +48,14 @@ export default function Home() {
     <main className="shell">
       <header className="masthead">
         <h1>Cohort Firewall</h1>
-        <p>Check whether an oncology dataset can answer your AI question before anyone trains on it.</p>
+        <p>Check whether the data can answer your research question before anyone uses it.</p>
       </header>
       <Nav current="question" />
       <div className="layout">
         <aside className="panel">
           <div className="toggle" role="radiogroup" aria-label="Input">
-            <label><input type="radio" checked={mode === "card"} disabled={!apiConfigured} onChange={() => setMode("card")} /> Question card</label>
-            <label><input type="radio" checked={mode === "upload"} onChange={() => setMode("upload")} /> Upload files or samples</label>
+            <label><input type="radio" checked={mode === "card"} disabled={!apiConfigured} onChange={() => setMode("card")} /> Fill in a question</label>
+            <label><input type="radio" checked={mode === "upload"} onChange={() => setMode("upload")} /> Upload files</label>
           </div>
           {mode === "card"
             ? <QuestionCard busy={busy} onSubmit={(id, spec) => run(() => evaluateCard(id, spec))} />
@@ -65,18 +65,13 @@ export default function Home() {
           {error && <p className="error" role="alert">{error}</p>}
           {result ? <Results result={result} /> : (
             <div className="empty">
-              <p>Upload a dataset and describe the question, or open a sample result.</p>
-              <p className="quiet">
-                Rules decide the verdict. The language model only helps read your question and explain the result.
-              </p>
+              <p>Fill in the question on the left, or start from an example, then select Check readiness.</p>
+              <p className="quiet">Rules decide the verdict, and every result shows why.</p>
             </div>
           )}
         </section>
       </div>
-      <footer className="disclaimer">
-        Research data-readiness screen. Not a clinical tool: it gives no diagnosis, treatment
-        recommendation, or patient risk score, and makes no claim of clinical validity or regulatory compliance.
-      </footer>
+      <footer className="disclaimer">Research data-readiness tool. Not for diagnosis, treatment or patient risk scores.</footer>
     </main>
   );
 }

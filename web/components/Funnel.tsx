@@ -12,8 +12,8 @@ export function Funnel({ funnel, name }: { funnel: EvaluateResponse["funnel"]; n
     URL.revokeObjectURL(a.href);
   }
   return (
-    <section className="block" aria-labelledby="funnel-h">
-      <h3 id="funnel-h">Which samples can answer it</h3>
+    <section aria-label="Which samples can answer it">
+      <p className="quiet tab-intro">Records left after each condition and each field the question needs.</p>
       <ol className="funnel">
         {funnel.steps.map((s, i) => (
           <li key={i}>
@@ -33,8 +33,8 @@ export function Funnel({ funnel, name }: { funnel: EvaluateResponse["funnel"]; n
           : " can answer the question exactly as asked."}
         {funnel.repeated_patients ? ` ${funnel.repeated_patients} are extra samples from patients already counted.` : ""}
       </p>
-      <p className="quiet">{funnel.note}</p>
-      <div className="cert-actions"><button type="button" className="secondary" onClick={download}>Download sample list (CSV)</button></div>
+      <details className="fold"><summary>How this is counted</summary><p className="quiet">{funnel.note}</p></details>
+      <div className="actions"><button type="button" className="secondary" onClick={download}>Download sample list (CSV)</button></div>
     </section>
   );
 }

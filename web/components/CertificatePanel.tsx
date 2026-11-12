@@ -31,20 +31,20 @@ export function CertificatePanel({ cert }: { cert: Certificate }) {
   const p = cert.payload;
   return (
     <section className="block">
-      <h3>Readiness certificate</h3>
-      <p className="quiet">
-        Signed record of this decision. Changing the data, question, or rules produces a different certificate.
-      </p>
-      <dl className="cert">
-        <dt>Certificate</dt><dd className="hash">{cert.cert_id}</dd>
-        <dt>Dataset</dt><dd className="hash">{short(p.dataset_sha256)}</dd>
-        <dt>Dictionary</dt><dd className="hash">{short(p.dictionary_sha256)}</dd>
-        <dt>Question</dt><dd className="hash">{short(p.spec_sha256)}</dd>
-        <dt>Policy</dt><dd>v{p.policy_version}</dd>
-        <dt>Issued</dt><dd>{new Date(p.issued_at).toLocaleString()}</dd>
-      </dl>
+      <h3>Signed record</h3>
+      <p className="quiet">Changing the data, the question or the rules produces a different record.</p>
+      <details className="fold">
+        <summary>Certificate {cert.cert_id}</summary>
+        <dl className="cert">
+          <dt>Dataset</dt><dd className="hash">{short(p.dataset_sha256)}</dd>
+          <dt>Dictionary</dt><dd className="hash">{short(p.dictionary_sha256)}</dd>
+          <dt>Question</dt><dd className="hash">{short(p.spec_sha256)}</dd>
+          <dt>Rules</dt><dd>version {p.policy_version}</dd>
+          <dt>Issued</dt><dd>{new Date(p.issued_at).toLocaleString()}</dd>
+        </dl>
+      </details>
       <div className="cert-actions">
-        <button type="button" onClick={onVerify} disabled={!apiConfigured || state === "checking"}>
+        <button type="button" className="secondary" onClick={onVerify} disabled={!apiConfigured || state === "checking"}>
           {state === "checking" ? "Verifying…" : "Verify signature"}
         </button>
         <button type="button" className="secondary" onClick={onDownload}>Download certificate</button>

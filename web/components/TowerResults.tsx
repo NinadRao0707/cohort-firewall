@@ -4,101 +4,70 @@ import type { Verdict } from "@/lib/types";
 import type { FindingsDoc, TowerAnalysis, TowerFinding } from "@/lib/tower";
 import { CertificatePanel } from "./CertificatePanel";
 import { ReleaseReview } from "./ReviewPanel";
-import { Summary } from "./Summary";
+import { NextSteps } from "./Summary";
+import { Tabs } from "./Tabs";
 import { VerdictGate } from "./VerdictGate";
 
 const TO_ENGINE: Record<string, Verdict> = {
   Ready: "READY", Conditional: "CONDITIONAL", Blocked: "BLOCKED", "Insufficient Evidence": "INSUFFICIENT_EVIDENCE",
 };
 const TOWER_LINE: Record<Verdict, string> = {
-  READY: "No change affects the protected analyses. They can be reused on the new release.",
-  CONDITIONAL: "At least one analysis is usable on the new release only after the changes below are reviewed.",
-  BLOCKED: "At least one protected analysis can't be trusted on the new release until the findings are resolved.",
+  READY: "Nothing in this release affects the protected analyses.",
+  CONDITIONAL: "Usable only after the changes below are reviewed.",
+  BLOCKED: "At least one protected analysis can't be trusted on this release yet.",
   INSUFFICIENT_EVIDENCE: "The comparison can't be trusted, so nothing passes by default.",
 };
-const STATUS: Record<string, string> = {
-  changed: "Rerun: result changed", unchanged: "Rerun: result unchanged", not_rerun: "Not rerun",
-};
+const STATUS: Record<string, string> = { changed: "Rerun, result changed", unchanged: "Rerun, result unchanged", not_rerun: "Not rerun" };
+const show = (v: unknown) => (typeof v === "object" && v !== null
+  ? Object.entries(v as Record<string, unknown>).map(([k, x]) => `${k} ${x}`).join(", ") : String(v ?? "–"));
 
-function ResultTable({ before, after }: { before?: Record<string, unknown>; after?: Record<string, unknown> }) {
-  if (!before) return null;
-  const keys = Object.keys(before).filter((k) => !["analysis", "inputs"].includes(k));
-  const show = (v: unknown) => (typeof v === "object" && v !== null ? Object.entries(v as Record<string, unknown>)
-    .map(([k, x]) => `${k} ${x}`).join(", ") : String(v ?? "–"));
+function AnalysisRow({ a }: { a: TowerAnalysis }) {
+  const keys = Object.keys(a.before ?? {}).filter((k) => !["analysis", "inputs", "n_sample_ids"].includes(k));
+  const moved = a.after ? keys.filter((k) => show(a.before![k]) !== show(a.after![k])) : [];
   return (
-    <div className="table-scroll">
-      <table className="checks compare">
-        <thead><tr><th scope="col">Value</th><th scope="col">Baseline</th><th scope="col">New release</th></tr></thead>
-        <tbody>
-          {keys.map((k) => {
-            const b = show(before[k]); const a = after ? show(after[k]) : "not rerun";
-            return (
-              <tr key={k} data-moved={after && a !== b ? "true" : undefined}>
-                <th scope="row">{k.replaceAll("_", " ")}</th><td>{b}</td><td>{a}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function AnalysisCard({ a }: { a: TowerAnalysis }) {
-  const v = TO_ENGINE[a.verdict ?? "Ready"];
-  return (
-    <li className="analysis" data-verdict={v}>
+    <li className="analysis" data-verdict={TO_ENGINE[a.verdict ?? "Ready"]}>
       <div className="analysis-head">
         <span className="analysis-id">{a.id}</span>
         <span className="analysis-verdict">{a.verdict}</span>
         <span className="quiet">{STATUS[a.status]}</span>
       </div>
-      {a.description && <p className="analysis-desc">{a.description}</p>}
-      <p className="quiet">{a.reason}</p>
-      {a.verdict_rules && a.verdict_rules.length > 0 && (
-        <ul className="plain-list rules">
-          {a.verdict_rules.map((r) => (
-            <li key={r.rule_id}><span className="rule-id">{r.rule_id}</span> {r.reason} <em>To fix:</em> {r.remedy}</li>
-          ))}
-        </ul>
+      <p className="analysis-desc">{a.description}</p>
+      {a.status === "not_rerun" ? <p className="quiet">{a.reason}</p> : (
+        <ul className="plain-list">{(a.verdict_rules ?? []).map((r) => <li key={r.rule_id}><strong>{r.rule_id}</strong> {r.reason}</li>)}</ul>
       )}
-      <ResultTable before={a.before} after={a.after} />
-      <p className="review" data-level={a.needs_human_review ? "required" : "recommended"}>
-        <span>Human review {a.needs_human_review ? "required" : "recommended"}.</span>{" "}
-        {a.needs_human_review ? "Do not use this analysis on the new release until a person resolves the findings."
-          : "No change touches this analysis; a person should still confirm before relying on it."}
-      </p>
+      {moved.length > 0 && (
+        <p className="moved">{moved.map((k) => <span key={k}>{k.replaceAll("_", " ")}: {show(a.before![k])} → <b>{show(a.after![k])}</b></span>)}</p>
+      )}
+      {a.before && (
+        <details className="fold"><summary>All values</summary>
+          <div className="table-scroll"><table className="checks compare">
+            <thead><tr><th scope="col">Value</th><th scope="col">Baseline</th><th scope="col">New release</th></tr></thead>
+            <tbody>{keys.map((k) => (
+              <tr key={k}><th scope="row">{k.replaceAll("_", " ")}</th><td>{show(a.before![k])}</td><td>{a.after ? show(a.after[k]) : "not rerun"}</td></tr>
+            ))}</tbody>
+          </table></div>
+        </details>
+      )}
     </li>
   );
 }
 
-function FindingRow({ f }: { f: TowerFinding }) {
+function ChangeRow({ f }: { f: TowerFinding }) {
   const [open, setOpen] = useState(false);
-  const samples = f.evidence.filter((e) => e.kind === "sample");
   return (
     <li className="finding" data-severity={f.severity}>
-      <div className="finding-head">
-        <span className="rule-id">{f.id}</span>
-        <span className="finding-level">{f.severity} severity · {f.kind?.replaceAll("_", " ")}</span>
-      </div>
-      <p className="finding-reason">{f.summary}</p>
-      <p className="finding-remedy">
-        <span>Affects:</span> {f.affects_analyses?.length ? f.affects_analyses.join(", ") : "no protected analysis"}
-        {f.not_affected_analyses?.length ? <> · <span>Not affected:</span> {f.not_affected_analyses.join(", ")}</> : null}
-      </p>
-      {samples.length > 0 && (
-        <button type="button" className="link" aria-expanded={open} onClick={() => setOpen(!open)}>
-          {open ? "Hide" : "Show"} evidence ({samples.length} sample{samples.length === 1 ? "" : "s"})
-        </button>
-      )}
+      <button type="button" className="finding-toggle" aria-expanded={open} onClick={() => setOpen(!open)}>
+        <span className="finding-head"><span className="rule-id">{f.id}</span>
+          <span className="finding-level">{f.severity} · {f.affects_analyses?.length ? `affects ${f.affects_analyses.join(", ")}` : "affects no protected analysis"}</span></span>
+        <span className="finding-reason">{f.summary}</span>
+        <span className="finding-more" aria-hidden="true">{open ? "Hide details" : "Details"}</span>
+      </button>
       {open && (
-        <ul className="evidence">
-          {f.evidence.map((e, i) => (
-            <li key={i}><code>{e.id}</code> {e.file ? `in ${e.file}` : ""} {e.release ? `(${e.release})` : ""} {e.note ?? ""}</li>
-          ))}
-        </ul>
+        <div className="finding-body">
+          <p><span>Samples:</span> <code>{f.evidence.filter((e) => e.kind === "sample").map((e) => e.id).join(", ") || "file-level"}</code></p>
+          {f.limitation && <p><span>Limitation:</span> {f.limitation}</p>}
+        </div>
       )}
-      {f.limitation && <p className="finding-limit"><span>Limitation:</span> {f.limitation}</p>}
     </li>
   );
 }
@@ -108,7 +77,6 @@ export function TowerResults({ doc }: { doc: FindingsDoc }) {
   const [baseline, release] = doc.data.releases;
   const order = { high: 0, medium: 1, low: 2, none: 3 };
   const findings = [...doc.findings].sort((a, b) => order[a.severity] - order[b.severity]);
-
   function download() {
     const blob = new Blob([JSON.stringify(doc, null, 2)], { type: "application/json" });
     const a = document.createElement("a");
@@ -117,70 +85,29 @@ export function TowerResults({ doc }: { doc: FindingsDoc }) {
     a.click();
     URL.revokeObjectURL(a.href);
   }
-
   return (
     <div className="results">
-      <div>
-        <VerdictGate verdict={verdict} question={doc.question} line={TOWER_LINE[verdict]} />
-        <p className="quiet">
-          Compared <strong>{release?.name}</strong> with <strong>{baseline?.name}</strong>
-          {doc.baseline_unverified_files?.length
-            ? ` (baseline does NOT match the frozen checksums: ${doc.baseline_unverified_files.join(", ")})`
-            : " (baseline matches the event's frozen checksums)"}.
-          {doc.timing_seconds ? ` Took ${doc.timing_seconds.total} s.` : ""}
-        </p>
-      </div>
-
-      <Summary text={doc.plain_summary} steps={doc.next_steps} />
-
-      <section className="block">
-        <h3>Protected analyses</h3>
-        <ul className="analyses">{(doc.analyses ?? []).map((a) => <AnalysisCard key={a.id} a={a} />)}</ul>
-      </section>
-
-      <section className="block">
-        <h3>What changed ({doc.findings.length} finding{doc.findings.length === 1 ? "" : "s"})</h3>
-        {findings.length === 0 ? <p className="quiet">No differences from the baseline.</p> :
-          <ul className="findings">{findings.map((f) => <FindingRow key={f.id} f={f} />)}</ul>}
-      </section>
-
-      {doc.repairs && doc.repairs.length > 0 && (
-        <section className="block">
-          <h3>Proposed repairs (a reviewer decides)</h3>
-          <div className="table-scroll">
-            <table className="checks">
-              <thead><tr><th scope="col">Repair</th><th scope="col">Action</th><th scope="col">Samples</th><th scope="col">Resolves</th></tr></thead>
-              <tbody>
-                {doc.repairs.map((r) => (
-                  <tr key={r.id}>
-                    <th scope="row">{r.id}</th>
-                    <td>{r.action.replaceAll("_", " ")}</td>
-                    <td><code>{r.targets.slice(0, 3).map((t) => t.id).join(", ")}{r.targets.length > 3 ? ` +${r.targets.length - 3}` : ""}</code></td>
-                    <td>{r.addresses.join(", ")}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      )}
-
-      <section className="block">
-        <details className="limits" open>
-          <summary>Limitations of this check</summary>
-          <ul className="plain-list">{(doc.limitations ?? []).map((l) => <li key={l}>{l}</li>)}</ul>
-        </details>
-      </section>
-
-      <section className="block">
-        <h3>Hand-off</h3>
-        <p className="quiet">Shared findings format v{doc.format_version}, for a Repair Review Desk or any reviewer.</p>
-        <div className="cert-actions"><button type="button" onClick={download}>Download findings.json</button></div>
-      </section>
-
-      <ReleaseReview key={(doc.certificate as { cert_id?: string } | undefined)?.cert_id ?? "r"} doc={doc} />
-
-      {doc.certificate ? <CertificatePanel cert={doc.certificate as never} /> : null}
+      <VerdictGate verdict={verdict} line={TOWER_LINE[verdict]} summary={doc.plain_summary}
+                   question={`${release?.name} compared with ${baseline?.name}${doc.baseline_unverified_files?.length
+                     ? " (baseline does not match the frozen checksums)" : ""}${doc.timing_seconds ? `, ${doc.timing_seconds.total} s` : ""}`} />
+      <Tabs tabs={[
+        { id: "analyses", label: "Analyses", count: doc.analyses?.length ?? 0,
+          content: <ul className="analyses">{(doc.analyses ?? []).map((a) => <AnalysisRow key={a.id} a={a} />)}</ul> },
+        { id: "steps", label: "Next steps", count: doc.next_steps?.length ?? 0, content: <NextSteps steps={doc.next_steps} /> },
+        { id: "changes", label: "Changes", count: doc.findings.length, content: findings.length
+          ? <ul className="findings">{findings.map((f) => <ChangeRow key={f.id} f={f} />)}</ul>
+          : <p className="quiet">No differences from the baseline.</p> },
+        { id: "review", label: "Review", content: <ReleaseReview key={(doc.certificate as { cert_id?: string } | undefined)?.cert_id ?? "r"} doc={doc} /> },
+        { id: "record", label: "Record", content: (
+          <>
+            <div className="actions"><button type="button" onClick={download}>Download findings.json</button></div>
+            <p className="quiet">Shared format v{doc.format_version}, for a Repair Review Desk or any reviewer.</p>
+            <details className="fold"><summary>Limitations of this check</summary>
+              <ul className="plain-list">{(doc.limitations ?? []).map((l) => <li key={l}>{l}</li>)}</ul></details>
+            {doc.certificate ? <CertificatePanel cert={doc.certificate as never} /> : null}
+          </>
+        ) },
+      ]} />
     </div>
   );
 }

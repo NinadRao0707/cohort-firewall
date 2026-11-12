@@ -62,7 +62,7 @@ export default function TowerPage() {
     <main className="shell">
       <header className="masthead">
         <h1>Cohort Firewall</h1>
-        <p>Cohort Control Tower: a new TCGA-BRCA release arrived. What changed, which analyses does it break, and which can you still trust?</p>
+        <p>A new release arrived. See what changed and which analyses you can still trust.</p>
       </header>
       <Nav current="release" />
       <div className="layout">
@@ -74,47 +74,43 @@ export default function TowerPage() {
                 {releases.length === 0 && <option value="">{apiConfigured ? "No releases found" : "API not connected"}</option>}
                 {releases.map((r) => <option key={r.name} value={r.name}>{r.name}</option>)}
               </select>
-              <small>Folders in the challenge repo&apos;s data/tcga-brca/releases/. Compared with the frozen release.</small>
+              <small>Compared with the frozen release.</small>
             </label>
-            <label className="toggle"><input type="checkbox" checked={rna} onChange={(e) => setRna(e.target.checked)} /> Include the 64 MB RNA file</label>
-            <div className="cert-actions">
-              <button type="submit" disabled={!apiConfigured || !release || busy}>{busy ? "Comparing… (up to a minute)" : "Compare releases"}</button>
-              <button type="button" className="secondary" onClick={refresh} disabled={!apiConfigured || busy}>Refresh list</button>
+            <div className="submit-bar">
+              <button type="submit" disabled={!apiConfigured || !release || busy}>{busy ? "Comparing…" : "Compare releases"}</button>
             </div>
           </form>
-          <div className="samples">
-            <h3>Or build a release from a config</h3>
+          <details className="group">
+            <summary>Other ways to load a release</summary>
             <label className="field">
-              <span>make_release.py config (JSON)</span>
+              <span>Build from a make_release config (JSON)</span>
               <input type="file" accept=".json,application/json" disabled={!apiConfigured || busy}
                      onChange={(e) => buildAndCompare(e.target.files?.[0])} />
-              <small>Runs the event&apos;s own make_release.py --config, then compares. Its answer key is never read.</small>
+              <small>Runs the event&apos;s make_release.py, then compares. Its answer key is never read.</small>
             </label>
-          </div>
-          <div className="samples">
-            <h3>Or open results</h3>
             <label className="field">
-              <span>A findings.json file</span>
+              <span>Open a findings.json file</span>
               <input type="file" accept=".json,application/json" onChange={(e) => openFile(e.target.files?.[0])} />
             </label>
-            <button type="button" className="link" onClick={() => go(loadTowerSample)}>Saved run: practice-B</button>
-          </div>
+            <div className="actions">
+              <button type="button" className="secondary" onClick={() => go(loadTowerSample)}>Open saved practice-B run</button>
+              <button type="button" className="secondary" onClick={refresh} disabled={!apiConfigured || busy}>Refresh release list</button>
+            </div>
+            <label className="toggle"><input type="checkbox" checked={rna} onChange={(e) => setRna(e.target.checked)} /> Include the 64 MB RNA file</label>
+          </details>
         </aside>
         <section className="output" aria-live="polite" ref={out}>
           {error && <p className="error" role="alert">{error}</p>}
           {busy && stage && <p className="quiet" role="status">{stage}</p>}
           {doc ? <TowerResults doc={doc} /> : (
             <div className="empty">
-              <p>Pick a new release and compare it with the frozen baseline, or open a saved result.</p>
-              <p className="quiet">Unaffected analyses are not rerun. Every change and every repair is listed for a person to decide.</p>
+              <p>Pick a release and select Compare releases.</p>
+              <p className="quiet">Analyses that nothing touches are left alone, and every change is listed for a person to decide.</p>
             </div>
           )}
         </section>
       </div>
-      <footer className="disclaimer">
-        Research data-quality check. Not a clinical tool: no diagnosis, treatment recommendation, or patient
-        risk score, and no claim of clinical validity or regulatory compliance.
-      </footer>
+      <footer className="disclaimer">Research data-quality tool. Not for diagnosis, treatment or patient risk scores.</footer>
     </main>
   );
 }

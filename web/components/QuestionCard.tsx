@@ -106,12 +106,12 @@ export function QuestionCard({ busy, onSubmit }: { busy: boolean; onSubmit: (dat
           {datasets.length === 0 && <option value="">No server datasets (run data/flatten_tcga.py)</option>}
           {datasets.map((d) => <option key={d.id} value={d.id}>{d.label}</option>)}
         </select>
-        {info && <small>{info.n_rows} rows · {info.columns.length} documented columns</small>}
+        {info && <small>{info.n_rows.toLocaleString()} records, {info.columns.length} documented fields</small>}
       </label>
 
       {examples.length > 0 && (
         <label className="field">
-          <span>Start from an example card</span>
+          <span>Start from an example</span>
           <select defaultValue="" onChange={(e) => loadExample(e.target.value)}>
             <option value="" disabled>Choose an example…</option>
             {examples.map((e) => <option key={e.id} value={e.id}>{(e.spec as Spec & { title?: string }).title ?? e.spec.question_text.slice(0, 80)}</option>)}
@@ -121,21 +121,19 @@ export function QuestionCard({ busy, onSubmit }: { busy: boolean; onSubmit: (dat
 
       <fieldset className="field">
         <legend>Research question</legend>
-        <textarea rows={3} value={spec.question_text} onChange={(e) => set("question_text", e.target.value)}
+        <textarea rows={2} value={spec.question_text} onChange={(e) => set("question_text", e.target.value)}
                   placeholder="Is this dataset suitable for studying …" />
       </fieldset>
 
-      <fieldset className="field">
-        <legend>Intended use</legend>
-        {USES.map((u) => (
-          <label key={u.value} className="choice">
-            <input type="radio" name="use" checked={spec.intended_use === u.value} onChange={() => set("intended_use", u.value)} /> {u.label}
-          </label>
-        ))}
-      </fieldset>
+      <label className="field">
+        <span>Intended use</span>
+        <select value={spec.intended_use} onChange={(e) => set("intended_use", e.target.value as Spec["intended_use"])}>
+          {USES.map((u) => <option key={u.value} value={u.value}>{u.label}</option>)}
+        </select>
+      </label>
 
       <fieldset className="field">
-        <legend>Group being studied</legend>
+        <legend>Who is studied</legend>
         {filters.map((f, i) => {
           const c = col[f.column];
           const upd = (p: Partial<Filter>) => setFilters((fs) => fs.map((x, j) => (j === i ? { ...x, ...p } : x)));
@@ -178,7 +176,7 @@ export function QuestionCard({ busy, onSubmit }: { busy: boolean; onSubmit: (dat
       </fieldset>
 
       <fieldset className="field">
-        <legend>Outcome of interest</legend>
+        <legend>Outcome</legend>
         <select value={spec.task_type} onChange={(e) => set("task_type", e.target.value as Spec["task_type"])} aria-label="Kind of question">
           {TASKS.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
         </select>
@@ -199,8 +197,8 @@ export function QuestionCard({ busy, onSubmit }: { busy: boolean; onSubmit: (dat
         {!needsOutcome && <small>Descriptive questions have no outcome or time horizon.</small>}
       </fieldset>
 
-      <fieldset className="field">
-        <legend>Predictors to use</legend>
+      <details className="group">
+        <summary>Predictors <span className="group-count">{spec.feature_columns.length} selected</span></summary>
         <div className="chips">
           {predictors.map((c) => (
             <label key={c.name} className="chip" title={c.description}>
@@ -208,10 +206,10 @@ export function QuestionCard({ busy, onSubmit }: { busy: boolean; onSubmit: (dat
             </label>
           ))}
         </div>
-      </fieldset>
+      </details>
 
-      <fieldset className="field">
-        <legend>Check fairness across</legend>
+      <details className="group">
+        <summary>Check fairness across <span className="group-count">{spec.subgroup_columns.length} selected</span></summary>
         <div className="chips">
           {groupable.filter((c) => c.role === "demographic" || c.role === "feature").map((c) => (
             <label key={c.name} className="chip">
@@ -226,21 +224,23 @@ export function QuestionCard({ busy, onSubmit }: { busy: boolean; onSubmit: (dat
           <input value={extra} onChange={(e) => setExtra(e.target.value)} placeholder="Attribute not in this dataset, e.g. race" aria-label="Other attribute" />
           <button type="button" className="secondary" onClick={() => { if (extra.trim()) { toggle("subgroup_columns", extra.trim()); setExtra(""); } }}>Add</button>
         </div>
-      </fieldset>
+      </details>
 
-      <fieldset className="field">
-        <legend>Acceptable limitations for this use</legend>
-        <small>Accepted limitations stay visible in the result and the record, but don&apos;t lower the verdict. Blocked problems can never be accepted.</small>
+      <details className="group">
+        <summary>Acceptable limitations <span className="group-count">{spec.acceptable_limitations.length} accepted</span></summary>
+        <small>Accepted limitations stay visible but don&apos;t lower the verdict. Blocked problems can never be accepted.</small>
         {acceptable.map((a) => (
           <label key={a.rule_id} className="choice">
             <input type="checkbox" checked={spec.acceptable_limitations.includes(a.rule_id)} onChange={() => toggle("acceptable_limitations", a.rule_id)} />
-            {" "}{a.label} <span className="quiet">({a.rule_id})</span>
+            {" "}{a.label}
           </label>
         ))}
-      </fieldset>
+      </details>
 
-      {error && <p className="error" role="alert">{error}</p>}
-      <button type="submit" disabled={busy || !info}>{busy ? "Checking…" : "Check readiness"}</button>
+      <div className="submit-bar">
+        {error && <p className="error" role="alert">{error}</p>}
+        <button type="submit" disabled={busy || !info}>{busy ? "Checking…" : "Check readiness"}</button>
+      </div>
     </form>
   );
 }
