@@ -1,63 +1,99 @@
-# Design notes
+# Design
 
-## Verdicts (precedence: worst wins)
+## Principles
+1. **Checks measure; rules decide.** Checks produce numbers. A versioned YAML rule file turns those
+   numbers into findings and a verdict. Anyone can read the rules; no code change is needed to adjust one.
+2. **Nothing passes by default.** A check that can't run, a missing input, or an unverified source is
+   Insufficient Evidence, never Ready.
+3. **Readiness belongs to the data and the question together.** A problem in a field the question
+   doesn't use is reported as a note, not counted against the verdict.
+4. **A person decides.** The tool recommends; approval is a recorded human step.
+5. **A language model never decides.** Optional AI only turns plain English into filters or words a report.
 
-| Verdict | Meaning | Typical trigger |
+## Verdicts
+Worst finding wins: Blocked > Insufficient Evidence > Conditional > Ready.
+
+| Verdict | Meaning | Typical cause |
 |---|---|---|
-| BLOCKED | A check ran and found a hard failure for this question | Identifiers present, outcome absent, clinical-decision use, too few events |
-| INSUFFICIENT_EVIDENCE | The firewall could not verify something it needs | No dictionary, unknown license or provenance, a check could not run |
-| CONDITIONAL | Usable for this question if listed remedies are applied | Leakage suspects, small subgroups, 20–50% missingness, short follow-up |
-| READY | Every applicable check passed under the current policy | |
+| **Blocked** | A check ran and found a problem this question can't work around | Identifiers, outcome missing, out-of-scope use, too few events |
+| **Insufficient Evidence** | The tool can't confirm something the question needs | No dictionary, unknown license, attribute not recorded |
+| **Conditional** | Usable after the listed fixes are made and reported | Missing values, short follow-up, small subgroups, disagreeing sources |
+| **Ready** | Every applicable check passed | |
 
-Blocked vs Insufficient Evidence is the distinction judges will probe:
-Blocked = "we checked and it fails". Insufficient = "we could not check, so we do not pass it".
+## The research-question card
+| Field | Example |
+|---|---|
+| Question | "Is this release suitable for a 5-year survival study?" |
+| Intended use | Research analysis, research model, or the two clinical uses (always Blocked) |
+| Who is studied | `sample_type` is Primary Tumor; `er_status` is Positive or Negative |
+| Outcome | Kind of question, outcome field, follow-up field, time horizon |
+| Predictors | Fields the analysis uses |
+| Fairness across | Attributes to check subgroup coverage for, including ones not in the data |
+| Acceptable limitations | Conditional rules the use can tolerate (see below) |
 
-## Default-deny, in code
-- Spec fails validation → INSUFFICIENT_EVIDENCE (no guessing what the user meant)
-- A check errors or cannot run → INSUFFICIENT_EVIDENCE
-- A check never reports → INSUFFICIENT_EVIDENCE
-- A rule references a metric its check did not produce → INSUFFICIENT_EVIDENCE
-
-## Checks (all deterministic)
-
-| Check | Measures | Rules |
+## Checks (question readiness)
+| Check | What it looks for | Rules |
 |---|---|---|
-| metadata | dictionary present, license, provenance, patient-derived / identifiable / access level, undocumented columns | META-001..008 |
-| scope | intended use; keyword backstop for individual diagnosis, treatment, or patient risk scores | SCOPE-001..002 |
-| spec_quality | parser confidence | SPEC-001 |
-| columns | outcome, predictors, filter and time columns present | COL-001..004 |
-| cohort | size after population filters | COH-001 |
-| completeness | outcome and worst-predictor missingness | CMP-001..004 |
-| outcome_events | events, minority class, events per model parameter | EVT-001..002 |
-| leakage | dictionary-declared post-index predictors; single-feature AUC ≥ 0.95 | LEAK-001..002 |
-| temporal | share of cohort observed through the question's horizon | TIME-001..002 |
-| subgroups | requested subgroup columns present; categories below minimum n | SUB-001..002 |
-| phi | identifier-like column names and values (SSN, phone, email, full dates, ZIP) | PHI-001 |
-| injection | instruction-like text in cells, column names, dictionary | INJ-001 |
+| Documentation and license | Dictionary, license, provenance, patient-data status, verified source files, undocumented fields | META-001 to META-009 |
+| Permitted use | Clinical intended use; wording that asks for a diagnosis, treatment or patient risk score | SCOPE-001, SCOPE-002 |
+| Question clarity | Parser confidence | SPEC-001 |
+| Required fields | Outcome, predictors, group fields, follow-up time present | COL-001 to COL-004 |
+| Group being studied | Records match the group | COH-001 |
+| Missing values | Outcome and predictor missingness | CMP-001 to CMP-004 |
+| Enough outcome events | Events and events per model parameter | EVT-001, EVT-002 |
+| Unfair shortcuts | Fields recorded after the outcome; a single field that separates the outcome almost perfectly | LEAK-001, LEAK-002 |
+| Follow-up length | Share observed through the horizon; negative times | TIME-001 to TIME-003 |
+| Patients counted once | More than one row per patient | UNIT-001 |
+| Subgroup coverage | Fairness attribute missing; groups too small to evaluate | SUB-001, SUB-002 |
+| Records agree across sources | Two sources for the same fact that disagree | CONS-001 |
+| Plausible values | Values outside the dictionary's declared ranges | PLAUS-001 |
+| Direct identifiers | Identifier-like field names and values | PHI-001 |
+| Instruction-like text | Text that tries to instruct an AI, reported by location only | INJ-001 |
 
-Thresholds live in the YAML, are hackathon defaults, and are stated as such in the pitch.
-Grounding to cite: METRIC framework (fitness for a specific purpose, npj Digit Med 2024) and
-STANDING Together recommendations (dataset transparency and subgroup representation, 2024).
+Thresholds are defaults in [`rules/policy_v0_1.yaml`](../rules/policy_v0_1.yaml) (version 0.5.1):
+10 events per parameter, 50 records per subgroup, 20% and 50% missingness, 5% source disagreement.
 
-## Threat model (the "firewall" part)
-- **Prompt injection via data.** Dataset text is never sent raw to an LLM. Only sanitized
-  identifiers, metric values and rule reasons reach the report writer. Flagged text is reported
-  by location only. The verdict comes from rules, so injected text cannot change it.
-- **LLM drift.** Report text is rejected and replaced by the template if it omits the verdict or
-  any Blocked/Insufficient rule id, or states a different verdict.
-- **Parser mislabels clinical use.** A deterministic keyword guard (SCOPE-002) backs up the parser.
-- **Tampering after the fact.** Certificates bind dataset, dictionary, spec, policy file hash and
-  engine version, signed with Ed25519. Changing any byte fails verification.
-- **Data retention.** The API evaluates uploads in memory and stores hashes and results only;
-  the Supabase table is append-only.
+## Acceptable limitations
+A question card may accept only the Conditional rules the policy lists (for example CMP-004, TIME-002,
+SUB-002, CONS-001). An accepted finding stays visible and marked as accepted, no longer lowers the
+verdict, and makes human review **required**; approval then needs a written reason. Blocked and
+Insufficient Evidence findings can never be accepted, and an attempt to accept one is reported.
+
+## Evidence behind each finding
+Every finding carries the columns of the event's findings template: check performed, fields used,
+rows or groups affected, what was found, effect on the intended use, materiality, confidence,
+evidence or source (measured value and rule), limitation, recommended next step, and whether a person
+must review. It also states **what would change the verdict**. Findings download as that template CSV.
+
+**Uncertainty:** each measured rate shows a 95% Wilson range. If the range crosses the rule's threshold,
+the finding is marked **borderline**. Counts that are exact say so.
+
+**Which samples can answer it:** records remaining after each group condition and each required
+field, and a CSV of every record with whether it can answer the question and where it dropped out.
 
 ## Patient-data model
-`patient_derived` (true for real, even de-identified, data such as TCGA), `identifiable` (must be
-false), `access` (open only). De-identified open-access patient data is allowed; identifiable or
-controlled-access data is Blocked; an undeclared status is Insufficient evidence.
+`patient_derived` (true for real, even de-identified, data such as TCGA), `identifiable` (must be false)
+and `access` (open only). De-identified open-access patient data is allowed; identifiable or
+controlled-access data is Blocked; an undeclared status is Insufficient Evidence.
 
-## Known limits (say these before judges do)
-- PHI detection is heuristic; a pass is not a privacy guarantee.
-- Single-feature AUC catches blatant leakage, not leakage spread across several features.
-- Events-per-parameter ≥ 10 is a rough rule of thumb, not a sample-size calculation.
-- Subgroup check uses a minimum count; it does not compare against a reference population.
+## Review step
+| Verdict | Decisions available |
+|---|---|
+| Ready | Approve, reject, ask for more evidence |
+| Conditional | Approve with conditions, reject, ask for more evidence |
+| Blocked, Insufficient Evidence | Reject, ask for more evidence |
+
+Approval requires acknowledging every finding; any decision other than a clean approval requires a
+note. The verdict being reviewed is read from the signed certificate, never from the browser. The
+review itself is signed (Ed25519) and saved with the evidence record.
+
+## Threat model
+| Risk | Mitigation |
+|---|---|
+| Text hidden in the data steering an AI | Data text never reaches a model raw; flagged text is reported by location only; rules, not models, set verdicts |
+| Generated wording contradicting the verdict | Report text that omits or changes the verdict, or drops a Blocked rule, is replaced by a template |
+| A clinical question mislabelled as research | A wording guard (SCOPE-002) backs up the intended-use field |
+| Results edited after the fact | Certificates bind data checksums, question, rule version and verdicts; edits fail verification |
+| A review attached to a forged result | Reviews are accepted only for results whose certificate verifies |
+| Arbitrary paths from the browser | The API only opens release folders it lists itself; envelope input is validated and passed without a shell |
+| Data retention | Uploads are evaluated in memory; stored records hold checksums and results |

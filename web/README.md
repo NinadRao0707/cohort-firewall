@@ -1,28 +1,43 @@
-# Cohort Firewall web app (Next.js)
+# Web app
 
-## First run (sample results only, no API needed)
+The Next.js reviewer interface for Cohort Firewall: **Release check** (`/tower`) and **Question check** (`/`).
+
+## Run
+The simplest way is from the repository root, which starts the API too:
+```bash
+bash scripts/run.sh
+```
+
+To work on the web app alone:
 ```bash
 cd web
-npm install next@latest react@latest react-dom@latest
-npm install -D typescript @types/react @types/react-dom @types/node
+npm install
+cp .env.local.example .env.local   # NEXT_PUBLIC_API_URL=http://localhost:8000
 npm run dev
 ```
-Open http://localhost:3000 and click any sample result in the left column.
-If `next dev` prompts to adjust tsconfig.json or creates next-env.d.ts, accept it.
 
-## Connect to the API
+Without `NEXT_PUBLIC_API_URL`, the app runs in **saved-results mode**: it opens the results in
+`public/samples/` but can't run live checks. Regenerate those samples, signed with your local key,
+with `python scripts/export_web_samples.py`.
+
+## Build
 ```bash
-cp .env.local.example .env.local      # sets NEXT_PUBLIC_API_URL=http://localhost:8000
+npm run build
 ```
-Restart `npm run dev`. With the API running (`uvicorn api.main:app --reload` from the repo root),
-upload `data/variants/clean/data.csv` and `dictionary.json`, choose "Question spec (JSON)",
-paste `spec.json`, and click Check readiness. Expected verdict: Ready.
 
-## Structure
-- `app/page.tsx` page state and data flow
-- `components/VerdictGate.tsx` the four-step verdict scale (the one bold element)
-- `components/Findings.tsx`, `ChecksTable.tsx`, `CertificatePanel.tsx`
-- `lib/types.ts` response types mirroring `/evaluate`; `lib/api.ts` API client and sample list
-- `public/samples/*.json` real engine output used for offline development
+## Layout
+| Path | Contents |
+|---|---|
+| `app/page.tsx` | Question check |
+| `app/tower/page.tsx` | Release check, including Open envelope |
+| `components/QuestionCard.tsx` | The question filter bar |
+| `components/Popover.tsx` | Filter chips, popovers and phone bottom sheets |
+| `components/Results.tsx`, `TowerResults.tsx` | Verdict header and result tabs |
+| `components/Findings.tsx`, `Funnel.tsx`, `ChecksTable.tsx` | Findings, samples and checks |
+| `components/ReviewPanel.tsx`, `CertificatePanel.tsx` | Human review and signed records |
+| `lib/` | API clients and response types |
+| `public/samples/` | Saved results for offline use |
 
-Not yet built or tested with `next build` (written offline). Report any type errors and they'll be fixed.
+## Deploying
+The app can be hosted on Vercel as a saved-results demo: set the project's root directory to `web`
+and leave `NEXT_PUBLIC_API_URL` unset. Live checks need the API and the frozen data, so they run locally.

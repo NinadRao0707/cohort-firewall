@@ -1,48 +1,61 @@
-# Cohort Control Tower (featured product, Cohort Firewall track)
+# Cohort Control Tower
 
-**User:** a research engineer responsible for a dataset that gets new releases.
-**Workflow they finish:** point the tool at a new TCGA-BRCA release; see what changed, which
-protected analyses it affects (and which it doesn't), a readiness verdict per analysis, and a
-`findings.json` a reviewer (Repair Review Desk) can act on.
+Compares a new TCGA-BRCA release with the event's frozen release, finds what changed, reruns only
+the analyses it affects, gives each a verdict, and writes `findings.json` in the shared format v0.2.
 
-## Run
-```bash
-python -m cohort_firewall.tower --challenge-repo ~/oncosys-hackathon-challenge \
-  --b ~/oncosys-hackathon-challenge/data/tcga-brca/releases/practice-B --out findings.json
-python ~/oncosys-hackathon-challenge/format/validate.py findings.json
-```
-The baseline defaults to the frozen release (`data/tcga-brca/raw`) and is checked against
-`sources.csv`. If it doesn't match, every verdict is Insufficient Evidence (TWR-PROV-1).
+## Run it
+| Situation | Command or click |
+|---|---|
+| Sealed envelope | Release check → **+ Open envelope** → number and code → **Open and compare** |
+| Any folder | `python -m cohort_firewall.tower --b <folder> --out outputs/findings.json` |
+| Validate the output | `python ../oncosys-hackathon-challenge/format/validate.py outputs/findings.json` |
+| Leave out summary findings | add `--no-summary-findings` |
 
-## Web reviewer screen
-Start the API (`uvicorn api.main:app --reload`, with `CF_CHALLENGE_REPO` if the challenge repo
-isn't at `~/oncosys-hackathon-challenge`) and the web app (`cd web && npm run dev`), then open
-http://localhost:3000/tower. Pick a release folder from `data/tcga-brca/releases/`, compare, and
-download `findings.json`. A saved findings.json can also be opened without the API.
+The baseline defaults to the frozen release (`data/tcga-brca/raw` in the challenge repository) and is
+checked against `sources.csv`. If it doesn't match, every verdict is Insufficient Evidence (TWR-PROV-1).
 
 ## How it works
-1. **Fingerprint** every sample in every file from its exact text values. Large matrices are
-   streamed, so the 64 MB RNA file needs about 65 MB of memory.
-2. **Detect changes without being told what to look for:** swaps, profiles copied onto other IDs,
-   new IDs carrying existing profiles, samples added or removed, clinical fields changed, values
-   lost or edited, and genuine-profile coverage lost per ER status and PAM50 subtype.
-3. **Map changes to analyses** using each analysis's input files, the samples it used on the
-   baseline, and the clinical columns its code reads. Unaffected analyses are **not rerun**, and the
-   output says why.
-4. **Verdict per analysis** from `rules/tower_v0_1.yaml`: swaps, duplicates and changed grouping
-   labels are Blocked; membership, value and other changes are Conditional; an unverified baseline
-   or a failed rerun is Insufficient Evidence; otherwise Ready.
-5. **Write `findings.json`** (shared format v0.2): findings with evidence pointers and affected /
-   not-affected analyses, before/after results, proposed repairs, human-review flags, limitations,
-   and a signed certificate over the release checksums.
+1. **Fingerprint every sample in every file** from its exact text values. Large matrices are streamed,
+   so even the 64 MB RNA file needs little memory. Baseline fingerprints are cached by file checksum.
+2. **Compare only the files the new release has.** A baseline file the release doesn't carry (envelopes
+   have no RNA) is listed as "not compared", not reported as a change.
+3. **Detect changes without being told what to look for** (table below).
+4. **Map changes to analyses** by input file, by the samples each analysis used on the baseline, and by
+   the clinical columns its code reads. Unaffected analyses are not rerun; the output says why.
+5. **Rerun affected analyses** with the event's own `reference_analyses.py`, and show before and after values.
+6. **Give each analysis a verdict** from [`rules/tower_v0_1.yaml`](../rules/tower_v0_1.yaml).
+7. **Write `findings.json`** with findings, evidence, affected and unaffected analyses, proposed repairs,
+   limitations, a plain-English summary, ranked next steps and a signed certificate.
 
-## Limitations (shown in the output)
-- Exact-match detection: a swap or copy that also alters values is reported as value edits.
-- A profile counts as copied only if it was unique in the baseline and most of the sample's values
-  changed, so coincidental matches are not accused. This can miss a copy between near-identical profiles.
-- The tool shows what changed, not which release is correct. Every repair needs a person's decision.
+## What it detects
+| Change | Finding kind | Proposed repair |
+|---|---|---|
+| Two samples exchanged profiles | `sample_swap` | Restore both from the baseline |
+| A sample now carries another sample's exact profile | `duplicate` | Restore from the baseline |
+| A new sample ID carries an existing profile | `duplicate` | Exclude the new ID |
+| Samples removed or added | `membership_change` | Flag for review |
+| Sample count unchanged but membership changed | `membership_change` (summary) | – |
+| Clinical field changed for a sample | `label_conflict` | Flag for review |
+| Values lost or edited | `missing_data` / `other` | Flag for review |
+| Fewer genuine profiles in an ER or PAM50 subgroup | `missing_data` (summary) | – |
 
-## Honesty note on the practice release
-`make_release.py` defines practice-B's change types in its own header, so they are not secret.
-The tool is built to be general and is tested on our own randomized releases (`tests/test_tower.py`)
-covering every detector. Judges use an unseen release with different changes.
+A profile counts as copied only if it was unique in the baseline and most of the sample's values
+changed, so samples that happen to share values are never accused.
+
+## Verdict rules
+| Rule | Verdict | When |
+|---|---|---|
+| TWR-PROV-1 | Insufficient Evidence | The baseline doesn't match the frozen checksums |
+| TWR-RUN-1 | Insufficient Evidence | The analysis couldn't be run |
+| TWR-SWAP-1 | Blocked | A swap touches the analysis's samples |
+| TWR-DUP-1 | Blocked | A copied profile touches the analysis's samples |
+| TWR-LBL-1 | Blocked | A clinical label the analysis groups by changed |
+| TWR-MEM-1 | Conditional | Samples appeared or disappeared |
+| TWR-VAL-1 | Conditional | Values edited or lost |
+| TWR-OTH-1 | Conditional | Other changes to its input files |
+| TWR-RES-1 | Conditional | The result changed with no integrity issue |
+
+## Limitations
+- Exact-match detection: a swap or copy that also edits values is reported as value edits.
+- The tool shows what changed, not which release is correct; every repair needs a person's decision.
+- Coverage per subgroup uses the newer release's labels.

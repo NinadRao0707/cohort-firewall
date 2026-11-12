@@ -1,24 +1,33 @@
 # Third-party code, data and licenses
 
-Licenses as published by each project; check the installed version's metadata
-(`pip show <package>`, `npm view <package> license`) if in doubt.
+Licenses are as published by each project. Check an installed version with `pip show <package>` or
+`npm view <package> license`.
 
-## Python packages (requirements.txt)
-| Package | Use | License |
+## Python
+Installed by `requirements.txt`:
+
+| Package | Used for | License |
 |---|---|---|
-| pandas | data loading and checks | BSD-3-Clause |
-| NumPy | numerics | BSD-3-Clause |
-| PyYAML | policy files | MIT |
-| cryptography | Ed25519 certificate signing | Apache-2.0 OR BSD-3-Clause |
+| pandas | Data loading and checks | BSD-3-Clause |
+| NumPy | Numerics | BSD-3-Clause |
+| PyYAML | Rule files | MIT |
+| cryptography | Ed25519 signing of results and reviews | Apache-2.0 or BSD-3-Clause |
 | FastAPI | API | MIT |
 | Uvicorn | API server | BSD-3-Clause |
-| Pydantic | request validation | MIT |
-| python-multipart | file uploads | Apache-2.0 |
-| anthropic (optional) | plain-English question parsing | MIT |
-| supabase (optional) | run log | MIT |
-| jsonschema (via the challenge repo's validator) | findings.json validation | MIT |
+| Pydantic | Request validation | MIT |
+| python-multipart | File uploads | Apache-2.0 |
+| certifi | TLS certificates for data downloads | MPL-2.0 |
+| jsonschema | Validating `findings.json` with the event's validator | MIT |
 
-## JavaScript (web/)
+Optional, in `requirements-optional.txt`:
+
+| Package | Used for | License |
+|---|---|---|
+| anthropic | Plain-English question parsing (user supplies the key) | MIT |
+| supabase | Optional run log | MIT |
+| pytest | Running the tests with pytest | MIT |
+
+## JavaScript (`web/`)
 | Package | License |
 |---|---|
 | Next.js | MIT |
@@ -28,13 +37,12 @@ Licenses as published by each project; check the installed version's metadata
 ## Fonts
 Public Sans and Source Serif 4, loaded through `next/font/google`: SIL Open Font License 1.1.
 
-## Event materials used at runtime (not copied into this repository)
-- The challenge repository's `data/tcga-brca/reference_analyses.py`, `make_release.py`, `fetch.py`,
-  `sources.csv`, manifests and `format/` validator are read from a local clone of
-  https://github.com/disleveK/oncosys-hackathon-challenge. See its `DATA_LICENSES.md`.
-- TCGA-BRCA data: TCGA open access via the UCSC Xena TCGA hub; survival from the TCGA Pan-Cancer
-  Clinical Data Resource (Liu et al., Cell 2018). Credit the TCGA Research Network. Not
-  redistributed here.
+## Event materials (used at run time, not copied here)
+From a local clone of https://github.com/disleveK/oncosys-hackathon-challenge: `reference_analyses.py`,
+`make_release.py`, `fetch.py`, `sources.csv`, the manifests, `envelopes/unseal.py` and the `format/`
+validator. See that repository's `DATA_LICENSES.md`.
 
-## Test data
-- Synthea (optional, engine testing only): Apache-2.0, MITRE. Generated output is not committed.
+## Data
+- **TCGA-BRCA:** TCGA open access, via the UCSC Xena TCGA hub; survival data from the TCGA Pan-Cancer
+  Clinical Data Resource (Liu et al., *Cell*, 2018). Credit: the TCGA Research Network. Not redistributed here.
+- **Synthea** (optional, engine testing only): Apache-2.0, MITRE. Generated output is not committed.
