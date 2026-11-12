@@ -21,7 +21,7 @@ from cohort_firewall.engine import DEFAULT_POLICY, evaluate_dataset
 from cohort_firewall import datasets
 from cohort_firewall.policy import Policy
 from cohort_firewall.review import ReviewError, review_question, review_release, reviews_for, verify_review
-from cohort_firewall.tower.run import list_releases, run_tower
+from cohort_firewall.tower.run import list_releases, release_folders, run_tower
 
 CHALLENGE_REPO = Path(os.environ.get("CF_CHALLENGE_REPO", "~/oncosys-hackathon-challenge")).expanduser()
 TOWER_OUT = Path(__file__).resolve().parent.parent / "outputs"
@@ -122,10 +122,11 @@ class TowerRequest(BaseModel):
 
 @app.post("/tower/run")
 def tower_run(req: TowerRequest):
-    names = {r["name"] for r in list_releases(CHALLENGE_REPO)}
-    if req.release not in names:   # only listed folders: no arbitrary paths from the browser
-        raise HTTPException(404, f"Unknown release '{req.release}'. Put it under data/tcga-brca/releases/.")
-    path_b = CHALLENGE_REPO / "data" / "tcga-brca" / "releases" / req.release
+    folders = release_folders(CHALLENGE_REPO)
+    if req.release not in folders:   # only listed folders: no arbitrary paths from the browser
+        raise HTTPException(404, f"Unknown release '{req.release}'. Open an envelope, or put the folder "
+                                 "under data/tcga-brca/releases/.")
+    path_b = folders[req.release]
     try:
         doc = run_tower(CHALLENGE_REPO, path_b, include_rna=req.include_rna,
                         include_summaries=req.include_summaries)
@@ -134,6 +135,37 @@ def tower_run(req: TowerRequest):
     TOWER_OUT.mkdir(exist_ok=True)
     (TOWER_OUT / f"findings-{req.release}.json").write_text(json.dumps(doc, indent=2))
     return doc
+
+
+class UnsealRequest(BaseModel):
+    envelope: str
+    code: str
+
+
+@app.post("/tower/unseal")
+def tower_unseal(req: UnsealRequest):
+    """Open a sealed envelope with the organizers' own envelopes/unseal.py, then report its release."""
+    import re
+    import subprocess
+    import sys
+    env = req.envelope.strip()
+    words = req.code.replace("-", " ").split()
+    if not re.fullmatch(r"(?i)practice|E?\d{1,2}", env):
+        raise HTTPException(400, "Envelope must be a number like 07, or 'practice'.")
+    if len(words) != 4 or not all(re.fullmatch(r"[A-Za-z]{2,20}", w) for w in words):
+        raise HTTPException(400, "The code is four words, like: amber falcon river quartz.")
+    script = CHALLENGE_REPO / "envelopes" / "unseal.py"
+    if not script.exists():
+        raise HTTPException(400, "envelopes/unseal.py not found. Run git pull in the challenge repo.")
+    proc = subprocess.run([sys.executable, str(script), env, *words], cwd=CHALLENGE_REPO,
+                          capture_output=True, text=True, timeout=180)
+    log = (proc.stdout + proc.stderr).strip()
+    if proc.returncode != 0:
+        raise HTTPException(400, log.splitlines()[-1].strip(" ✗") if log else "unseal.py failed.")
+    name = "envelope " + ("practice" if env.lower() == "practice" else f"E{int(env.lstrip('Ee')):02d}")
+    if name not in release_folders(CHALLENGE_REPO):
+        raise HTTPException(400, f"Opened, but no release folder was found. Output: {log[-300:]}")
+    return {"name": name, "log": log}
 
 
 class BuildRequest(BaseModel):

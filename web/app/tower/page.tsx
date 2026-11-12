@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Nav } from "@/components/Nav";
 import { ChipPopover } from "@/components/Popover";
 import { TowerResults } from "@/components/TowerResults";
-import { apiConfigured, buildRelease, listReleases, loadTowerSample, runTower, type FindingsDoc } from "@/lib/tower";
+import { apiConfigured, buildRelease, listReleases, loadTowerSample, runTower, unsealEnvelope, type FindingsDoc } from "@/lib/tower";
 
 export default function TowerPage() {
   const [releases, setReleases] = useState<{ name: string; files: string[] }[]>([]);
@@ -13,6 +13,8 @@ export default function TowerPage() {
   const [busy, setBusy] = useState(false);
   const [stage, setStage] = useState("");
   const [error, setError] = useState("");
+  const [envNo, setEnvNo] = useState("");
+  const [envCode, setEnvCode] = useState("");
   const out = useRef<HTMLElement>(null);
 
   async function refresh(select?: string) {
@@ -31,6 +33,16 @@ export default function TowerPage() {
     setBusy(true); setError("");
     try { setDoc(await task()); } catch (e) { setError((e as Error).message); } finally { setBusy(false); setStage(""); }
   }
+  function openEnvelope() {
+    go(async () => {
+      setStage(`Opening envelope ${envNo}… (about 15 s)`);
+      const name = await unsealEnvelope(envNo, envCode);
+      await refresh(name);
+      setStage(`Comparing ${name}…`);
+      return runTower(name, rna);
+    });
+  }
+
   function buildAndCompare(file: File | undefined) {
     if (!file) return;
     go(async () => {
@@ -62,7 +74,21 @@ export default function TowerPage() {
       <section className="toolbar" aria-label="Release">
         <form className="qbar" onSubmit={(e) => { e.preventDefault(); if (release) { setStage(`Comparing ${release}…`); go(() => runTower(release, rna)); } }}>
           <div className="chips-row">
-            <ChipPopover title="New release" label={<><span className="k">Release</span> {release || (apiConfigured ? "none found" : "API not running")}</>}>
+            <ChipPopover variant="add" title="Open a sealed envelope" label="+ Open envelope" width={340}>
+              {(close) => (
+                <div className="editor">
+                  <p className="quiet pop-note">Type the envelope number and the four-word code the judge gives you.
+                    This runs the event&apos;s envelopes/unseal.py, then compares the release inside.</p>
+                  <label className="field"><span>Envelope</span>
+                    <input value={envNo} onChange={(e) => setEnvNo(e.target.value)} placeholder="07, or practice" inputMode="text" /></label>
+                  <label className="field"><span>Code</span>
+                    <input value={envCode} onChange={(e) => setEnvCode(e.target.value)} placeholder="amber falcon river quartz" autoCapitalize="none" /></label>
+                  <button type="button" disabled={!apiConfigured || busy || !envNo.trim() || envCode.trim().split(/[\s-]+/).length !== 4}
+                          onClick={() => { close(); openEnvelope(); }}>Open and compare</button>
+                </div>
+              )}
+            </ChipPopover>
+            <ChipPopover title="New release" label={<><span className="k">Release</span> {release || (apiConfigured ? "none found" : "saved results only")}</>}>
               {(close) => (
                 <ul className="menu">{releases.map((r) => (
                   <li key={r.name}><label className="radio-row"><input type="radio" checked={r.name === release}
@@ -95,7 +121,7 @@ export default function TowerPage() {
         {error && <p className="error" role="alert">{error}</p>}
         {doc ? <TowerResults doc={doc} /> : (
           <div className="empty">
-            <p>Choose a release and select Compare releases.</p>
+            <p>{apiConfigured ? "Choose a release and select Compare releases." : "This copy shows saved results only: open More, then the saved practice-B run."}</p>
             <p className="quiet">Analyses that nothing touches are left alone, and every change is listed for a person to decide.</p>
           </div>
         )}

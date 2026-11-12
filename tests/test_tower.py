@@ -113,5 +113,58 @@ def test_tower_scenarios():
     assert run_all(verbose=False)
 
 
+
+
+
+def run_envelope_case(verbose=True):
+    """Envelope releases have no RNA file. The baseline does. That must not be reported as a change,
+    the release must be found under envelopes/opened/<name>/release/, and be named after the envelope."""
+    import gzip
+    import shutil
+    from cohort_firewall.tower.run import release_folders, run_tower
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        base = tmp / "baseline"
+        make_baseline(base)
+        repo = tmp / "challenge"
+        make_challenge_repo(repo, base)
+        with gzip.open(repo / "data" / "tcga-brca" / "raw" / "rna_hiseq.tsv.gz", "wt") as f:
+            f.write("sample\tTCGA-AA-0001-01\nGENE1\t1.0\n")
+        env = repo / "envelopes" / "opened" / "E07" / "release"
+        make_release(base, env, [{"type": "swap", "file": "protein_rppa.tsv.gz"}], seed=77)
+        problems = []
+        folders = release_folders(repo)
+        if "envelope E07" not in folders:
+            problems.append(f"opened envelope not listed: {list(folders)}")
+        doc = run_tower(repo, env)
+        if any("rna_hiseq" in f["summary"] for f in doc["findings"]):
+            problems.append("missing RNA reported as a finding")
+        if doc.get("not_compared") != ["rna_hiseq.tsv.gz"]:
+            problems.append(f"not_compared = {doc.get('not_compared')}")
+        if doc["data"]["releases"][1]["name"] != "E07":
+            problems.append(f"release named {doc['data']['releases'][1]['name']!r}, expected 'E07'")
+        if {f["kind"] for f in doc["findings"]} != {"sample_swap", "missing_data"} or \
+                {a["id"]: a["verdict"] for a in doc["analyses"]} != {"A1": "Blocked", "A2": "Ready"}:
+            problems.append(f"unexpected result: {[f['kind'] for f in doc['findings']]}")
+        if schema_path().exists():
+            problems += check(doc, json.loads(schema_path().read_text()))
+        if verbose:
+            print(f"{'PASS' if not problems else 'FAIL'}  envelope_without_rna         "
+                  f"{ {a['id']: a['verdict'] for a in doc['analyses']} }  not_compared={doc.get('not_compared')}")
+            for p in problems:
+                print("      -", p)
+        return not problems
+
+
+def schema_path():
+    return SCHEMA
+
+
+def test_envelope_without_rna():
+    assert run_envelope_case(verbose=False)
+
+
 if __name__ == "__main__":
-    sys.exit(0 if run_all() else 1)
+    ok_all = run_all()
+    ok_env = run_envelope_case()
+    sys.exit(0 if ok_all and ok_env else 1)

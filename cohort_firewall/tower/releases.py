@@ -144,13 +144,14 @@ CACHE_VERSION = "fp1"
 
 
 def load_release(path: str | Path, name: str | None = None, include_rna: bool = True,
-                 cache_dir: Path | None = None) -> Release:
+                 cache_dir: Path | None = None, only: set[str] | None = None) -> Release:
     """Load and fingerprint a release. With cache_dir, a release whose files are byte-identical
     to a previous load (same sha256 per file) is read from the cache instead of re-fingerprinted."""
     import pickle
     path = Path(path)
     if cache_dir is not None:
-        present = [f for f in LAYOUT if (path / f).exists() and (include_rna or not f.startswith("rna_"))]
+        present = [f for f in LAYOUT if (path / f).exists() and (include_rna or not f.startswith("rna_"))
+                   and (only is None or f in only)]
         key = hashlib.sha256("|".join([CACHE_VERSION] + [f"{f}:{file_sha256(path / f)}" for f in present])
                              .encode()).hexdigest()[:24]
         cached = Path(cache_dir) / f"release-{key}.pkl"
@@ -160,14 +161,14 @@ def load_release(path: str | Path, name: str | None = None, include_rna: bool = 
             for v in rel.files.values():
                 v.path = path / v.name
             return rel
-        rel = load_release(path, name, include_rna)
+        rel = load_release(path, name, include_rna, only=only)
         Path(cache_dir).mkdir(parents=True, exist_ok=True)
         cached.write_bytes(pickle.dumps(rel))
         return rel
     files, hashes = {}, {}
     for fname, (orient, idcol) in LAYOUT.items():
         p = path / fname
-        if not p.exists() or (fname.startswith("rna_") and not include_rna):
+        if not p.exists() or (fname.startswith("rna_") and not include_rna) or (only is not None and fname not in only):
             continue
         hashes[fname] = {"file": file_sha256(p), "content": content_sha256(p)}
         files[fname] = _load_rows(p, fname, idcol) if orient == "rows" else _load_matrix(p, fname)

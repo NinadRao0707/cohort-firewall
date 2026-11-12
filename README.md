@@ -83,8 +83,11 @@ python -m cohort_firewall.tower --challenge-repo ../oncosys-hackathon-challenge 
   --b ../oncosys-hackathon-challenge/data/tcga-brca/releases/practice-B --out outputs/findings-practice-B.json
 python ../oncosys-hackathon-challenge/format/validate.py outputs/findings-practice-B.json
 ```
-To compare **any new release**, put its folder in `oncosys-hackathon-challenge/data/tcga-brca/releases/<name>/`
-(for example with `make_release.py --config <file>`), or upload the config in Release check, or pass its path with `--b`.
+To compare **any new release**, pass its folder with `--b` (for example a judge's opened envelope,
+`../oncosys-hackathon-challenge/envelopes/opened/E07/release`), or in Release check use
+**+ Open envelope** (number and code), **More → Build from a config**, or any folder under
+`data/tcga-brca/releases/`. Envelope releases have no RNA file; files a release doesn't carry are
+listed as "not compared", not reported as changes.
 
 If `fetch.py` fails with `CERTIFICATE_VERIFY_FAILED` on macOS, `setup.sh` already sets `SSL_CERT_FILE`
 from `certifi`; if you run fetch.py by hand, run `export SSL_CERT_FILE="$(python -m certifi)"` first.

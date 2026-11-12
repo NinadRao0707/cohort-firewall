@@ -33,6 +33,7 @@ export interface FindingsDoc {
   findings: TowerFinding[]; analyses?: TowerAnalysis[]; repairs?: TowerRepair[];
   limitations?: string[]; certificate?: unknown; baseline_unverified_files?: string[];
   timing_seconds?: { baseline: number; total: number };
+  not_compared?: string[];
   plain_summary?: string;
   next_steps?: { rank: number; action: string; samples: string[]; n_samples: number; resolves: string[]; affects_analyses: string[] }[];
 }
@@ -50,6 +51,14 @@ export async function runTower(release: string, includeRna: boolean): Promise<Fi
   });
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail ?? `Run failed (${res.status}).`);
   return res.json();
+}
+
+export async function unsealEnvelope(envelope: string, code: string): Promise<string> {
+  const res = await fetch(`${API}/tower/unseal`, {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ envelope, code }),
+  });
+  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail ?? `Couldn't open the envelope (${res.status}).`);
+  return (await res.json()).name;
 }
 
 export async function buildRelease(config: unknown): Promise<string> {
