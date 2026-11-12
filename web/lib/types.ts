@@ -64,6 +64,11 @@ export interface EvaluateResponse {
   findings_template_csv?: string;
   plain_summary?: string;
   next_steps?: QuestionStep[];
+  funnel?: {
+    steps: { step: string; n: number; dropped: number }[];
+    n_final: number; n_patients_final: number | null; repeated_patients: number | null;
+    not_in_data: string[]; note: string; samples_csv: string;
+  };
   certificate: Certificate;
   engine_version: string;
   policy_version: string;

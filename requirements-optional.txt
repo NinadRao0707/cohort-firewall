@@ -1,0 +1,4 @@
+# Optional extras (not needed for judging): pip install -r requirements-optional.txt
+anthropic   # plain-English question parsing (user supplies ANTHROPIC_API_KEY)
+supabase    # optional run log
+pytest      # the tests also run with plain python

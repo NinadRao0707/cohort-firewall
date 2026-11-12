@@ -1,4 +1,4 @@
-# Cohort Firewall policy, version 0.5.0
+# Cohort Firewall policy, version 0.5.1
 #
 # Checks measure. This file decides. The LLM never sees or changes it.
 # Verdict precedence (worst wins): BLOCKED > INSUFFICIENT_EVIDENCE > CONDITIONAL > READY
@@ -11,7 +11,7 @@
 # Thresholds are hackathon defaults, chosen to be explainable, not clinical standards.
 # Change them here, bump the version, and every certificate records which version decided.
 
-version: "0.5.0"
+version: "0.5.1"
 
 parameters:
   leakage_auc_threshold: 0.95   # single feature separating the outcome this well is suspicious
@@ -224,7 +224,7 @@ rules:
     verdict: CONDITIONAL
     reason: "Field '{worst_feature}' is missing for {max_feature_missing_rate:.0%} of the cohort."
     remedy: "Plan and document an imputation strategy, or drop the field."
-    reconsider: "A documented imputation plan, or the result with and without that predictor."
+    reconsider: "A documented imputation plan, or the result with and without that field."
 
   # ---- enough signal -----------------------------------------------------------------------
   - id: EVT-001

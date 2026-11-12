@@ -227,3 +227,9 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="file"]) {
 .steps { margin: 0; padding-left: 22px; display: grid; gap: 10px; max-width: 76ch; }
 .steps li span { display: block; font-size: 0.875rem; margin-top: 2px; }
 .status[data-status="accepted"] { color: var(--ink-soft); font-style: italic; }
+.funnel { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; max-width: 640px; }
+.funnel-label { display: flex; justify-content: space-between; gap: 12px; font-size: 0.9375rem; }
+.funnel-n { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+.funnel-bar { height: 8px; background: var(--rule); border-radius: 4px; margin-top: 4px; overflow: hidden; }
+.funnel-bar span { display: block; height: 100%; background: var(--ink-soft); }
+.funnel-final { margin: 16px 0 6px; max-width: 64ch; }

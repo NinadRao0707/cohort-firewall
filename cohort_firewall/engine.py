@@ -9,6 +9,7 @@ import pandas as pd
 from . import ENGINE_VERSION
 from .certificate import issue
 from .evidence import enrich, summarize, template_csv
+from .funnel import build_funnel
 from .checks import run_checks
 from .policy import Policy, evaluate
 from .report import build_report
@@ -79,6 +80,7 @@ def evaluate_dataset(dataset_bytes: bytes, dictionary: dict | None, spec: dict |
         "limitations": LIMITATIONS,
         "findings": ev["findings"],
         "findings_template_csv": template_csv(ev["findings"]),
+        "funnel": build_funnel(df, dictionary, qs),
         **summarize(ev["verdict"], ev["findings"],
                     next((c["metrics"].get("n_cohort") for c in checks if c["check"] == "cohort"), None),
                     [f for f in ev["findings"] if f.get("accepted")]),
