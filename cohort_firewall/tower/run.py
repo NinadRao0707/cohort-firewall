@@ -18,7 +18,11 @@ def run_tower(challenge_repo: Path, path_b: Path, path_a: Path | None = None,
     for p in (repo, a, b):
         if not p.exists():
             raise FileNotFoundError(str(p))
-    rel_a = load_release(a, "frozen-A" if path_a is None else a.name, include_rna=include_rna)
+    import time
+    t0 = time.time()
+    cache = Path(__file__).resolve().parents[2] / "outputs" / "cache"
+    rel_a = load_release(a, "frozen-A" if path_a is None else a.name, include_rna=include_rna, cache_dir=cache)
+    t1 = time.time()
     rel_b = load_release(b, b.name, include_rna=include_rna)
     frozen = frozen_checksums(repo)
     unverified = sorted(f for f, h in rel_a.file_hashes.items() if frozen.get(f) != h["file"])
@@ -30,6 +34,7 @@ def run_tower(challenge_repo: Path, path_b: Path, path_a: Path | None = None,
     doc = build_findings(rel_a, rel_b, changes, runs, unverified, team, question,
                          include_summaries=include_summaries)
     doc["baseline_unverified_files"] = unverified
+    doc["timing_seconds"] = {"baseline": round(t1 - t0, 1), "total": round(time.time() - t0, 1)}
     return doc
 
 

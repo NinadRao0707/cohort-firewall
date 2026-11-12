@@ -133,6 +133,39 @@ def tower_run(req: TowerRequest):
     return doc
 
 
+class BuildRequest(BaseModel):
+    config: dict
+
+
+@app.post("/tower/build")
+def tower_build(req: BuildRequest):
+    """Build a release from a make_release.py config, using the event's own script, for live tests."""
+    import re
+    import subprocess
+    import sys
+    cfg = req.config
+    name = str(cfg.get("name", ""))
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,63}", name):
+        raise HTTPException(400, "Config 'name' must be letters, digits, '-' or '_' (it becomes a folder name).")
+    if name in {"raw", "practice-B"}:
+        raise HTTPException(400, f"'{name}' is protected; choose another release name.")
+    if not isinstance(cfg.get("changes"), list) or "seed" not in cfg:
+        raise HTTPException(400, "Config needs 'name', 'seed' and a 'changes' list (see make_release.py).")
+    script = CHALLENGE_REPO / "data" / "tcga-brca" / "make_release.py"
+    if not script.exists():
+        raise HTTPException(400, f"make_release.py not found under {CHALLENGE_REPO}.")
+    cfg_dir = TOWER_OUT / "configs"
+    cfg_dir.mkdir(parents=True, exist_ok=True)
+    cfg_path = cfg_dir / f"{name}.json"
+    cfg_path.write_text(json.dumps(cfg, indent=2))
+    proc = subprocess.run([sys.executable, str(script), "--config", str(cfg_path)], cwd=CHALLENGE_REPO,
+                          capture_output=True, text=True, timeout=300)
+    if proc.returncode != 0:
+        raise HTTPException(400, f"make_release.py failed: {(proc.stderr or proc.stdout).strip()[-500:]}")
+    # CHANGES.json (the answer key) is written by the script but never read or returned here.
+    return {"name": name, "log": proc.stdout.strip()}
+
+
 @app.get("/health")
 def health():
     return {"ok": True}

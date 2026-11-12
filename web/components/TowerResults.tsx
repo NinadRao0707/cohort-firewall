@@ -125,6 +125,7 @@ export function TowerResults({ doc }: { doc: FindingsDoc }) {
           {doc.baseline_unverified_files?.length
             ? ` (baseline does NOT match the frozen checksums: ${doc.baseline_unverified_files.join(", ")})`
             : " (baseline matches the event's frozen checksums)"}.
+          {doc.timing_seconds ? ` Took ${doc.timing_seconds.total} s.` : ""}
         </p>
       </div>
 

@@ -32,6 +32,7 @@ export interface FindingsDoc {
   question: string; verdict?: ShareVerdict;
   findings: TowerFinding[]; analyses?: TowerAnalysis[]; repairs?: TowerRepair[];
   limitations?: string[]; certificate?: unknown; baseline_unverified_files?: string[];
+  timing_seconds?: { baseline: number; total: number };
 }
 
 export async function listReleases(): Promise<{ name: string; files: string[] }[]> {
@@ -47,6 +48,14 @@ export async function runTower(release: string, includeRna: boolean): Promise<Fi
   });
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail ?? `Run failed (${res.status}).`);
   return res.json();
+}
+
+export async function buildRelease(config: unknown): Promise<string> {
+  const res = await fetch(`${API}/tower/build`, {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ config }),
+  });
+  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail ?? `Build failed (${res.status}).`);
+  return (await res.json()).name;
 }
 
 export async function loadTowerSample(): Promise<FindingsDoc> {

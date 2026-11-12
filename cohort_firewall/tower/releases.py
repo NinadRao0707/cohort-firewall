@@ -140,8 +140,30 @@ def _load_matrix(p: Path, fname: str) -> FileView:
     return v
 
 
-def load_release(path: str | Path, name: str | None = None, include_rna: bool = True) -> Release:
+CACHE_VERSION = "fp1"
+
+
+def load_release(path: str | Path, name: str | None = None, include_rna: bool = True,
+                 cache_dir: Path | None = None) -> Release:
+    """Load and fingerprint a release. With cache_dir, a release whose files are byte-identical
+    to a previous load (same sha256 per file) is read from the cache instead of re-fingerprinted."""
+    import pickle
     path = Path(path)
+    if cache_dir is not None:
+        present = [f for f in LAYOUT if (path / f).exists() and (include_rna or not f.startswith("rna_"))]
+        key = hashlib.sha256("|".join([CACHE_VERSION] + [f"{f}:{file_sha256(path / f)}" for f in present])
+                             .encode()).hexdigest()[:24]
+        cached = Path(cache_dir) / f"release-{key}.pkl"
+        if cached.exists():
+            rel = pickle.loads(cached.read_bytes())
+            rel.name, rel.path = name or path.name, path
+            for v in rel.files.values():
+                v.path = path / v.name
+            return rel
+        rel = load_release(path, name, include_rna)
+        Path(cache_dir).mkdir(parents=True, exist_ok=True)
+        cached.write_bytes(pickle.dumps(rel))
+        return rel
     files, hashes = {}, {}
     for fname, (orient, idcol) in LAYOUT.items():
         p = path / fname

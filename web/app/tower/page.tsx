@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Nav } from "@/components/Nav";
 import { TowerResults } from "@/components/TowerResults";
-import { apiConfigured, listReleases, loadTowerSample, runTower, type FindingsDoc } from "@/lib/tower";
+import { apiConfigured, buildRelease, listReleases, loadTowerSample, runTower, type FindingsDoc } from "@/lib/tower";
 
 export default function TowerPage() {
   const [releases, setReleases] = useState<{ name: string; files: string[] }[]>([]);
@@ -11,6 +11,7 @@ export default function TowerPage() {
   const [doc, setDoc] = useState<FindingsDoc | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [stage, setStage] = useState("");
   const out = useRef<HTMLElement>(null);
 
   async function refresh() {
@@ -29,7 +30,23 @@ export default function TowerPage() {
 
   async function go(task: () => Promise<FindingsDoc>) {
     setBusy(true); setError("");
-    try { setDoc(await task()); } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
+    try { setDoc(await task()); } catch (e) { setError((e as Error).message); } finally { setBusy(false); setStage(""); }
+  }
+
+  async function buildAndCompare(file: File | undefined) {
+    if (!file) return;
+    go(async () => {
+      let config: unknown;
+      try { config = JSON.parse(await file.text()); } catch { throw new Error("That file is not valid JSON."); }
+      setStage("Building the release with make_release.py…");
+      const name = await buildRelease(config);
+      await refresh();
+      setRelease(name);
+      setStage(`Comparing ${name} with the frozen release…`);
+      const d = await runTower(name, rna);
+      setStage("");
+      return d;
+    });
   }
 
   async function openFile(file: File | undefined) {
@@ -66,6 +83,15 @@ export default function TowerPage() {
             </div>
           </form>
           <div className="samples">
+            <h3>Or build a release from a config</h3>
+            <label className="field">
+              <span>make_release.py config (JSON)</span>
+              <input type="file" accept=".json,application/json" disabled={!apiConfigured || busy}
+                     onChange={(e) => buildAndCompare(e.target.files?.[0])} />
+              <small>Runs the event&apos;s own make_release.py --config, then compares. Its answer key is never read.</small>
+            </label>
+          </div>
+          <div className="samples">
             <h3>Or open results</h3>
             <label className="field">
               <span>A findings.json file</span>
@@ -76,6 +102,7 @@ export default function TowerPage() {
         </aside>
         <section className="output" aria-live="polite" ref={out}>
           {error && <p className="error" role="alert">{error}</p>}
+          {busy && stage && <p className="quiet" role="status">{stage}</p>}
           {doc ? <TowerResults doc={doc} /> : (
             <div className="empty">
               <p>Pick a new release and compare it with the frozen baseline, or open a saved result.</p>
