@@ -4,6 +4,8 @@
     "level": "required",
     "text": "Do not use this dataset for this question. A person must resolve every Blocked finding first."
   },
+  "accepted_limitations": [],
+  "ignored_acceptances": [],
   "notes": [],
   "limitations": [
     "This is a research data-readiness screen. It is not a clinical tool and makes no claim of clinical validity, regulatory compliance, or production readiness.",
@@ -194,32 +196,33 @@
     ],
     "subgroup_columns": [],
     "parse_confidence": 0.9,
-    "parser_notes": ""
+    "parser_notes": "",
+    "acceptable_limitations": []
   },
   "report": {
     "text": "**Verdict: Blocked** for the question: \"Based on her ER and HER2 status, which treatment should this patient receive?\"\n\nWhy:\n- [SCOPE-001] (Blocked) The question is framed for clinical_decision_support, which is outside the permitted scope (no diagnosis, treatment recommendation, or patient risk score).\n- [SCOPE-002] (Blocked) The question asks for an individual diagnosis, treatment choice, or patient risk score (deterministic guard).\n\nTo make this dataset ready for this question:\n- [SCOPE-001] Reframe as a research or model-development question about the cohort, not an individual patient decision.\n- [SCOPE-002] Reword it as a cohort-level research question that does not produce a result for a specific patient.",
     "source": "template"
   },
   "certificate": {
-    "cert_id": "bfaffa48b9d32ac2",
+    "cert_id": "b240438d24f013b4",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.3.0",
-      "policy_sha256": "045c4ddc3e0cad17a1db6a1444fb8df13407e73cb50510e3c7e868c1b72e7063",
+      "policy_version": "0.4.0",
+      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
       "dataset_sha256": "31275bc4e6681487c7e17cd7939b7e5d1dd855d369321a7e890bb19b6b037e32",
       "dictionary_sha256": "18974ae121fbb69ea7c0047c1e86d3d931b86ef025d219e6466a0cc07208754f",
-      "spec_sha256": "8be3bd3659c7d6baf481418a982b48039054595ffbcf4aaaf8db70112c4b82ea",
+      "spec_sha256": "73ceb7771288d98c221e79125fc0858bb00db2b428fa9065ccdd586a1741cff2",
       "verdict": "BLOCKED",
       "rule_ids": [
         "SCOPE-001",
         "SCOPE-002"
       ],
-      "issued_at": "2026-11-11T18:57:17+00:00"
+      "issued_at": "2026-11-12T16:26:36+00:00"
     },
-    "signature": "t9Zj0lMoQ/TUpbnofrhUwKa/Vx8G0gYRGgWpysPntN1NHjKrBAbTUCgg/gODnkifRRxdHrnJT3QcIgFg4YRpAg==",
+    "signature": "np3UpBlUClq4CraIaQUF9sKuBsE/6gpVd57HRXAwZkOs33oEcx1SMdz6EranfvFUHN7sqAnCLOVYST1GIRsmBA==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.3.0"
+  "policy_version": "0.4.0"
 }

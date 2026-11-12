@@ -1,4 +1,4 @@
-# Cohort Firewall policy, version 0.3.0
+# Cohort Firewall policy, version 0.4.0
 #
 # Checks measure. This file decides. The LLM never sees or changes it.
 # Verdict precedence (worst wins): BLOCKED > INSUFFICIENT_EVIDENCE > CONDITIONAL > READY
@@ -11,7 +11,7 @@
 # Thresholds are hackathon defaults, chosen to be explainable, not clinical standards.
 # Change them here, bump the version, and every certificate records which version decided.
 
-version: "0.3.0"
+version: "0.4.0"
 
 parameters:
   leakage_auc_threshold: 0.95   # single feature separating the outcome this well is suspicious
@@ -20,6 +20,20 @@ parameters:
   missing_tokens: ["[Not Available]", "[Not Evaluated]", "[Unknown]", "[Not Applicable]",
                    "[Discrepancy]", "Not Reported", "not reported", "Unknown",
                    "unknown", "'--", "--", "NA", "N/A", ""]
+
+# Limitations a research-question card may declare acceptable for its intended use.
+# Only Conditional rules can be accepted. An accepted finding stays visible in the result and in the
+# record, marked as accepted, but no longer lowers the verdict. Blocked and Insufficient Evidence
+# findings can never be accepted.
+acceptable:
+  CMP-002: "Outcome unknown for up to half of the group"
+  CMP-004: "A predictor missing for up to half of the group"
+  EVT-002: "Fewer than 10 outcome events per model parameter (exploratory analysis)"
+  TIME-002: "Follow-up shorter than the horizon for many patients (use censoring-aware methods)"
+  SUB-002: "Some subgroups too small to evaluate; report them with uncertainty"
+  UNIT-001: "Some patients contribute more than one sample (sample-level analysis)"
+  META-006: "Some columns are not documented in the dictionary"
+  INJ-001: "Instruction-like text in free-text fields (fields excluded from use)"
 
 rules:
   # ---- provenance and metadata ---------------------------------------------------------

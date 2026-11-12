@@ -4,6 +4,8 @@
     "level": "required",
     "text": "A person must review the findings and decide whether the remedies are acceptable."
   },
+  "accepted_limitations": [],
+  "ignored_acceptances": [],
   "notes": [],
   "limitations": [
     "This is a research data-readiness screen. It is not a clinical tool and makes no claim of clinical validity, regulatory compliance, or production readiness.",
@@ -211,32 +213,33 @@
       "ethnicity"
     ],
     "parse_confidence": 1.0,
-    "parser_notes": ""
+    "parser_notes": "",
+    "acceptable_limitations": []
   },
   "report": {
     "text": "**Verdict: Conditional** for the question: \"Is this dataset suitable for a research study of which baseline factors (stage, receptor status, tumor size, age at diagnosis) are associated with disease worsening within 2 years in breast cancer patients diagnosed since 2012, including whether a model performs consistently across race and ethnicity?\"\n\nWhy:\n- [CMP-004] (Conditional) Predictor 'tumor_size' is missing for 27% of the cohort.\n- [SUB-002] (Conditional) Some subgroups are too small to evaluate model behavior reliably: race=hawaiian (n=13), race=other (n=13), race=native (n=2).\n\nTo make this dataset ready for this question:\n- [CMP-004] Plan and document an imputation strategy, or drop the predictor.\n- [SUB-002] Report subgroup performance with uncertainty, or obtain more data for these groups.",
     "source": "template"
   },
   "certificate": {
-    "cert_id": "41e792e328e0556e",
+    "cert_id": "d6ddedb3808d9272",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.3.0",
-      "policy_sha256": "045c4ddc3e0cad17a1db6a1444fb8df13407e73cb50510e3c7e868c1b72e7063",
+      "policy_version": "0.4.0",
+      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
       "dataset_sha256": "af34aae37e9e542dca5b81039b8ee1a49f2263b85a5f13588e95f85aa89e289f",
       "dictionary_sha256": "ffb6df259cfc22476a238af54dafa149c97d967140018c814cbbbdd29925a0fa",
-      "spec_sha256": "f9323faa9b19277628524c49b327289046963aea9159a4ae73e951e60b7bda21",
+      "spec_sha256": "306bf29e4b0a29cfac7f25c574c7ee2c8b105ed1e70362f1925cb5e44bded1c6",
       "verdict": "CONDITIONAL",
       "rule_ids": [
         "CMP-004",
         "SUB-002"
       ],
-      "issued_at": "2026-11-11T18:57:38+00:00"
+      "issued_at": "2026-11-12T16:26:47+00:00"
     },
-    "signature": "vRf730BnAhIJm7isbYC6h+m/MNfZR8z1LGbho7BQtMdh/73l6F12uwKsnuPI3BelSrIBf/0e++ErcMLFJqcgAw==",
+    "signature": "neerjyIGKm1AijtQX/UBN0tNREfk0v/E8E4EbAzXfW8NHDiM5/LHTlCIOgE6Y+6fU+tma4pWgv36hGR95CiuBw==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.3.0"
+  "policy_version": "0.4.0"
 }

@@ -4,6 +4,8 @@
     "level": "required",
     "text": "A person must review the findings and decide whether the remedies are acceptable."
   },
+  "accepted_limitations": [],
+  "ignored_acceptances": [],
   "notes": [],
   "limitations": [
     "This is a research data-readiness screen. It is not a clinical tool and makes no claim of clinical validity, regulatory compliance, or production readiness.",
@@ -200,31 +202,32 @@
       "race"
     ],
     "parse_confidence": 1.0,
-    "parser_notes": ""
+    "parser_notes": "",
+    "acceptable_limitations": []
   },
   "report": {
     "text": "**Verdict: Conditional** for the question: \"Can we model 5-year overall survival in breast cancer patients diagnosed since 2012 from stage, receptor status, tumor size, nodes and age, and compare across race?\"\n\nWhy:\n- [TIME-002] (Conditional) Only 27% of the cohort is observed through the 60-month horizon (median follow-up 47.0 months).\n\nTo make this dataset ready for this question:\n- [TIME-002] Use censoring-aware methods (survival analysis) or shorten the horizon.",
     "source": "template"
   },
   "certificate": {
-    "cert_id": "9979dcb3a951fab6",
+    "cert_id": "55b8abe188d0d40f",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.3.0",
-      "policy_sha256": "045c4ddc3e0cad17a1db6a1444fb8df13407e73cb50510e3c7e868c1b72e7063",
+      "policy_version": "0.4.0",
+      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
       "dataset_sha256": "31275bc4e6681487c7e17cd7939b7e5d1dd855d369321a7e890bb19b6b037e32",
       "dictionary_sha256": "18974ae121fbb69ea7c0047c1e86d3d931b86ef025d219e6466a0cc07208754f",
-      "spec_sha256": "bf012793080226480018852385667fc7c35f11afb60a92a56d847c45f17d56ef",
+      "spec_sha256": "9af79c4f1be0afaa66093389af351dd424987e58ae9d1aec0a57c3c0f8b48524",
       "verdict": "CONDITIONAL",
       "rule_ids": [
         "TIME-002"
       ],
-      "issued_at": "2026-11-11T18:57:17+00:00"
+      "issued_at": "2026-11-12T16:26:36+00:00"
     },
-    "signature": "qij6xqYAOAf0pXqMTEGhfkQyWISTw06m1GiIKmG4IL36eBTInU8vslzAbE8RUt2mi6UseSszoiScVhdCYyPDBQ==",
+    "signature": "OLm5c4s0xMCjQDTNrstbKHx9d0MZYitZ3f5luVO0/+H3dKDXjwhxDPvremfA3goWx0e//lpf7uLNAe/qpV6EBg==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.3.0"
+  "policy_version": "0.4.0"
 }

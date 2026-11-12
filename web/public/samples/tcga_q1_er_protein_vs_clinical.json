@@ -4,6 +4,8 @@
     "level": "required",
     "text": "A person must review the findings and decide whether the remedies are acceptable."
   },
+  "accepted_limitations": [],
+  "ignored_acceptances": [],
   "notes": [
     "3 placeholder value(s) such as 'NA' or '[Not Available]' were treated as missing (columns: pathologic_stage)."
   ],
@@ -186,31 +188,32 @@
       "er_status"
     ],
     "parse_confidence": 1.0,
-    "parser_notes": ""
+    "parser_notes": "",
+    "acceptable_limitations": []
   },
   "report": {
     "text": "**Verdict: Conditional** for the question: \"Is the frozen TCGA-BRCA release suitable for a descriptive research comparison of ER-alpha protein levels between clinically ER-positive and ER-negative primary tumors?\"\n\nWhy:\n- [CMP-004] (Conditional) Predictor 'er_alpha_rppa' is missing for 33% of the cohort.\n\nTo make this dataset ready for this question:\n- [CMP-004] Plan and document an imputation strategy, or drop the predictor.",
     "source": "template"
   },
   "certificate": {
-    "cert_id": "28554517b40a415a",
+    "cert_id": "ff05c380be4992b8",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.3.0",
-      "policy_sha256": "045c4ddc3e0cad17a1db6a1444fb8df13407e73cb50510e3c7e868c1b72e7063",
+      "policy_version": "0.4.0",
+      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
       "dataset_sha256": "a9f1d42f34bf97ff1732f8b09f8d85b16f3e0b44f37313ffef7c015b20d0116f",
       "dictionary_sha256": "deae70759cf656277cb2c0ff7f717f6d885cdd8b8ee6c1ed774fb62d695a4df3",
-      "spec_sha256": "ac145857bc26cf08e13976005afcbdb9a77896c3abcd406beef7435ab7a79281",
+      "spec_sha256": "c2a276fd1c9f6a793a65ed5579223257e065ba8ac3d417b0b82395d7db871fa7",
       "verdict": "CONDITIONAL",
       "rule_ids": [
         "CMP-004"
       ],
-      "issued_at": "2026-11-11T18:57:18+00:00"
+      "issued_at": "2026-11-12T16:26:36+00:00"
     },
-    "signature": "bHq1gR9C/SzZqu5N6r5VMBv+P4FJWRJuFgShdQnSqtHN2syd0ebKw7FN4SBwQ8aJs/MlTUIpzr2st47WVkesDQ==",
+    "signature": "m5N2Dk85+g1fA5qVOQsXTtXMZSvR47rUiIm+KA5CFUAP+eSM7SW5IUPTDousPmBjjZnwTiVJ4o2liw7CebcGDA==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.3.0"
+  "policy_version": "0.4.0"
 }

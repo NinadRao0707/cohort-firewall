@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { Verdict } from "@/lib/types";
 import type { FindingsDoc, TowerAnalysis, TowerFinding } from "@/lib/tower";
 import { CertificatePanel } from "./CertificatePanel";
+import { ReleaseReview } from "./ReviewPanel";
 import { VerdictGate } from "./VerdictGate";
 
 const TO_ENGINE: Record<string, Verdict> = {
@@ -173,6 +174,8 @@ export function TowerResults({ doc }: { doc: FindingsDoc }) {
         <p className="quiet">Shared findings format v{doc.format_version}, for a Repair Review Desk or any reviewer.</p>
         <div className="cert-actions"><button type="button" onClick={download}>Download findings.json</button></div>
       </section>
+
+      <ReleaseReview key={(doc.certificate as { cert_id?: string } | undefined)?.cert_id ?? "r"} doc={doc} />
 
       {doc.certificate ? <CertificatePanel cert={doc.certificate as never} /> : null}
     </div>

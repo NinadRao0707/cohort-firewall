@@ -22,7 +22,7 @@ export function InputPanel({ busy, onSubmit, onSample }: {
   const ready = apiConfigured && dataset && text.trim().length > 0 && !busy;
 
   return (
-    <aside className="panel">
+    <div>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -69,6 +69,6 @@ export function InputPanel({ busy, onSubmit, onSample }: {
           ))}
         </ul>
       </div>
-    </aside>
+    </div>
   );
 }

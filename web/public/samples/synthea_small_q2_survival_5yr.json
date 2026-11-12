@@ -4,6 +4,8 @@
     "level": "required",
     "text": "Do not use this dataset for this question. A person must resolve every Blocked finding first."
   },
+  "accepted_limitations": [],
+  "ignored_acceptances": [],
   "notes": [],
   "limitations": [
     "This is a research data-readiness screen. It is not a clinical tool and makes no claim of clinical validity, regulatory compliance, or production readiness.",
@@ -219,33 +221,34 @@
       "race"
     ],
     "parse_confidence": 1.0,
-    "parser_notes": ""
+    "parser_notes": "",
+    "acceptable_limitations": []
   },
   "report": {
     "text": "**Verdict: Blocked** for the question: \"Can we model 5-year overall survival in breast cancer patients diagnosed since 2012 from stage, receptor status, tumor size and age, and compare across race?\"\n\nWhy:\n- [EVT-001] (Blocked) Only 17 records in the smaller outcome class; too few to develop or evaluate a model.\n- [CMP-004] (Conditional) Predictor 'tumor_size' is missing for 26% of the cohort.\n- [SUB-002] (Conditional) Some subgroups are too small to evaluate model behavior reliably: race=black (n=12), race=asian (n=10), race=other (n=5), race=hawaiian (n=2), race=native (n=1).\n\nTo make this dataset ready for this question:\n- [EVT-001] Use a larger cohort or a more common outcome.\n- [CMP-004] Plan and document an imputation strategy, or drop the predictor.\n- [SUB-002] Report subgroup performance with uncertainty, or obtain more data for these groups.",
     "source": "template"
   },
   "certificate": {
-    "cert_id": "72ec19ce7a472491",
+    "cert_id": "2cc5ad3ecc942eba",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.3.0",
-      "policy_sha256": "045c4ddc3e0cad17a1db6a1444fb8df13407e73cb50510e3c7e868c1b72e7063",
+      "policy_version": "0.4.0",
+      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
       "dataset_sha256": "36c4dd46760187e50e27ea25869566a09c8d6fd515e3a1d9f5975ccf64c751dc",
       "dictionary_sha256": "ffb6df259cfc22476a238af54dafa149c97d967140018c814cbbbdd29925a0fa",
-      "spec_sha256": "58b0adcf852e991f73933760edba9e9239644efc40656380b26c2e978661f005",
+      "spec_sha256": "a66507caa19364935f8c9a6aedb5c260877a976e6597378eab8c2346883ebc46",
       "verdict": "BLOCKED",
       "rule_ids": [
         "CMP-004",
         "EVT-001",
         "SUB-002"
       ],
-      "issued_at": "2026-11-11T18:57:38+00:00"
+      "issued_at": "2026-11-12T16:26:47+00:00"
     },
-    "signature": "tzaHoNgsAriK6EAZDEf15DMwtqRomlGqJCZuS76ZUgcKKPQzV39XY0tXxufWM2c0TIltUu3KqnLVrGnIe8DTBg==",
+    "signature": "V8naXpAmxP0STzYyOi08mwBrWwLW4LqC8Cta57oGmZTXUfG7gqid+6A86Wt15q4FuQLiE1Q2wpP3+9ehmFvpAg==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.3.0"
+  "policy_version": "0.4.0"
 }

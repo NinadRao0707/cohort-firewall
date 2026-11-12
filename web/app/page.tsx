@@ -1,6 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { InputPanel, type Submission } from "@/components/InputPanel";
+import { QuestionCard } from "@/components/QuestionCard";
+import { evaluateCard } from "@/lib/card";
+import { apiConfigured } from "@/lib/api";
 import { Nav } from "@/components/Nav";
 import { Results } from "@/components/Results";
 import { evaluate, loadSample } from "@/lib/api";
@@ -10,6 +13,7 @@ export default function Home() {
   const [result, setResult] = useState<EvaluateResponse | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [mode, setMode] = useState<"card" | "upload">(apiConfigured ? "card" : "upload");
   const outputRef = useRef<HTMLElement>(null);
 
   // On narrow screens the result renders below the form; bring it into view.
@@ -48,7 +52,15 @@ export default function Home() {
       </header>
       <Nav current="question" />
       <div className="layout">
-        <InputPanel busy={busy} onSubmit={onSubmit} onSample={(n) => run(() => loadSample(n))} />
+        <aside className="panel">
+          <div className="toggle" role="radiogroup" aria-label="Input">
+            <label><input type="radio" checked={mode === "card"} disabled={!apiConfigured} onChange={() => setMode("card")} /> Question card</label>
+            <label><input type="radio" checked={mode === "upload"} onChange={() => setMode("upload")} /> Upload files or samples</label>
+          </div>
+          {mode === "card"
+            ? <QuestionCard busy={busy} onSubmit={(id, spec) => run(() => evaluateCard(id, spec))} />
+            : <InputPanel busy={busy} onSubmit={onSubmit} onSample={(n) => run(() => loadSample(n))} />}
+        </aside>
         <section className="output" aria-live="polite" ref={outputRef}>
           {error && <p className="error" role="alert">{error}</p>}
           {result ? <Results result={result} /> : (

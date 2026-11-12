@@ -6,6 +6,8 @@ export interface Finding {
   verdict: Verdict;
   reason: string;
   remedy: string;
+  accepted?: boolean;
+  accepted_as?: string;
 }
 
 export interface CheckResult {
@@ -37,6 +39,8 @@ export interface EvaluateResponse {
   human_review?: { level: "required" | "recommended"; text: string };
   notes?: string[];
   limitations?: string[];
+  accepted_limitations?: { rule_id: string; as: string }[];
+  ignored_acceptances?: string[];
   findings: Finding[];
   checks: CheckResult[];
   spec: { question_text?: string } & Record<string, unknown>;

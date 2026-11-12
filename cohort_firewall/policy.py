@@ -27,13 +27,14 @@ class Policy:
     parameters: dict
     rules: list[dict]
     sha256: str
+    acceptable: dict | None = None
 
     @classmethod
     def load(cls, path: str | Path) -> "Policy":
         raw = Path(path).read_bytes()
         doc = yaml.safe_load(raw)
         return cls(doc["version"], doc.get("parameters", {}), doc["rules"],
-                   hashlib.sha256(raw).hexdigest())
+                   hashlib.sha256(raw).hexdigest(), doc.get("acceptable", {}) or {})
 
 
 class _Fmt(dict):
@@ -49,7 +50,8 @@ def _fmt(template: str, metrics: dict) -> str:
         return template
 
 
-def evaluate(results: list[CheckResult], policy: Policy, expected: set[str] | None = None) -> dict:
+def evaluate(results: list[CheckResult], policy: Policy, expected: set[str] | None = None,
+             accepted: set[str] | None = None) -> dict:
     by_name = {r.check: r for r in results}
     findings = []
     expected = EXPECTED_CHECKS if expected is None else expected
@@ -88,10 +90,19 @@ def evaluate(results: list[CheckResult], policy: Policy, expected: set[str] | No
                              "reason": _fmt(rule["reason"], r.metrics),
                              "remedy": _fmt(rule.get("remedy", ""), r.metrics)})
 
+    accepted = set(accepted or set())
+    allowed = set((policy.acceptable or {}).keys())
+    ignored_acceptances = sorted(accepted - allowed)
+    for f in findings:
+        if f["rule_id"] in accepted and f["rule_id"] in allowed and f["verdict"] == "CONDITIONAL":
+            f["accepted"] = True
+            f["accepted_as"] = policy.acceptable[f["rule_id"]]
+
     verdict = "READY"
+    counted = [f for f in findings if not f.get("accepted")]
     for v in PRECEDENCE:
-        if any(f["verdict"] == v for f in findings):
+        if any(f["verdict"] == v for f in counted):
             verdict = v
             break
-    findings.sort(key=lambda f: PRECEDENCE.index(f["verdict"]))
-    return {"verdict": verdict, "findings": findings}
+    findings.sort(key=lambda f: (PRECEDENCE.index(f["verdict"]), bool(f.get("accepted"))))
+    return {"verdict": verdict, "findings": findings, "ignored_acceptances": ignored_acceptances}

@@ -4,6 +4,8 @@
     "level": "recommended",
     "text": "A person should still confirm the question and data match before training."
   },
+  "accepted_limitations": [],
+  "ignored_acceptances": [],
   "notes": [
     "3 placeholder value(s) such as 'NA' or '[Not Available]' were treated as missing (columns: pathologic_stage)."
   ],
@@ -183,29 +185,30 @@
       "er_status"
     ],
     "parse_confidence": 1.0,
-    "parser_notes": ""
+    "parser_notes": "",
+    "acceptable_limitations": []
   },
   "report": {
     "text": "**Verdict: Ready** for the question: \"Same comparison, restricted to primary tumors that have RPPA protein data: is the release suitable for comparing ER-alpha protein between clinically ER-positive and ER-negative tumors?\"\n\nEvery applicable check passed under the current policy.",
     "source": "template"
   },
   "certificate": {
-    "cert_id": "64e8ca743c724129",
+    "cert_id": "06903796efe273e1",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.3.0",
-      "policy_sha256": "045c4ddc3e0cad17a1db6a1444fb8df13407e73cb50510e3c7e868c1b72e7063",
+      "policy_version": "0.4.0",
+      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
       "dataset_sha256": "a9f1d42f34bf97ff1732f8b09f8d85b16f3e0b44f37313ffef7c015b20d0116f",
       "dictionary_sha256": "deae70759cf656277cb2c0ff7f717f6d885cdd8b8ee6c1ed774fb62d695a4df3",
-      "spec_sha256": "6e0a5f880b9f8d4d5a5a3a10ee852b472be28b62378c068b26cc2e98e2df64f4",
+      "spec_sha256": "ce381e96d79a7541db2bdc2316538efb55debde26e6d6da1d4eecbc148c5a810",
       "verdict": "READY",
       "rule_ids": [],
-      "issued_at": "2026-11-11T18:57:18+00:00"
+      "issued_at": "2026-11-12T16:26:36+00:00"
     },
-    "signature": "RzQ7MYmPvpU2GcE14AvDvHVWMVO44EVUrYoLVD0T/x4iw3q7sXAKjhwB+3fwqG4aZEhbI/zMITbe3rGw7kFzAA==",
+    "signature": "rWpnM6Dc6IdyW9k8z1nJGu33IQWXV0uHnZXntM5XoA7YJA6TCp/kth8Zr/LV3Bs7yWVsIB1UQZFzeOcGZJb0Bg==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.3.0"
+  "policy_version": "0.4.0"
 }

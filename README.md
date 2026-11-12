@@ -23,8 +23,15 @@ compare it with the event's frozen release. The tool shows:
 4. proposed repairs and a `findings.json` (shared format v0.2) to hand to a Repair Review Desk.
 
 The same verdict engine also answers **Question check**: is the frozen release fit for a specific
-research question? (For example: a fairness check across race is Insufficient Evidence because
-the release doesn't record race.)
+research question? A judge fills in a **research-question card** (intended use, group studied,
+outcome, predictors, subgroups, acceptable limitations) with no code or API key, and the verdict
+changes when the card changes. For example, a fairness check across race is Insufficient Evidence
+because the release doesn't record race.
+
+Both screens end with a **review step**: a person records approve / approve with conditions /
+reject / ask for more evidence, after confirming they reviewed each finding. Blocked and
+Insufficient Evidence results can't be approved. The review is signed and saved with the evidence
+record, and it can only attach to a result whose certificate verifies.
 
 ## One result a judge can verify
 On the public practice release, the tool reports exactly the answer key's changes, with no
@@ -103,10 +110,12 @@ python scripts/run_tcga_specs.py
 ```bash
 python tests/test_tower.py
 python data/make_variants.py && python tests/test_variants.py
+python tests/test_review.py
 bash scripts/rehearse.sh
 ```
 - `test_tower.py`: 10 Control Tower scenarios on synthetic releases (no TCGA data needed).
 - `test_variants.py`: 22 seeded-defect readiness cases on a synthetic stand-in cohort.
+- `test_review.py`: 13 review-step rules (approval limits, acknowledgements, forged results).
 - `rehearse.sh`: builds three private releases with the event's `make_release.py --config`, using
   change types practice-B does not use, runs the Control Tower and grades it.
 

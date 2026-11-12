@@ -18,6 +18,9 @@ from pydantic import BaseModel
 
 from cohort_firewall import certificate
 from cohort_firewall.engine import DEFAULT_POLICY, evaluate_dataset
+from cohort_firewall import datasets
+from cohort_firewall.policy import Policy
+from cohort_firewall.review import ReviewError, review_question, review_release, reviews_for, verify_review
 from cohort_firewall.tower.run import list_releases, run_tower
 
 CHALLENGE_REPO = Path(os.environ.get("CF_CHALLENGE_REPO", "~/oncosys-hackathon-challenge")).expanduser()
@@ -164,6 +167,93 @@ def tower_build(req: BuildRequest):
         raise HTTPException(400, f"make_release.py failed: {(proc.stderr or proc.stdout).strip()[-500:]}")
     # CHANGES.json (the answer key) is written by the script but never read or returned here.
     return {"name": name, "log": proc.stdout.strip()}
+
+
+@app.get("/datasets")
+def list_datasets():
+    return {"datasets": [{"id": d["id"], "label": d["label"]} for d in datasets.available()]}
+
+
+@app.get("/datasets/{dataset_id}")
+def describe_dataset(dataset_id: str):
+    try:
+        return datasets.describe(dataset_id)
+    except KeyError:
+        raise HTTPException(404, f"Unknown dataset '{dataset_id}'. Run data/flatten_tcga.py for TCGA.")
+
+
+@app.get("/policy/acceptable")
+def acceptable_limitations():
+    """Limitations a question card may accept (Conditional rules only), from the policy file."""
+    p = Policy.load(DEFAULT_POLICY)
+    return {"policy_version": p.version, "acceptable": [{"rule_id": k, "label": v} for k, v in p.acceptable.items()]}
+
+
+@app.get("/examples/cards/{dataset_id}")
+def example_cards(dataset_id: str):
+    """Example research-question cards for a dataset, to start the form from."""
+    prefix = {"tcga_brca_raw": "tcga_", "demo_breast_cohort": "q"}.get(dataset_id)
+    if prefix is None:
+        raise HTTPException(404, "No examples for this dataset.")
+    folder = Path(__file__).resolve().parent.parent / "examples" / "specs"
+    out = [{"id": p.stem, "spec": json.loads(p.read_text())} for p in sorted(folder.glob(f"{prefix}*.json"))]
+    return {"cards": out}
+
+
+class CardRequest(BaseModel):
+    dataset_id: str
+    spec: dict
+
+
+@app.post("/evaluate-card")
+def evaluate_card(req: CardRequest):
+    """Check a server-side dataset against a research-question card built in the form."""
+    d = datasets.get(req.dataset_id)
+    if d is None:
+        raise HTTPException(404, f"Unknown dataset '{req.dataset_id}'.")
+    return evaluate_dataset(d["csv"].read_bytes(), json.loads(d["dictionary"].read_text()), spec=req.spec)
+
+
+class QuestionReview(BaseModel):
+    result: dict
+    reviewer: str
+    role: str = ""
+    decision: str
+    acknowledged: list[str] = []
+    note: str = ""
+
+
+@app.post("/review/question")
+def post_question_review(req: QuestionReview):
+    try:
+        return review_question(req.result, req.reviewer, req.role, req.decision, req.acknowledged, req.note)
+    except ReviewError as e:
+        raise HTTPException(400, str(e))
+
+
+class ReleaseReview(BaseModel):
+    findings: dict
+    reviewer: str
+    role: str = ""
+    decisions: dict[str, str]
+    acknowledged: list[str] = []
+    note: str = ""
+
+
+@app.post("/review/release")
+def post_release_review(req: ReleaseReview):
+    try:
+        return review_release(req.findings, req.reviewer, req.role, req.decisions, req.acknowledged, req.note)
+    except ReviewError as e:
+        raise HTTPException(400, str(e))
+
+
+@app.get("/reviews/{cert_id}")
+def get_reviews(cert_id: str):
+    import re
+    if not re.fullmatch(r"[0-9a-f]{16}", cert_id):
+        raise HTTPException(400, "Invalid certificate id.")
+    return {"reviews": [{**r, "valid": verify_review(r)} for r in reviews_for(cert_id)]}
 
 
 @app.get("/health")

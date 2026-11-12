@@ -44,6 +44,9 @@ class QuestionSpec:
     subgroup_columns: list[str] = field(default_factory=list)
     parse_confidence: float = 1.0           # set by the LLM parser; 1.0 for hand-written specs
     parser_notes: str = ""
+    # Rule IDs the question card says are acceptable for this use (only rules the policy lists as
+    # acceptable, and only Conditional ones, can be accepted; Blocked and Insufficient never can).
+    acceptable_limitations: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -86,7 +89,7 @@ def spec_from_dict(d: dict) -> QuestionSpec:
             continue
         filters.append(PopulationFilter(str(f["column"]), f["op"], f["value"]))
 
-    for key in ("feature_columns", "subgroup_columns"):
+    for key in ("feature_columns", "subgroup_columns", "acceptable_limitations"):
         v = d.get(key, [])
         if not isinstance(v, list) or not all(isinstance(x, str) for x in v):
             errors.append(f"'{key}' must be a list of strings")
@@ -129,4 +132,5 @@ def spec_from_dict(d: dict) -> QuestionSpec:
         subgroup_columns=list(d.get("subgroup_columns", [])),
         parse_confidence=conf,
         parser_notes=str(d.get("parser_notes", "")),
+        acceptable_limitations=list(d.get("acceptable_limitations", [])),
     )

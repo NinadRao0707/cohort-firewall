@@ -4,6 +4,8 @@
     "level": "required",
     "text": "A person must review the findings and decide whether the remedies are acceptable."
   },
+  "accepted_limitations": [],
+  "ignored_acceptances": [],
   "notes": [],
   "limitations": [
     "This is a research data-readiness screen. It is not a clinical tool and makes no claim of clinical validity, regulatory compliance, or production readiness.",
@@ -204,31 +206,32 @@
       "ethnicity"
     ],
     "parse_confidence": 1.0,
-    "parser_notes": ""
+    "parser_notes": "",
+    "acceptable_limitations": []
   },
   "report": {
     "text": "**Verdict: Conditional** for the question: \"Is this dataset suitable for a research study of which baseline factors (stage, receptor status, tumor size, nodes, age at diagnosis) are associated with 2-year recurrence in breast cancer patients diagnosed since 2012, including whether a model performs consistently across race and ethnicity?\"\n\nWhy:\n- [INJ-001] (Conditional) Instruction-like text found in the data or dictionary at notes[row 17], dictionary:notes. It was quarantined and had no effect on this verdict.\n\nTo make this dataset ready for this question:\n- [INJ-001] Review and clean those fields; free text in a training set can carry prompt-injection payloads.",
     "source": "template"
   },
   "certificate": {
-    "cert_id": "ef3872a2b31fb1e2",
+    "cert_id": "9506a89066c91f0b",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.3.0",
-      "policy_sha256": "045c4ddc3e0cad17a1db6a1444fb8df13407e73cb50510e3c7e868c1b72e7063",
+      "policy_version": "0.4.0",
+      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
       "dataset_sha256": "ab3cdb8142d7a8ef5c25e788ade47a2011dc9ca2ddc727db4025951175ee8e9e",
       "dictionary_sha256": "d51b45bb498005070a122fe023cba4ae21bc2fc429de7b4811df36bb7ad60190",
-      "spec_sha256": "1d7a22d3fdd7440308503ceed1a574fb91969a63d614d75a48ff974d1e2e215c",
+      "spec_sha256": "843d4731ec71bef6469c594caf0270965ec21dab11db52fa14373ace058b3e95",
       "verdict": "CONDITIONAL",
       "rule_ids": [
         "INJ-001"
       ],
-      "issued_at": "2026-11-11T18:57:17+00:00"
+      "issued_at": "2026-11-12T16:26:36+00:00"
     },
-    "signature": "Iet8roPdcALVuqiynSj/bQwXgl9TvUpz5P/cXtXIMJx3X6MqWe6KhY/V7T1aBdkURpoGR47cs9pi2fSxwgyADA==",
+    "signature": "BfbwDkZsIZu+gODafFLhGtdIjkTEE2R3lFioGUy3lke02CanmRJcltfrz7tcTrgCYvAEwzbkJGe5owJVfTR9CQ==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.3.0"
+  "policy_version": "0.4.0"
 }

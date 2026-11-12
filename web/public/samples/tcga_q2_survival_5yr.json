@@ -4,6 +4,8 @@
     "level": "required",
     "text": "A person must review the findings and decide whether the remedies are acceptable."
   },
+  "accepted_limitations": [],
+  "ignored_acceptances": [],
   "notes": [
     "3 placeholder value(s) such as 'NA' or '[Not Available]' were treated as missing (columns: pathologic_stage)."
   ],
@@ -192,31 +194,32 @@
     ],
     "subgroup_columns": [],
     "parse_confidence": 1.0,
-    "parser_notes": ""
+    "parser_notes": "",
+    "acceptable_limitations": []
   },
   "report": {
     "text": "**Verdict: Conditional** for the question: \"Is the frozen TCGA-BRCA release suitable for a research study of 5-year overall survival in primary breast tumors by stage, receptor status and age?\"\n\nWhy:\n- [TIME-002] (Conditional) Only 32% of the cohort is observed through the 60-month horizon (median follow-up 27.7 months).\n\nTo make this dataset ready for this question:\n- [TIME-002] Use censoring-aware methods (survival analysis) or shorten the horizon.",
     "source": "template"
   },
   "certificate": {
-    "cert_id": "3badfed6c66b00b9",
+    "cert_id": "3600df1aef2e3193",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.3.0",
-      "policy_sha256": "045c4ddc3e0cad17a1db6a1444fb8df13407e73cb50510e3c7e868c1b72e7063",
+      "policy_version": "0.4.0",
+      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
       "dataset_sha256": "a9f1d42f34bf97ff1732f8b09f8d85b16f3e0b44f37313ffef7c015b20d0116f",
       "dictionary_sha256": "deae70759cf656277cb2c0ff7f717f6d885cdd8b8ee6c1ed774fb62d695a4df3",
-      "spec_sha256": "908ffaa4b644196665a914a586af48215603258a7e09cdd73af170971fc2553a",
+      "spec_sha256": "01230a5c365c525b87afe53e3647a0da8e9432d8ba08ff8507252b97c620f356",
       "verdict": "CONDITIONAL",
       "rule_ids": [
         "TIME-002"
       ],
-      "issued_at": "2026-11-11T18:57:18+00:00"
+      "issued_at": "2026-11-12T16:26:36+00:00"
     },
-    "signature": "Wan85NuEBgOlMkvZpHzav09YNSsqiD7evaOIcc/rbApkDr5tLdmUYQOob+lnWqUGe0m8bhFqQfoCnCIwYc55AA==",
+    "signature": "E1dvCmuoom4vwYNC/ZyoueyCqeh/nwF7HXlMoAGp23PZbj/9/UCmkv3s58USx2vP5zAfgvaCaQSycNlUYEPNAw==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.3.0"
+  "policy_version": "0.4.0"
 }

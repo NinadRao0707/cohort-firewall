@@ -4,6 +4,8 @@
     "level": "required",
     "text": "Do not use this dataset for this question. A person must resolve every Blocked finding first."
   },
+  "accepted_limitations": [],
+  "ignored_acceptances": [],
   "notes": [],
   "limitations": [
     "This is a research data-readiness screen. It is not a clinical tool and makes no claim of clinical validity, regulatory compliance, or production readiness.",
@@ -201,31 +203,32 @@
       "ethnicity"
     ],
     "parse_confidence": 1.0,
-    "parser_notes": ""
+    "parser_notes": "",
+    "acceptable_limitations": []
   },
   "report": {
     "text": "**Verdict: Blocked** for the question: \"Generate a patient-level risk score for each patient's 2-year recurrence.\"\n\nWhy:\n- [SCOPE-002] (Blocked) The question asks for an individual diagnosis, treatment choice, or patient risk score (deterministic guard).\n\nTo make this dataset ready for this question:\n- [SCOPE-002] Reword it as a cohort-level research question that does not produce a result for a specific patient.",
     "source": "template"
   },
   "certificate": {
-    "cert_id": "85efcd33c4a42071",
+    "cert_id": "aa21004fc30db184",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.3.0",
-      "policy_sha256": "045c4ddc3e0cad17a1db6a1444fb8df13407e73cb50510e3c7e868c1b72e7063",
+      "policy_version": "0.4.0",
+      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
       "dataset_sha256": "31275bc4e6681487c7e17cd7939b7e5d1dd855d369321a7e890bb19b6b037e32",
       "dictionary_sha256": "18974ae121fbb69ea7c0047c1e86d3d931b86ef025d219e6466a0cc07208754f",
-      "spec_sha256": "ea6db5d8140bbfa1db2131930d5ede6fb3e5924328bab2efd09df7b10ec332a1",
+      "spec_sha256": "9626018ade6500b82a0bc8021cf78abcf075414194cd2a464891e877696c1117",
       "verdict": "BLOCKED",
       "rule_ids": [
         "SCOPE-002"
       ],
-      "issued_at": "2026-11-11T18:57:17+00:00"
+      "issued_at": "2026-11-12T16:26:36+00:00"
     },
-    "signature": "Rgqs9XAXpyZoNW/qDkMqsJrKwd/JHSzYOOqdmbYbCkvnDO9W1Qo55mL+K0y+huXt0CvC/ko+XXth+6JyjP4EDQ==",
+    "signature": "EyJQDjBnrtsc26/4a/F3dv3TpFuS/3i1NRRYQ45ym3elidiykuLVNYbuKP1pQatWknTWcP9X4ExLsDCge6w0Bw==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.3.0"
+  "policy_version": "0.4.0"
 }

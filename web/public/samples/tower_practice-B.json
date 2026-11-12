@@ -332,7 +332,8 @@
         "A2"
       ],
       "limitation": "Compares sample IDs only; see the linked findings for what replaced the removed samples.",
-      "needs_human_review": true
+      "needs_human_review": true,
+      "x_summary_of_other_findings": true
     },
     {
       "id": "F8",
@@ -373,7 +374,8 @@
         "A2"
       ],
       "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
-      "needs_human_review": true
+      "needs_human_review": true,
+      "x_summary_of_other_findings": true
     },
     {
       "id": "F9",
@@ -402,7 +404,8 @@
         "A2"
       ],
       "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
-      "needs_human_review": true
+      "needs_human_review": true,
+      "x_summary_of_other_findings": true
     },
     {
       "id": "F10",
@@ -425,7 +428,8 @@
         "A2"
       ],
       "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
-      "needs_human_review": true
+      "needs_human_review": true,
+      "x_summary_of_other_findings": true
     },
     {
       "id": "F11",
@@ -472,7 +476,8 @@
         "A2"
       ],
       "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
-      "needs_human_review": true
+      "needs_human_review": true,
+      "x_summary_of_other_findings": true
     },
     {
       "id": "F12",
@@ -495,7 +500,8 @@
         "A2"
       ],
       "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
-      "needs_human_review": true
+      "needs_human_review": true,
+      "x_summary_of_other_findings": true
     },
     {
       "id": "F13",
@@ -806,7 +812,7 @@
     "tower_policy": "0.1.0"
   },
   "certificate": {
-    "cert_id": "f54f96ffa27b61fa",
+    "cert_id": "af712214e3639946",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -814,17 +820,21 @@
       "policy_sha256": "96178c766e51110d2cdcc34187819427187acd4c015f2d3aace50ee63e172915",
       "dataset_sha256": "e21b40e631efcaf020842757ed583ade92b32d5ab5421472b4a15bc8e70b3290",
       "dictionary_sha256": null,
-      "spec_sha256": "b5490ff39a3bc5bf9d8c6907f4fc46b8ea1b4e2c73c8325a0e10b17fc134c452",
+      "spec_sha256": "2525e1a404bcf9394d113f497115b061214a8abe52a802b1c38e60ddda00409f",
       "verdict": "BLOCKED",
       "rule_ids": [
         "TWR-DUP-1",
         "TWR-MEM-1",
         "TWR-SWAP-1"
       ],
-      "issued_at": "2026-11-11T18:57:38+00:00"
+      "issued_at": "2026-11-12T16:26:46+00:00"
     },
-    "signature": "AIdGZYmqmYrLdfuRyCFqxQqSuJUnQfi+/nP7Ndkz7TSpuPD2+0ngVKguIeX6giUUirHAmzF803GZw166BonqCg==",
+    "signature": "/F1iiEfKNqYajR/kw+LUkPsE0dyFUSiFPk4hAzNstJrmhQCQ1YthXcIWqzrxiBmUJt1mI+jglSly9yCdhuYYCQ==",
     "alg": "Ed25519"
   },
-  "baseline_unverified_files": []
+  "baseline_unverified_files": [],
+  "timing_seconds": {
+    "baseline": 0.0,
+    "total": 10.2
+  }
 }

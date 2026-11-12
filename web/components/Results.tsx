@@ -3,6 +3,7 @@ import { CertificatePanel } from "./CertificatePanel";
 import { ChecksTable } from "./ChecksTable";
 import { Findings } from "./Findings";
 import { HumanReview, NotesAndLimits } from "./ReviewAndLimits";
+import { QuestionReview } from "./ReviewPanel";
 import { VerdictGate } from "./VerdictGate";
 
 export function Results({ result }: { result: EvaluateResponse }) {
@@ -15,6 +16,7 @@ export function Results({ result }: { result: EvaluateResponse }) {
       <Findings findings={result.findings} />
       <ChecksTable checks={result.checks} findings={result.findings} />
       <NotesAndLimits notes={result.notes} limitations={result.limitations} />
+      <QuestionReview key={result.certificate.cert_id} result={result} />
       <CertificatePanel cert={result.certificate} />
     </div>
   );

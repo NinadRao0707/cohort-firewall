@@ -4,6 +4,8 @@
     "level": "required",
     "text": "A person must review the findings and decide whether the remedies are acceptable."
   },
+  "accepted_limitations": [],
+  "ignored_acceptances": [],
   "notes": [],
   "limitations": [
     "This is a research data-readiness screen. It is not a clinical tool and makes no claim of clinical validity, regulatory compliance, or production readiness.",
@@ -204,31 +206,32 @@
       "ethnicity"
     ],
     "parse_confidence": 1.0,
-    "parser_notes": ""
+    "parser_notes": "",
+    "acceptable_limitations": []
   },
   "report": {
     "text": "**Verdict: Conditional** for the question: \"Is this dataset suitable for a research study of which baseline factors (stage, receptor status, tumor size, nodes, age at diagnosis) are associated with 2-year recurrence in breast cancer patients diagnosed since 2012, including whether a model performs consistently across race and ethnicity?\"\n\nWhy:\n- [LEAK-002] (Conditional) Predictor(s) separate the outcome almost perfectly on their own (max AUC 0.971): ca15_3_rise_followup.\n\nTo make this dataset ready for this question:\n- [LEAK-002] Confirm these are measured before the outcome; if not, remove them.",
     "source": "template"
   },
   "certificate": {
-    "cert_id": "489171c66c5e6f5e",
+    "cert_id": "b86e1219e35baac8",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
-      "policy_version": "0.3.0",
-      "policy_sha256": "045c4ddc3e0cad17a1db6a1444fb8df13407e73cb50510e3c7e868c1b72e7063",
+      "policy_version": "0.4.0",
+      "policy_sha256": "691d3af51d8d0052d70f81014353f20e828d39bbd9fa9d1dfeb301c8d44a8db6",
       "dataset_sha256": "331839182916f8854ac8d8a5e0184a6e61ab69f0ac8b55d24a483d79f322307d",
       "dictionary_sha256": "6fba5ce27505a409805a3d4aab453eb9b7e6dac83dd458f0c503e29e6ccfac8a",
-      "spec_sha256": "91667f155f91bd6acec48d7dd23d72961bc10bb3cb03bf85b182460e5c0cf65f",
+      "spec_sha256": "03fd1ec0cbbde8ade1f26f6bc44f0047bd5c3a9e4102bd85c7298017c4806146",
       "verdict": "CONDITIONAL",
       "rule_ids": [
         "LEAK-002"
       ],
-      "issued_at": "2026-11-11T18:57:17+00:00"
+      "issued_at": "2026-11-12T16:26:36+00:00"
     },
-    "signature": "J4YXfxyg+Y/JeVs/ShXvTZgQX4fJIO65Xpydmjl7C+RjzeUC24iNUm9WfOuUGodKhcm+JWjDpAczhgyJnqvxCw==",
+    "signature": "LpwRdBjPIvJXk3umiNjUW8FxjTpK90PQr0iPDOrZU/Bc636Csc6jMzh0dDlXctFZacBG7zUZ7/XYP4j+sF4XBw==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
-  "policy_version": "0.3.0"
+  "policy_version": "0.4.0"
 }

@@ -213,8 +213,9 @@ def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: 
                    "tower_policy": Policy.load(TOWER_POLICY).version},
     }
     hashes = json.dumps(doc["data"], sort_keys=True).encode()
+    from ..review import tower_binding
     doc["certificate"] = issue(dataset_bytes=hashes, dictionary=None,
-                               spec_json=json.dumps({"question": question, "analyses": [r.analysis.id for r in runs]}),
+                               spec_json=tower_binding(question, analyses),
                                policy_version=Policy.load(TOWER_POLICY).version,
                                policy_sha256=Policy.load(TOWER_POLICY).sha256, verdict=overall,
                                rule_ids=[f["rule_id"] for e in vds.values() for f in e["findings"]])

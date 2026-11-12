@@ -55,13 +55,16 @@ def evaluate_dataset(dataset_bytes: bytes, dictionary: dict | None, spec: dict |
                               dataset_bytes, dictionary, spec, policy)
 
     results = run_checks(df, dictionary, qs, policy.parameters)
-    ev = evaluate(results, policy)
+    ev = evaluate(results, policy, accepted=set(qs.acceptable_limitations))
     cert = issue(dataset_bytes=dataset_bytes, dictionary=dictionary, spec_json=qs.canonical_json(),
                  policy_version=policy.version, policy_sha256=policy.sha256,
                  verdict=ev["verdict"], rule_ids=[f["rule_id"] for f in ev["findings"]])
     return {
         "verdict": ev["verdict"],
-        "human_review": human_review(ev["verdict"]),
+        "human_review": human_review(ev["verdict"], [f for f in ev["findings"] if f.get("accepted")]),
+        "accepted_limitations": [{"rule_id": f["rule_id"], "as": f["accepted_as"]}
+                                 for f in ev["findings"] if f.get("accepted")],
+        "ignored_acceptances": ev.get("ignored_acceptances", []),
         "notes": notes,
         "limitations": LIMITATIONS,
         "findings": ev["findings"],
@@ -85,7 +88,11 @@ LIMITATIONS = [
 ]
 
 
-def human_review(verdict: str) -> dict:
+def human_review(verdict: str, accepted: list | None = None) -> dict:
+    if verdict == "READY" and accepted:
+        return {"level": "required",
+                "text": f"Ready only because the question card accepts {len(accepted)} limitation(s). "
+                        "A person must confirm those limitations are acceptable for this use."}
     if verdict == "READY":
         return {"level": "recommended",
                 "text": "A person should still confirm the question and data match before training."}
@@ -107,5 +114,6 @@ def _short_circuit(rule_id, reason, dataset_bytes, dictionary, spec, policy) -> 
                  verdict=ev["verdict"], rule_ids=[rule_id])
     q = (spec or {}).get("question_text") or ""
     return {**ev, "human_review": human_review(ev["verdict"]), "notes": [], "limitations": LIMITATIONS,
+            "accepted_limitations": [], "ignored_acceptances": [],
             "checks": [], "spec": spec, "report": build_report(ev, q),
             "certificate": cert, "engine_version": ENGINE_VERSION, "policy_version": policy.version}

@@ -193,8 +193,29 @@ select { font: inherit; color: var(--ink); background: var(--surface); border: 1
 .finding[data-severity="high"] { --v: var(--blocked); }
 .finding[data-severity="medium"] { --v: var(--conditional); }
 .finding[data-severity="low"] { --v: var(--ink-soft); }
-.finding-level { text-transform: capitalize; }
+[data-severity] .finding-level { text-transform: capitalize; }
 .finding-limit { margin: 6px 0 0; font-size: 0.875rem; color: var(--ink-soft); max-width: 72ch; }
 .finding-limit span { font-weight: 600; }
 .evidence { margin: 6px 0 0; padding-left: 18px; font-size: 0.875rem; display: grid; gap: 2px; }
 code { font-family: var(--mono); font-size: 0.85em; }
+
+/* ---- question card and review ---- */
+.card-form { display: grid; gap: 18px; padding-bottom: 24px; border-bottom: 1px solid var(--rule); }
+.choice { display: block; font-size: 0.9375rem; margin: 4px 0; }
+.filter-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 6px 0; }
+.filter-row select, .filter-row input:not([type="checkbox"]) { width: auto; min-width: 0; flex: 1 1 120px; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]) {
+  font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--rule);
+  border-radius: 4px; padding: 8px 10px;
+}
+.inline { display: flex; gap: 6px; align-items: center; font-size: 0.875rem; }
+.inline input { width: 80px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 0.8125rem; border: 1px solid var(--rule); border-radius: 999px; padding: 3px 10px; display: inline-flex; gap: 6px; align-items: center; }
+.chip.missing { border-style: dashed; color: var(--insufficient); }
+.finding[data-accepted="true"] { opacity: 0.85; border-left-style: dashed; }
+.review-step form { display: grid; gap: 14px; max-width: 720px; }
+.review-record { border-left: 4px solid var(--ready); padding: 10px 0 10px 16px; display: grid; gap: 6px; }
+.review-record p { margin: 0; }
+.panel > .toggle { margin-bottom: 16px; }
+.review-step form > button, .card-form > button[type="submit"] { justify-self: start; }
