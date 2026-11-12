@@ -67,6 +67,10 @@ export function QuestionReview({ result }: { result: EvaluateResponse }) {
           {result.findings.length > 0 && (
             <fieldset className="field">
               <legend>I have reviewed the evidence for</legend>
+              {result.findings.length > 1 && (
+                <label className="choice"><input type="checkbox" checked={result.findings.every((f) => ack.includes(f.rule_id))}
+                  onChange={(e) => setAck(e.target.checked ? result.findings.map((f) => f.rule_id) : [])} /> <strong>All {result.findings.length} findings below</strong></label>
+              )}
               {result.findings.map((f) => (
                 <label key={f.rule_id} className="choice">
                   <input type="checkbox" checked={ack.includes(f.rule_id)} onChange={() => toggle(f.rule_id)} />
@@ -120,6 +124,8 @@ export function ReleaseReview({ doc }: { doc: FindingsDoc }) {
           {affecting.length > 0 && (
             <fieldset className="field">
               <legend>I have reviewed the evidence for</legend>
+              <label className="choice"><input type="checkbox" checked={affecting.every((f) => ack.includes(f.id))}
+                onChange={(e) => setAck(e.target.checked ? affecting.map((f) => f.id) : [])} /> <strong>All {affecting.length} findings below</strong></label>
               {affecting.map((f) => (
                 <label key={f.id} className="choice">
                   <input type="checkbox" checked={ack.includes(f.id)} onChange={() => toggle(f.id)} /> <strong>{f.id}</strong> {f.summary}

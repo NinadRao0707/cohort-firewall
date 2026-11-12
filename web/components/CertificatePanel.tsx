@@ -37,7 +37,7 @@ export function CertificatePanel({ cert }: { cert: Certificate }) {
         <summary>Certificate {cert.cert_id}</summary>
         <dl className="cert">
           <dt>Dataset</dt><dd className="hash">{short(p.dataset_sha256)}</dd>
-          <dt>Dictionary</dt><dd className="hash">{short(p.dictionary_sha256)}</dd>
+          {p.dictionary_sha256 && <><dt>Dictionary</dt><dd className="hash">{short(p.dictionary_sha256)}</dd></>}
           <dt>Question</dt><dd className="hash">{short(p.spec_sha256)}</dd>
           <dt>Rules</dt><dd>version {p.policy_version}</dd>
           <dt>Issued</dt><dd>{new Date(p.issued_at).toLocaleString()}</dd>

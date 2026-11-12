@@ -181,7 +181,8 @@ def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: 
                  "verdict": VERDICT_LABEL[ev["verdict"]],
                  "verdict_rules": [{"rule_id": f["rule_id"], "verdict": VERDICT_LABEL[f["verdict"]],
                                     "reason": f["reason"], "remedy": f["remedy"]} for f in ev["findings"]],
-                 "affected_by": sorted({ids_by_change[id(c)] for c in r.changes if id(c) in ids_by_change}),
+                 "affected_by": sorted({ids_by_change[id(c)] for c in r.changes if id(c) in ids_by_change},
+                                       key=lambda x: int(x[1:])),
                  "needs_human_review": ev["verdict"] != "READY"}
         if r.before is not None:
             entry["before"] = strip(r.before)
