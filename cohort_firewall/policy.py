@@ -93,7 +93,8 @@ def evaluate(results: list[CheckResult], policy: Policy, expected: set[str] | No
                              "reconsider": _fmt(rule.get("reconsider", ""), r.metrics),
                              "rule_condition": f"{cond} -> {rule['verdict']}",
                              "measured": {c["metric"]: r.metrics.get(c["metric"]) for c in rule["when"]},
-                             "fields_used": [f for f in getattr(r, "fields", [])]})
+                             "fields_used": [f for f in getattr(r, "fields", [])],
+                             "_conditions": rule["when"]})
 
     accepted = set(accepted or set())
     allowed = set((policy.acceptable or {}).keys())

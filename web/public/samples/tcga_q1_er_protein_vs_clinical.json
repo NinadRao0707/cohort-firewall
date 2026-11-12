@@ -34,6 +34,8 @@
         "er_status",
         "er_alpha_rppa"
       ],
+      "uncertainty": "max_feature_missing_rate = 33.3% (95% range 30.5% to 36.2%)",
+      "borderline": false,
       "finding_id": "F1",
       "check_performed": "Missing values",
       "rows_or_groups_affected": "about 348 of 1046 records",
@@ -46,6 +48,18 @@
     }
   ],
   "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Missing values,er_status; er_alpha_rppa,about 348 of 1046 records,[CMP-004] Predictor 'er_alpha_rppa' is missing for 33% of the cohort.,Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured max_feature_missing_rate = 0.333. Rule CMP-004 (max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on tcga_brca_raw.\",Counts missing values; it can't tell why they are missing.,\"Plan and document an imputation strategy, or drop the predictor. To reconsider: A documented imputation plan, or the result with and without that predictor.\",yes\r\n",
+  "plain_summary": "The data can support this question only after the steps below are taken and reported. 1,046 records match the group being studied. What needs attention: Predictor 'er_alpha_rppa' is missing for 33% of the cohort. A person must review before use.",
+  "next_steps": [
+    {
+      "rank": 1,
+      "rule_id": "CMP-004",
+      "verdict": "CONDITIONAL",
+      "action": "Plan and document an imputation strategy, or drop the predictor.",
+      "size": "about 348 of 1046 records",
+      "unblocks": false,
+      "evidence_to_reconsider": "A documented imputation plan, or the result with and without that predictor."
+    }
+  ],
   "checks": [
     {
       "check": "metadata",
@@ -139,7 +153,13 @@
       "metrics": {
         "outcome_missing_rate": null,
         "max_feature_missing_rate": 0.333,
-        "worst_feature": "er_alpha_rppa"
+        "worst_feature": "er_alpha_rppa",
+        "ci": {
+          "max_feature_missing_rate": [
+            0.305,
+            0.362
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -207,6 +227,12 @@
           "ER status: clinical file vs 2012 paper: 0 of 778 (0%)"
         ],
         "n_rows_disagreeing": 0,
+        "ci": {
+          "max_disagreement_rate": [
+            0.0,
+            0.005
+          ]
+        },
         "elsewhere": [
           "PAM50 subtype: RNA-seq call vs 2012 microarray call: 52 of 501 (10%)"
         ],
@@ -298,7 +324,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "0e898250b79a3fd6",
+    "cert_id": "b5a7e86ade16e2c1",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -311,9 +337,9 @@
       "rule_ids": [
         "CMP-004"
       ],
-      "issued_at": "2026-11-12T16:43:14+00:00"
+      "issued_at": "2026-11-12T16:47:02+00:00"
     },
-    "signature": "SuKhQvCreqNi+so1WV9lNdW8shkVQJM6mMnaWcErpo/+cSF/f9tQW6U0TspxkRB2U1DmyHrxlHTRU4ARJbJNDQ==",
+    "signature": "2gXbjHPA7SVY//nxK8lqHFj5WdlTtgx/Jq/XwWiPE+3gjdZpBsCOQB6tClu+e9NvXGUjrczsM6KFWE3eTNt2Dw==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

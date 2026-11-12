@@ -96,6 +96,23 @@ def _rows_affected(check: str, m: dict, n_cohort: int | None) -> str:
     return "whole dataset" if check in {"metadata", "phi"} else "whole question"
 
 
+def _uncertainty(f: dict, m: dict) -> tuple[str, bool]:
+    """A 95% range for each measured rate, and whether that range crosses the rule's threshold."""
+    ci = m.get("ci") or {}
+    parts, borderline = [], False
+    for metric, value in (f.get("measured") or {}).items():
+        rng = ci.get(metric)
+        if not rng or value is None:
+            continue
+        parts.append(f"{metric} = {value:.1%} (95% range {rng[0]:.1%} to {rng[1]:.1%})")
+        for c in (f.get("_conditions") or []):
+            if c["metric"] == metric and isinstance(c["value"], (int, float)) and rng[0] <= c["value"] <= rng[1]:
+                borderline = True
+    if borderline:
+        parts.append("the range crosses the rule's threshold, so this finding is borderline")
+    return "; ".join(parts), borderline
+
+
 def enrich(findings: list[dict], checks: list[dict], policy_version: str, dataset_label: str) -> list[dict]:
     by = {c["check"]: c for c in checks}
     n_cohort = (by.get("cohort", {}).get("metrics") or {}).get("n_cohort")
@@ -106,7 +123,10 @@ def enrich(findings: list[dict], checks: list[dict], policy_version: str, datase
         measured = ", ".join(f"{k} = {v}" for k, v in (f.get("measured") or {}).items())
         effect = (f"Accepted by the question card as: {f['accepted_as']}. Recorded, not counted against the verdict."
                   if f.get("accepted") else f"{why} {EFFECT.get(f['verdict'], '')}".strip())
-        out.append({**f,
+        unc, borderline = _uncertainty(f, m)
+        out.append({**{k: v for k, v in f.items() if k != "_conditions"},
+                    "uncertainty": unc or "Exact count; no sampling uncertainty applies to this check.",
+                    "borderline": borderline,
                     "finding_id": f"F{i}",
                     "check_performed": label,
                     "fields_used": f.get("fields_used") or (by.get(f["check"], {}) or {}).get("fields", []),
@@ -138,3 +158,40 @@ def template_csv(findings: list[dict]) -> str:
                     f"{f['remedy']} To reconsider: {f.get('reconsider', '')}".strip(),
                     "yes" if f["needs_human_review"] else "no"])
     return buf.getvalue()
+
+
+VERDICT_SENTENCE = {
+    "READY": "The data can support this question as stated.",
+    "CONDITIONAL": "The data can support this question only after the steps below are taken and reported.",
+    "BLOCKED": "The data can't support this question as asked.",
+    "INSUFFICIENT_EVIDENCE": "The tool can't confirm something this question needs, so the data doesn't pass.",
+}
+ORDER = {"BLOCKED": 0, "INSUFFICIENT_EVIDENCE": 1, "CONDITIONAL": 2}
+
+
+def _size(f: dict) -> int:
+    import re
+    m = re.search(r"(\d[\d,]*)", f.get("rows_or_groups_affected") or "")
+    return int(m.group(1).replace(",", "")) if m else 0
+
+
+def summarize(verdict: str, findings: list[dict], n_cohort: int | None, accepted: list[dict]) -> dict:
+    """Plain-English summary and next steps, most serious and largest first."""
+    counted = [f for f in findings if not f.get("accepted")]
+    ranked = sorted(counted, key=lambda f: (ORDER.get(f["verdict"], 3), -_size(f)))
+    head = VERDICT_SENTENCE[verdict]
+    group = f" {n_cohort:,} records match the group being studied." if n_cohort is not None else ""
+    if ranked:
+        issues = " ".join(f["reason"].rstrip(".") + "." for f in ranked[:2])
+        more = f" There are {len(ranked) - 2} more issue(s) below." if len(ranked) > 2 else ""
+        body = f" What needs attention: {issues}{more}"
+    else:
+        body = " No check found a problem for this question."
+    acc = (f" The question card accepts {len(accepted)} limitation(s), which a reviewer must confirm."
+           if accepted else "")
+    steps = [{"rank": i, "rule_id": f["rule_id"], "verdict": f["verdict"], "action": f["remedy"],
+              "size": f.get("rows_or_groups_affected", ""), "unblocks": f["verdict"] != "CONDITIONAL",
+              "evidence_to_reconsider": f.get("reconsider", "")}
+             for i, f in enumerate(ranked, 1)]
+    return {"plain_summary": head + group + body + acc + " A person must review before use.",
+            "next_steps": steps}

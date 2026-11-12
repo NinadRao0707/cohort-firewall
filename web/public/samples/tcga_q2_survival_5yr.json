@@ -34,6 +34,8 @@
         "os_days",
         "os_event"
       ],
+      "uncertainty": "horizon_coverage = 32.0% (95% range 29.3% to 34.8%)",
+      "borderline": false,
       "finding_id": "F1",
       "check_performed": "Follow-up length",
       "rows_or_groups_affected": "about 749 of 1101 records not followed to the horizon",
@@ -46,6 +48,18 @@
     }
   ],
   "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Follow-up length,os_days; os_event,about 749 of 1101 records not followed to the horizon,[TIME-002] Only 32% of the cohort is observed through the 60-month horizon (median follow-up 27.7 months).,Patients not followed to the horizon have unknown outcomes; ignoring that biases results. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured horizon_coverage = 0.32. Rule TIME-002 (horizon_coverage >= 0.2 and horizon_coverage < 0.5 -> CONDITIONAL), policy v0.5.0, on tcga_brca_raw.\",Uses the declared follow-up column and unit.,\"Use censoring-aware methods (survival analysis) or shorten the horizon. To reconsider: A censoring-aware analysis, or a shorter horizon.\",yes\r\n",
+  "plain_summary": "The data can support this question only after the steps below are taken and reported. 1,101 records match the group being studied. What needs attention: Only 32% of the cohort is observed through the 60-month horizon (median follow-up 27.7 months). A person must review before use.",
+  "next_steps": [
+    {
+      "rank": 1,
+      "rule_id": "TIME-002",
+      "verdict": "CONDITIONAL",
+      "action": "Use censoring-aware methods (survival analysis) or shorten the horizon.",
+      "size": "about 749 of 1101 records not followed to the horizon",
+      "unblocks": false,
+      "evidence_to_reconsider": "A censoring-aware analysis, or a shorter horizon."
+    }
+  ],
   "checks": [
     {
       "check": "metadata",
@@ -142,7 +156,17 @@
       "metrics": {
         "outcome_missing_rate": 0.004,
         "max_feature_missing_rate": 0.165,
-        "worst_feature": "her2_ihc_status"
+        "worst_feature": "her2_ihc_status",
+        "ci": {
+          "max_feature_missing_rate": [
+            0.145,
+            0.188
+          ],
+          "outcome_missing_rate": [
+            0.001,
+            0.009
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -162,7 +186,14 @@
         "n_nonevents": 946,
         "minority_class_n": 151,
         "n_parameters": 11,
-        "events_per_parameter": 13.73
+        "events_per_parameter": 13.73,
+        "event_rate": 0.138,
+        "ci": {
+          "event_rate": [
+            0.119,
+            0.159
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -201,6 +232,12 @@
       "metrics": {
         "horizon_months": 60.0,
         "horizon_coverage": 0.32,
+        "ci": {
+          "horizon_coverage": [
+            0.293,
+            0.348
+          ]
+        },
         "median_follow_up_months": 27.7,
         "time_unit": "days",
         "n_negative_times": 0
@@ -244,6 +281,12 @@
           "PR status: clinical file vs 2012 paper: 0 of 779 (0%)"
         ],
         "n_rows_disagreeing": 1,
+        "ci": {
+          "max_disagreement_rate": [
+            0.0,
+            0.005
+          ]
+        },
         "elsewhere": [
           "PAM50 subtype: RNA-seq call vs 2012 microarray call: 52 of 508 (10%)"
         ],
@@ -332,7 +375,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "b458e7a26d9170ac",
+    "cert_id": "fa8fd78e7e6d872e",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -345,9 +388,9 @@
       "rule_ids": [
         "TIME-002"
       ],
-      "issued_at": "2026-11-12T16:43:14+00:00"
+      "issued_at": "2026-11-12T16:47:02+00:00"
     },
-    "signature": "8ki+o8pzwPC51sSsUYqrOTqtctwRpr0Eo+7eqL1fmNZeqOrsKe8JGzD7S4/PQK/8kEf/dE/M6zOBLWtrUBSABg==",
+    "signature": "WKGAddsXDASneMmgHvGQ6G7Jgkag115h9Oo9L82iVvDLUzSNxnJhiwpUlqlJresWF6oRu6WfcDmrUydpIR2FDg==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

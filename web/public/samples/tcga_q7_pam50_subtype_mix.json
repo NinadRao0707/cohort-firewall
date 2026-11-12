@@ -33,6 +33,8 @@
       "fields_used": [
         "pam50_subtype"
       ],
+      "uncertainty": "max_feature_missing_rate = 23.3% (95% range 20.9% to 25.9%)",
+      "borderline": false,
       "finding_id": "F1",
       "check_performed": "Missing values",
       "rows_or_groups_affected": "about 257 of 1101 records",
@@ -58,6 +60,8 @@
         "pam50_subtype",
         "pam50_nature2012"
       ],
+      "uncertainty": "max_disagreement_rate = 10.2% (95% range 7.9% to 13.2%)",
+      "borderline": false,
       "finding_id": "F2",
       "check_performed": "Records agree across sources",
       "rows_or_groups_affected": "52 records disagree",
@@ -70,6 +74,27 @@
     }
   ],
   "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Missing values,pam50_subtype,about 257 of 1101 records,[CMP-004] Predictor 'pam50_subtype' is missing for 23% of the cohort.,Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured max_feature_missing_rate = 0.233. Rule CMP-004 (max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on tcga_brca_raw.\",Counts missing values; it can't tell why they are missing.,\"Plan and document an imputation strategy, or drop the predictor. To reconsider: A documented imputation plan, or the result with and without that predictor.\",yes\r\nF2,Records agree across sources,pam50_subtype; pam50_nature2012,52 records disagree,[CONS-001] Two sources for a field this question uses disagree: PAM50 subtype: RNA-seq call vs 2012 microarray call: 52 of 508 (10%).,\"Two sources disagree, so the label itself is uncertain for those records. Usable for this question only after the next step is taken and reported.\",medium,high,\"Measured max_disagreement_rate = 0.102. Rule CONS-001 (max_disagreement_rate > 0.05 -> CONDITIONAL), policy v0.5.0, on tcga_brca_raw.\",Compares the source pairs the dictionary declares; vocabularies are normalised.,\"Choose one source for the label, say why, and report how results change with the other. To reconsider: A sensitivity analysis showing the conclusion holds under both sources.\",yes\r\n",
+  "plain_summary": "The data can support this question only after the steps below are taken and reported. 1,101 records match the group being studied. What needs attention: Predictor 'pam50_subtype' is missing for 23% of the cohort. Two sources for a field this question uses disagree: PAM50 subtype: RNA-seq call vs 2012 microarray call: 52 of 508 (10%). A person must review before use.",
+  "next_steps": [
+    {
+      "rank": 1,
+      "rule_id": "CMP-004",
+      "verdict": "CONDITIONAL",
+      "action": "Plan and document an imputation strategy, or drop the predictor.",
+      "size": "about 257 of 1101 records",
+      "unblocks": false,
+      "evidence_to_reconsider": "A documented imputation plan, or the result with and without that predictor."
+    },
+    {
+      "rank": 2,
+      "rule_id": "CONS-001",
+      "verdict": "CONDITIONAL",
+      "action": "Choose one source for the label, say why, and report how results change with the other.",
+      "size": "52 records disagree",
+      "unblocks": false,
+      "evidence_to_reconsider": "A sensitivity analysis showing the conclusion holds under both sources."
+    }
+  ],
   "checks": [
     {
       "check": "metadata",
@@ -160,7 +185,13 @@
       "metrics": {
         "outcome_missing_rate": null,
         "max_feature_missing_rate": 0.233,
-        "worst_feature": "pam50_subtype"
+        "worst_feature": "pam50_subtype",
+        "ci": {
+          "max_feature_missing_rate": [
+            0.209,
+            0.259
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -219,6 +250,12 @@
           "PAM50 subtype: RNA-seq call vs 2012 microarray call: 52 of 508 (10%)"
         ],
         "n_rows_disagreeing": 52,
+        "ci": {
+          "max_disagreement_rate": [
+            0.079,
+            0.132
+          ]
+        },
         "elsewhere": [
           "Vital status (clinical) vs overall-survival event (curated): 1 of 1097 (0%)"
         ],
@@ -299,7 +336,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "717003acccd3c388",
+    "cert_id": "93eb97dbb92cd5e9",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -313,9 +350,9 @@
         "CMP-004",
         "CONS-001"
       ],
-      "issued_at": "2026-11-12T16:43:15+00:00"
+      "issued_at": "2026-11-12T16:47:03+00:00"
     },
-    "signature": "xlEZ/900Fee0ulveh6QWkUgir+gNJnZa4/R7K/fG1AVI1CJ1udMzTuliMJeVTTCiGX8loTGIIgDwTV8MRSUFAg==",
+    "signature": "cO4d4LMmUNW1DmuxjhmxR95H8l/SbSnzbHk99DTjWaRookyAcyrSIIJpo6TywkxJv1UXIl9lFpj/XGzfDtJ/DQ==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

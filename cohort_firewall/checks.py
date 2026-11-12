@@ -245,10 +245,17 @@ def check_completeness(ctx: Context) -> CheckResult:
     rates = {f: float(c[f].isna().mean()) for f in present}
     worst = max(rates, key=rates.get) if rates else None
     oc = ctx.spec.outcome_column
+    n = len(c)
+    ci = {}
+    if worst:
+        ci["max_feature_missing_rate"] = wilson(int(c[worst].isna().sum()), n)
+    if oc in c.columns:
+        ci["outcome_missing_rate"] = wilson(int(c[oc].isna().sum()), n)
     return CheckResult("completeness", "ok", fields=present + ([oc] if oc in c.columns else []), metrics={
         "outcome_missing_rate": round(float(c[oc].isna().mean()), 3) if oc in c.columns else None,
         "max_feature_missing_rate": round(rates[worst], 3) if worst else 0.0,
         "worst_feature": safe_ident(worst) if worst else None,
+        "ci": ci,
     })
 
 
@@ -267,6 +274,8 @@ def check_outcome_events(ctx: Context) -> CheckResult:
     return CheckResult("outcome_events", "ok", fields=[spec.outcome_column] + present, metrics={
         "n_events": events, "n_nonevents": nonevents, "minority_class_n": minority,
         "n_parameters": n_params, "events_per_parameter": round(minority / n_params, 2),
+        "event_rate": round(events / max(events + nonevents, 1), 3),
+        "ci": {"event_rate": wilson(events, events + nonevents)},
     })
 
 
@@ -318,6 +327,7 @@ def check_temporal(ctx: Context) -> CheckResult:
     return CheckResult("temporal", "ok", fields=[spec.time_column] + ([spec.outcome_column] if spec.outcome_column else []), metrics={
         "horizon_months": spec.time_horizon_months,
         "horizon_coverage": round(float(observed.mean()), 3) if len(c) else 0.0,
+        "ci": {"horizon_coverage": wilson(int(observed.sum()), int(len(c)))},
         "median_follow_up_months": round(float(t.median()), 1) if len(c) and t.notna().any() else None,
         "time_unit": safe_ident(unit),
         "n_negative_times": n_negative,
@@ -412,6 +422,17 @@ def check_injection(ctx: Context) -> CheckResult:
     })
 
 
+def wilson(k: int, n: int, z: float = 1.96) -> list[float] | None:
+    """95% Wilson score interval for a proportion k/n."""
+    if not n:
+        return None
+    p = k / n
+    d = 1 + z * z / n
+    c = (p + z * z / (2 * n)) / d
+    h = z * ((p * (1 - p) / n + z * z / (4 * n * n)) ** 0.5) / d
+    return [round(max(0.0, c - h), 3), round(min(1.0, c + h), 3)]
+
+
 def _used_columns(ctx: Context) -> set[str]:
     sp = ctx.spec
     return set(ctx.features) | set(sp.subgroup_columns) | {f.column for f in sp.population_filters} | \
@@ -473,6 +494,7 @@ def check_consistency(ctx: Context) -> CheckResult:
         "disagreements": [f"{safe_ident(x['label'], 90)}: {x['n_disagree']} of {x['n_compared']} ({x['rate']:.0%})"
                           for x in sorted(relevant, key=lambda x: -x["rate"])],
         "n_rows_disagreeing": worst["n_disagree"] if worst else 0,
+        "ci": {"max_disagreement_rate": wilson(worst["n_disagree"], worst["n_compared"])} if worst else {},
         "elsewhere": [f"{safe_ident(x['label'], 90)}: {x['n_disagree']} of {x['n_compared']} ({x['rate']:.0%})"
                       for x in elsewhere if x["n_disagree"]],
         "unmatched_vocabularies": unmatched,

@@ -20,7 +20,11 @@ export interface Finding {
   confidence?: string;
   evidence_or_source?: string;
   limitation?: string;
+  uncertainty?: string;
+  borderline?: boolean;
 }
+
+export interface QuestionStep { rank: number; rule_id: string; verdict: Verdict; action: string; size: string; unblocks: boolean; evidence_to_reconsider: string }
 
 export interface CheckResult {
   check: string;
@@ -58,6 +62,8 @@ export interface EvaluateResponse {
   spec: { question_text?: string } & Record<string, unknown>;
   report: { text: string; source: "llm" | "template" };
   findings_template_csv?: string;
+  plain_summary?: string;
+  next_steps?: QuestionStep[];
   certificate: Certificate;
   engine_version: string;
   policy_version: string;

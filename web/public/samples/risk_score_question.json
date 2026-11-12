@@ -30,6 +30,8 @@
         "question_text",
         "intended_use"
       ],
+      "uncertainty": "Exact count; no sampling uncertainty applies to this check.",
+      "borderline": false,
       "finding_id": "F1",
       "check_performed": "Permitted use",
       "rows_or_groups_affected": "whole question",
@@ -42,6 +44,18 @@
     }
   ],
   "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Permitted use,question_text; intended_use,whole question,\"[SCOPE-002] The question asks for an individual diagnosis, treatment choice, or patient risk score (deterministic guard).\",\"The event and this tool exclude diagnosis, treatment choices and patient risk scores. The data can't support this question as asked.\",high,medium,\"Measured keyword_guard_hit = True. Rule SCOPE-002 (keyword_guard_hit == True -> BLOCKED), policy v0.5.0, on demo_breast_cohort.\",The wording guard is a phrase list; a cleverly worded clinical question could slip past it.,Reword it as a cohort-level research question that does not produce a result for a specific patient. To reconsider: A rewritten question that produces no result for a specific patient.,yes\r\n",
+  "plain_summary": "The data can't support this question as asked. 2,400 records match the group being studied. What needs attention: The question asks for an individual diagnosis, treatment choice, or patient risk score (deterministic guard). A person must review before use.",
+  "next_steps": [
+    {
+      "rank": 1,
+      "rule_id": "SCOPE-002",
+      "verdict": "BLOCKED",
+      "action": "Reword it as a cohort-level research question that does not produce a result for a specific patient.",
+      "size": "whole question",
+      "unblocks": true,
+      "evidence_to_reconsider": "A rewritten question that produces no result for a specific patient."
+    }
+  ],
   "checks": [
     {
       "check": "metadata",
@@ -142,7 +156,17 @@
       "metrics": {
         "outcome_missing_rate": 0.091,
         "max_feature_missing_rate": 0.0,
-        "worst_feature": "age_at_diagnosis"
+        "worst_feature": "age_at_diagnosis",
+        "ci": {
+          "max_feature_missing_rate": [
+            0.0,
+            0.002
+          ],
+          "outcome_missing_rate": [
+            0.08,
+            0.103
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -164,7 +188,14 @@
         "n_nonevents": 1712,
         "minority_class_n": 469,
         "n_parameters": 9,
-        "events_per_parameter": 52.11
+        "events_per_parameter": 52.11,
+        "event_rate": 0.215,
+        "ci": {
+          "event_rate": [
+            0.198,
+            0.233
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -207,6 +238,12 @@
       "metrics": {
         "horizon_months": 24.0,
         "horizon_coverage": 0.909,
+        "ci": {
+          "horizon_coverage": [
+            0.897,
+            0.92
+          ]
+        },
         "median_follow_up_months": 47.0,
         "time_unit": "months",
         "n_negative_times": 0
@@ -328,7 +365,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "e1a66eecb798e25b",
+    "cert_id": "2a9a819c775f4039",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -341,9 +378,9 @@
       "rule_ids": [
         "SCOPE-002"
       ],
-      "issued_at": "2026-11-12T16:43:14+00:00"
+      "issued_at": "2026-11-12T16:47:02+00:00"
     },
-    "signature": "GZ0bzs7VBLXzu2AwhoMfnXHtuN37SU925sTZcfNZ/mzvMbgOlH6WZ7umPZK8ZHj0MfFghxER0EuMAvbH62MeDA==",
+    "signature": "5Kj7yqtp4y9XWO2NMRGr6ZUgymDmfqmHv1d2/tcYmSt85uXCNi8/zk0FcBJGI8vk+G1Y4e7NSgh4Y/v4RflVDg==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

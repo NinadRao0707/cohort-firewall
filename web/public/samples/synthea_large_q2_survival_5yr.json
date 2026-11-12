@@ -35,6 +35,8 @@
         "tumor_size",
         "death_event"
       ],
+      "uncertainty": "max_feature_missing_rate = 27.1% (95% range 24.6% to 29.8%)",
+      "borderline": false,
       "finding_id": "F1",
       "check_performed": "Missing values",
       "rows_or_groups_affected": "about 309 of 1142 records",
@@ -59,6 +61,8 @@
       "fields_used": [
         "race"
       ],
+      "uncertainty": "Exact count; no sampling uncertainty applies to this check.",
+      "borderline": false,
       "finding_id": "F2",
       "check_performed": "Subgroup coverage (bias)",
       "rows_or_groups_affected": "race=hawaiian (n=13); race=other (n=13); race=native (n=2)",
@@ -71,6 +75,27 @@
     }
   ],
   "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Missing values,age_at_diagnosis; stage_group; er_status; pr_status; her2_ihc; tumor_size; death_event,about 309 of 1142 records,[CMP-004] Predictor 'tumor_size' is missing for 27% of the cohort.,Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured max_feature_missing_rate = 0.271. Rule CMP-004 (max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.\",Counts missing values; it can't tell why they are missing.,\"Plan and document an imputation strategy, or drop the predictor. To reconsider: A documented imputation plan, or the result with and without that predictor.\",yes\r\nF2,Subgroup coverage (bias),race,race=hawaiian (n=13); race=other (n=13); race=native (n=2),\"[SUB-002] Some subgroups are too small to evaluate model behavior reliably: race=hawaiian (n=13), race=other (n=13), race=native (n=2).\",\"With few patients in a group, the model's behaviour in that group can't be judged. Usable for this question only after the next step is taken and reported.\",medium,high,\"Measured n_small_subgroups = 3. Rule SUB-002 (n_small_subgroups > 0 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.\",Minimum counts only; no comparison with a reference population.,\"Report subgroup performance with uncertainty, or obtain more data for these groups. To reconsider: More records for those groups, or results reported with uncertainty.\",yes\r\n",
+  "plain_summary": "The data can support this question only after the steps below are taken and reported. 1,142 records match the group being studied. What needs attention: Predictor 'tumor_size' is missing for 27% of the cohort. Some subgroups are too small to evaluate model behavior reliably: race=hawaiian (n=13), race=other (n=13), race=native (n=2). A person must review before use.",
+  "next_steps": [
+    {
+      "rank": 1,
+      "rule_id": "CMP-004",
+      "verdict": "CONDITIONAL",
+      "action": "Plan and document an imputation strategy, or drop the predictor.",
+      "size": "about 309 of 1142 records",
+      "unblocks": false,
+      "evidence_to_reconsider": "A documented imputation plan, or the result with and without that predictor."
+    },
+    {
+      "rank": 2,
+      "rule_id": "SUB-002",
+      "verdict": "CONDITIONAL",
+      "action": "Report subgroup performance with uncertainty, or obtain more data for these groups.",
+      "size": "race=hawaiian (n=13); race=other (n=13); race=native (n=2)",
+      "unblocks": false,
+      "evidence_to_reconsider": "More records for those groups, or results reported with uncertainty."
+    }
+  ],
   "checks": [
     {
       "check": "metadata",
@@ -170,7 +195,17 @@
       "metrics": {
         "outcome_missing_rate": 0.0,
         "max_feature_missing_rate": 0.271,
-        "worst_feature": "tumor_size"
+        "worst_feature": "tumor_size",
+        "ci": {
+          "max_feature_missing_rate": [
+            0.246,
+            0.298
+          ],
+          "outcome_missing_rate": [
+            0.0,
+            0.003
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -191,7 +226,14 @@
         "n_nonevents": 1045,
         "minority_class_n": 97,
         "n_parameters": 8,
-        "events_per_parameter": 12.12
+        "events_per_parameter": 12.12,
+        "event_rate": 0.085,
+        "ci": {
+          "event_rate": [
+            0.07,
+            0.103
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -232,6 +274,12 @@
       "metrics": {
         "horizon_months": 60.0,
         "horizon_coverage": 0.615,
+        "ci": {
+          "horizon_coverage": [
+            0.586,
+            0.643
+          ]
+        },
         "median_follow_up_months": 63.8,
         "time_unit": "months",
         "n_negative_times": 0
@@ -349,7 +397,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "92d1cedaa0e8f308",
+    "cert_id": "c82b803f176db719",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -363,9 +411,9 @@
         "CMP-004",
         "SUB-002"
       ],
-      "issued_at": "2026-11-12T16:43:25+00:00"
+      "issued_at": "2026-11-12T16:47:13+00:00"
     },
-    "signature": "c/+RLSO2cWB1XkiQSuuU9S/AhqtjwnpFLbFQdXbu4/qOY4Bbvfnwi+vU2VCQbKsQhcxD+w+GgMaSUs3nAy0hBw==",
+    "signature": "ZwXQU/rz3DsPp8dYKuoQeUMRA2poD0o9gP18pP7bHtbURB1Cj/CREIK7QEVPM7k/mfq5i8FAPz06BKYo5YCXAg==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

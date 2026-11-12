@@ -30,6 +30,8 @@
         "race",
         "ethnicity"
       ],
+      "uncertainty": "Exact count; no sampling uncertainty applies to this check.",
+      "borderline": false,
       "finding_id": "F1",
       "check_performed": "Subgroup coverage (bias)",
       "rows_or_groups_affected": "race=black (n=25)",
@@ -42,6 +44,18 @@
     }
   ],
   "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Subgroup coverage (bias),race; ethnicity,race=black (n=25),[SUB-002] Some subgroups are too small to evaluate model behavior reliably: race=black (n=25).,\"With few patients in a group, the model's behaviour in that group can't be judged. Usable for this question only after the next step is taken and reported.\",medium,high,\"Measured n_small_subgroups = 1. Rule SUB-002 (n_small_subgroups > 0 -> CONDITIONAL), policy v0.5.0, on demo_breast_cohort.\",Minimum counts only; no comparison with a reference population.,\"Report subgroup performance with uncertainty, or obtain more data for these groups. To reconsider: More records for those groups, or results reported with uncertainty.\",yes\r\n",
+  "plain_summary": "The data can support this question only after the steps below are taken and reported. 2,017 records match the group being studied. What needs attention: Some subgroups are too small to evaluate model behavior reliably: race=black (n=25). A person must review before use.",
+  "next_steps": [
+    {
+      "rank": 1,
+      "rule_id": "SUB-002",
+      "verdict": "CONDITIONAL",
+      "action": "Report subgroup performance with uncertainty, or obtain more data for these groups.",
+      "size": "race=black (n=25)",
+      "unblocks": false,
+      "evidence_to_reconsider": "More records for those groups, or results reported with uncertainty."
+    }
+  ],
   "checks": [
     {
       "check": "metadata",
@@ -142,7 +156,17 @@
       "metrics": {
         "outcome_missing_rate": 0.089,
         "max_feature_missing_rate": 0.0,
-        "worst_feature": "age_at_diagnosis"
+        "worst_feature": "age_at_diagnosis",
+        "ci": {
+          "max_feature_missing_rate": [
+            0.0,
+            0.002
+          ],
+          "outcome_missing_rate": [
+            0.077,
+            0.102
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -164,7 +188,14 @@
         "n_nonevents": 1445,
         "minority_class_n": 393,
         "n_parameters": 9,
-        "events_per_parameter": 43.67
+        "events_per_parameter": 43.67,
+        "event_rate": 0.214,
+        "ci": {
+          "event_rate": [
+            0.196,
+            0.233
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -207,6 +238,12 @@
       "metrics": {
         "horizon_months": 24.0,
         "horizon_coverage": 0.911,
+        "ci": {
+          "horizon_coverage": [
+            0.898,
+            0.923
+          ]
+        },
         "median_follow_up_months": 47.1,
         "time_unit": "months",
         "n_negative_times": 0
@@ -330,7 +367,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "9c1b9eb1c3ac47ce",
+    "cert_id": "f27f1028fe328052",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -343,9 +380,9 @@
       "rule_ids": [
         "SUB-002"
       ],
-      "issued_at": "2026-11-12T16:43:14+00:00"
+      "issued_at": "2026-11-12T16:47:02+00:00"
     },
-    "signature": "PUGRqFPYEhlGW56ucOLExHiDbBFKz2/DN0tpoScDiZkjwb6OoJW67xjc9HQsCgN7+GDgcVNe8Dd+UTzDEpNEDQ==",
+    "signature": "NEJd2vSyB2H+9gay3qplCluZOyL/NqPEbRdEHG8BFUq3BtMEjdDB3/pHPDCYXR4g6Z+ZIcr05+7zoph4DdVZCg==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

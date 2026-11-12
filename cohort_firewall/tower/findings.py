@@ -212,6 +212,7 @@ def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: 
         "engine": {"name": "cohort-firewall", "version": ENGINE_VERSION,
                    "tower_policy": Policy.load(TOWER_POLICY).version},
     }
+    doc.update(_tower_summary(rel_a.name, rel_b.name, findings, analyses, repairs))
     hashes = json.dumps(doc["data"], sort_keys=True).encode()
     from ..review import tower_binding
     doc["certificate"] = issue(dataset_bytes=hashes, dictionary=None,
@@ -220,3 +221,52 @@ def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: 
                                policy_sha256=Policy.load(TOWER_POLICY).sha256, verdict=overall,
                                rule_ids=[f["rule_id"] for e in vds.values() for f in e["findings"]])
     return doc
+
+
+ACTION_TEXT = {
+    "restore_from_previous_release": "Restore {n} sample profile(s) in {file} from the baseline release",
+    "exclude": "Exclude {n} new sample ID(s) in {file} that copy another sample's profile",
+    "flag_for_review": "Check {n} changed sample(s) in {file} against the source",
+}
+ACTION_ORDER = {"restore_from_previous_release": 0, "exclude": 1, "flag_for_review": 2}
+KIND_TEXT = {"sample_swap": "sample swap(s)", "duplicate": "profile(s) copied onto other IDs",
+             "membership_change": "membership change(s)", "label_conflict": "clinical label change(s)",
+             "missing_data": "missing-data change(s)", "other": "other change(s)"}
+
+
+def _tower_summary(name_a: str, name_b: str, findings: list[dict], analyses: list[dict], repairs: list[dict]) -> dict:
+    """Plain-English summary and ranked next steps for a release comparison."""
+    core = [f for f in findings if not f.get("x_summary_of_other_findings")]
+    counts: dict[str, int] = {}
+    for f in core:
+        counts[f["kind"]] = counts.get(f["kind"], 0) + 1
+    changed = ", ".join(f"{n} {KIND_TEXT.get(k, k)}" for k, n in counts.items()) or "nothing"
+    parts = []
+    for a in analyses:
+        if a["status"] == "not_rerun":
+            parts.append(f"{a['id']} is unaffected and was not rerun")
+        else:
+            parts.append(f"{a['id']} is {a['verdict']}"
+                         + (f" because of {', '.join(a['affected_by'][:4])}" if a.get("affected_by") else ""))
+    masked = next((f["summary"] for f in findings if "count unchanged" in f["summary"]), "")
+    summary = (f"Compared with {name_a}, release {name_b} has {changed}. "
+               + ((lambda t: t[:1].upper() + t[1:])(masked.split(":", 1)[1].strip().rstrip(".")) + ". " if masked else "")
+               + "; ".join(parts) + ". A person must review before the new release is used.")
+    affected_by_finding = {}
+    for a in analyses:
+        for fid in a.get("affected_by", []):
+            affected_by_finding.setdefault(fid, set()).add(a["id"])
+    groups: dict[tuple, dict] = {}
+    for r in repairs:
+        file = r["targets"][0].get("file", "") if r["targets"] else ""
+        g = groups.setdefault((r["action"], file), {"action": r["action"], "file": file, "samples": [], "findings": []})
+        g["samples"] += [t["id"] for t in r["targets"]]
+        g["findings"] += r["addresses"]
+    steps = []
+    for (action, file), g in sorted(groups.items(), key=lambda kv: ACTION_ORDER.get(kv[0][0], 9)):
+        unblocks = sorted({a for fid in g["findings"] for a in affected_by_finding.get(fid, set())})
+        steps.append({"rank": len(steps) + 1,
+                      "action": ACTION_TEXT.get(action, action).format(n=len(set(g["samples"])), file=file),
+                      "samples": sorted(set(g["samples"]))[:12], "n_samples": len(set(g["samples"])),
+                      "resolves": sorted(set(g["findings"])), "affects_analyses": unblocks})
+    return {"plain_summary": summary, "next_steps": steps}

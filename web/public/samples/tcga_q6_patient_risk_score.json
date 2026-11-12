@@ -35,6 +35,8 @@
         "question_text",
         "intended_use"
       ],
+      "uncertainty": "Exact count; no sampling uncertainty applies to this check.",
+      "borderline": false,
       "finding_id": "F1",
       "check_performed": "Permitted use",
       "rows_or_groups_affected": "whole question",
@@ -64,6 +66,8 @@
         "age_at_diagnosis",
         "pfi_2yr"
       ],
+      "uncertainty": "outcome_missing_rate = 41.8% (95% range 38.9% to 44.7%)",
+      "borderline": false,
       "finding_id": "F2",
       "check_performed": "Missing values",
       "rows_or_groups_affected": "about 460 of 1101 records",
@@ -94,6 +98,8 @@
         "her2_ihc_status",
         "age_at_diagnosis"
       ],
+      "uncertainty": "Exact count; no sampling uncertainty applies to this check.",
+      "borderline": false,
       "finding_id": "F3",
       "check_performed": "Enough outcome events",
       "rows_or_groups_affected": "62 events, 579 non-events",
@@ -106,6 +112,36 @@
     }
   ],
   "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Permitted use,question_text; intended_use,whole question,\"[SCOPE-002] The question asks for an individual diagnosis, treatment choice, or patient risk score (deterministic guard).\",\"The event and this tool exclude diagnosis, treatment choices and patient risk scores. The data can't support this question as asked.\",high,medium,\"Measured keyword_guard_hit = True. Rule SCOPE-002 (keyword_guard_hit == True -> BLOCKED), policy v0.5.0, on tcga_brca_raw.\",The wording guard is a phrase list; a cleverly worded clinical question could slip past it.,Reword it as a cohort-level research question that does not produce a result for a specific patient. To reconsider: A rewritten question that produces no result for a specific patient.,yes\r\nF2,Missing values,stage_group; er_status; pr_status; her2_ihc_status; age_at_diagnosis; pfi_2yr,about 460 of 1101 records,[CMP-002] The outcome is missing for 42% of the cohort.,Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured outcome_missing_rate = 0.418. Rule CMP-002 (outcome_missing_rate > 0.2 and outcome_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on tcga_brca_raw.\",Counts missing values; it can't tell why they are missing.,\"Explain why outcomes are missing and analyze whether missingness is related to patient characteristics. To reconsider: An explanation of why outcomes are missing, and a check that missingness is unrelated to the predictors.\",yes\r\nF3,Enough outcome events,pfi_2yr; stage_group; er_status; pr_status; her2_ihc_status; age_at_diagnosis,\"62 events, 579 non-events\",[EVT-002] 5.64 events per model parameter (11 parameters); high overfitting risk.,Too few events make estimates unstable and models overfit. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured minority_class_n = 62, events_per_parameter = 5.64. Rule EVT-002 (minority_class_n >= 20 and events_per_parameter < 10 -> CONDITIONAL), policy v0.5.0, on tcga_brca_raw.\",\"10 events per model parameter is a rule of thumb, not a sample-size calculation.\",\"Reduce predictors, use penalized models, and report validation with uncertainty. To reconsider: Fewer predictors or more events, or a penalized model with validation.\",yes\r\n",
+  "plain_summary": "The data can't support this question as asked. 1,101 records match the group being studied. What needs attention: The question asks for an individual diagnosis, treatment choice, or patient risk score (deterministic guard). The outcome is missing for 42% of the cohort. There are 1 more issue(s) below. A person must review before use.",
+  "next_steps": [
+    {
+      "rank": 1,
+      "rule_id": "SCOPE-002",
+      "verdict": "BLOCKED",
+      "action": "Reword it as a cohort-level research question that does not produce a result for a specific patient.",
+      "size": "whole question",
+      "unblocks": true,
+      "evidence_to_reconsider": "A rewritten question that produces no result for a specific patient."
+    },
+    {
+      "rank": 2,
+      "rule_id": "CMP-002",
+      "verdict": "CONDITIONAL",
+      "action": "Explain why outcomes are missing and analyze whether missingness is related to patient characteristics.",
+      "size": "about 460 of 1101 records",
+      "unblocks": false,
+      "evidence_to_reconsider": "An explanation of why outcomes are missing, and a check that missingness is unrelated to the predictors."
+    },
+    {
+      "rank": 3,
+      "rule_id": "EVT-002",
+      "verdict": "CONDITIONAL",
+      "action": "Reduce predictors, use penalized models, and report validation with uncertainty.",
+      "size": "62 events, 579 non-events",
+      "unblocks": false,
+      "evidence_to_reconsider": "Fewer predictors or more events, or a penalized model with validation."
+    }
+  ],
   "checks": [
     {
       "check": "metadata",
@@ -202,7 +238,17 @@
       "metrics": {
         "outcome_missing_rate": 0.418,
         "max_feature_missing_rate": 0.165,
-        "worst_feature": "her2_ihc_status"
+        "worst_feature": "her2_ihc_status",
+        "ci": {
+          "max_feature_missing_rate": [
+            0.145,
+            0.188
+          ],
+          "outcome_missing_rate": [
+            0.389,
+            0.447
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -222,7 +268,14 @@
         "n_nonevents": 579,
         "minority_class_n": 62,
         "n_parameters": 11,
-        "events_per_parameter": 5.64
+        "events_per_parameter": 5.64,
+        "event_rate": 0.097,
+        "ci": {
+          "event_rate": [
+            0.076,
+            0.122
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -261,6 +314,12 @@
       "metrics": {
         "horizon_months": 24.0,
         "horizon_coverage": 0.582,
+        "ci": {
+          "horizon_coverage": [
+            0.553,
+            0.611
+          ]
+        },
         "median_follow_up_months": 25.4,
         "time_unit": "days",
         "n_negative_times": 0
@@ -303,6 +362,12 @@
           "PR status: clinical file vs 2012 paper: 0 of 779 (0%)"
         ],
         "n_rows_disagreeing": 0,
+        "ci": {
+          "max_disagreement_rate": [
+            0.0,
+            0.005
+          ]
+        },
         "elsewhere": [
           "PAM50 subtype: RNA-seq call vs 2012 microarray call: 52 of 508 (10%)",
           "Vital status (clinical) vs overall-survival event (curated): 1 of 1097 (0%)"
@@ -390,7 +455,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "1e4301d4a49cb319",
+    "cert_id": "3bded88a73af108d",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -405,9 +470,9 @@
         "EVT-002",
         "SCOPE-002"
       ],
-      "issued_at": "2026-11-12T16:43:14+00:00"
+      "issued_at": "2026-11-12T16:47:03+00:00"
     },
-    "signature": "FIDkeqt5iiHQtiyjvq+rQK9WRg4D/pg0FzbBWrBFTH0o2J4JbevZOuok3NtJtw7o1pf5oGA97N17oTCMT40BCA==",
+    "signature": "7BVDzpl9W7AJJnvLnr+IAoNhqSWP6o9b/RZxpF6lXxYjNigmgZpIskGLYU3ED4U4wjZyxp4ZvfNSrcP6u021BA==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

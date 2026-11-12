@@ -4,6 +4,7 @@ import type { Verdict } from "@/lib/types";
 import type { FindingsDoc, TowerAnalysis, TowerFinding } from "@/lib/tower";
 import { CertificatePanel } from "./CertificatePanel";
 import { ReleaseReview } from "./ReviewPanel";
+import { Summary } from "./Summary";
 import { VerdictGate } from "./VerdictGate";
 
 const TO_ENGINE: Record<string, Verdict> = {
@@ -129,6 +130,8 @@ export function TowerResults({ doc }: { doc: FindingsDoc }) {
           {doc.timing_seconds ? ` Took ${doc.timing_seconds.total} s.` : ""}
         </p>
       </div>
+
+      <Summary text={doc.plain_summary} steps={doc.next_steps} />
 
       <section className="block">
         <h3>Protected analyses</h3>

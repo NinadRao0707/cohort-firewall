@@ -18,6 +18,7 @@ function Evidence({ f }: { f: Finding }) {
           <dt>Measured</dt><dd><code>{Object.entries(f.measured ?? {}).map(([k, v]) => `${k} = ${v}`).join(", ")}</code></dd>
           <dt>Decision rule</dt><dd><code>{f.rule_id}: {f.rule_condition}</code></dd>
           <dt>Confidence</dt><dd>{f.confidence}</dd>
+          <dt>Uncertainty</dt><dd>{f.uncertainty}</dd>
           <dt>Limitation of this check</dt><dd>{f.limitation}</dd>
           <dt>Source</dt><dd>{f.evidence_or_source}</dd>
         </dl>
@@ -52,7 +53,8 @@ export function Findings({ findings, csv, name }: { findings: Finding[]; csv?: s
             <div className="finding-head">
               <span className="rule-id">{f.rule_id}</span>
               <span className="finding-level">{VERDICT_COPY[f.verdict].label}{f.accepted ? " · accepted by the question card" : ""}
-                {f.materiality ? ` · ${f.materiality} materiality` : ""}</span>
+                {f.materiality ? ` · ${f.materiality} materiality` : ""}
+                {f.borderline ? " · borderline (the 95% range crosses the rule's threshold)" : ""}</span>
             </div>
             {f.accepted && <p className="finding-remedy"><span>Accepted as:</span> {f.accepted_as}. Still shown so a reviewer can confirm it.</p>}
             <p className="finding-reason">{f.reason}</p>

@@ -33,6 +33,8 @@ export interface FindingsDoc {
   findings: TowerFinding[]; analyses?: TowerAnalysis[]; repairs?: TowerRepair[];
   limitations?: string[]; certificate?: unknown; baseline_unverified_files?: string[];
   timing_seconds?: { baseline: number; total: number };
+  plain_summary?: string;
+  next_steps?: { rank: number; action: string; samples: string[]; n_samples: number; resolves: string[]; affects_analyses: string[] }[];
 }
 
 export async function listReleases(): Promise<{ name: string; files: string[] }[]> {

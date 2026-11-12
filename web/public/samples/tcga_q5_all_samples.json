@@ -37,6 +37,8 @@
         "age_at_diagnosis",
         "pfi_2yr"
       ],
+      "uncertainty": "outcome_missing_rate = 39.2% (95% range 36.5% to 42.0%)",
+      "borderline": false,
       "finding_id": "F1",
       "check_performed": "Missing values",
       "rows_or_groups_affected": "about 489 of 1247 records",
@@ -61,6 +63,8 @@
       "fields_used": [
         "patient_id"
       ],
+      "uncertainty": "Exact count; no sampling uncertainty applies to this check.",
+      "borderline": false,
       "finding_id": "F2",
       "check_performed": "Patients counted once",
       "rows_or_groups_affected": "142 patients across 1247 rows",
@@ -73,6 +77,27 @@
     }
   ],
   "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Missing values,stage_group; er_status; age_at_diagnosis; pfi_2yr,about 489 of 1247 records,[CMP-002] The outcome is missing for 39% of the cohort.,Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured outcome_missing_rate = 0.392. Rule CMP-002 (outcome_missing_rate > 0.2 and outcome_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on tcga_brca_raw.\",Counts missing values; it can't tell why they are missing.,\"Explain why outcomes are missing and analyze whether missingness is related to patient characteristics. To reconsider: An explanation of why outcomes are missing, and a check that missingness is unrelated to the predictors.\",yes\r\nF2,Patients counted once,patient_id,142 patients across 1247 rows,\"[UNIT-001] 142 patient(s) appear more than once (1247 rows for 1101 patients), so counting rows counts some people twice (e.g. TCGA-A7-A0CE, TCGA-A7-A0CH, TCGA-A7-A0D9, TCGA-A7-A0DB, TCGA-A7-A0DC).\",Counting samples as patients counts some people twice and overstates certainty. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured n_patients_repeated = 142. Rule UNIT-001 (n_patients_repeated > 0 -> CONDITIONAL), policy v0.5.0, on tcga_brca_raw.\",Uses the declared patient identifier.,\"Choose one sample per patient (for example the primary tumor) or analyze at sample level and say so. To reconsider: One sample per patient, or a stated sample-level analysis.\",yes\r\n",
+  "plain_summary": "The data can support this question only after the steps below are taken and reported. 1,247 records match the group being studied. What needs attention: The outcome is missing for 39% of the cohort. 142 patient(s) appear more than once (1247 rows for 1101 patients), so counting rows counts some people twice (e.g. TCGA-A7-A0CE, TCGA-A7-A0CH, TCGA-A7-A0D9, TCGA-A7-A0DB, TCGA-A7-A0DC). A person must review before use.",
+  "next_steps": [
+    {
+      "rank": 1,
+      "rule_id": "CMP-002",
+      "verdict": "CONDITIONAL",
+      "action": "Explain why outcomes are missing and analyze whether missingness is related to patient characteristics.",
+      "size": "about 489 of 1247 records",
+      "unblocks": false,
+      "evidence_to_reconsider": "An explanation of why outcomes are missing, and a check that missingness is unrelated to the predictors."
+    },
+    {
+      "rank": 2,
+      "rule_id": "UNIT-001",
+      "verdict": "CONDITIONAL",
+      "action": "Choose one sample per patient (for example the primary tumor) or analyze at sample level and say so.",
+      "size": "142 patients across 1247 rows",
+      "unblocks": false,
+      "evidence_to_reconsider": "One sample per patient, or a stated sample-level analysis."
+    }
+  ],
   "checks": [
     {
       "check": "metadata",
@@ -164,7 +189,17 @@
       "metrics": {
         "outcome_missing_rate": 0.392,
         "max_feature_missing_rate": 0.053,
-        "worst_feature": "er_status"
+        "worst_feature": "er_status",
+        "ci": {
+          "max_feature_missing_rate": [
+            0.042,
+            0.067
+          ],
+          "outcome_missing_rate": [
+            0.365,
+            0.42
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -182,7 +217,14 @@
         "n_nonevents": 688,
         "minority_class_n": 70,
         "n_parameters": 6,
-        "events_per_parameter": 11.67
+        "events_per_parameter": 11.67,
+        "event_rate": 0.092,
+        "ci": {
+          "event_rate": [
+            0.074,
+            0.115
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -217,6 +259,12 @@
       "metrics": {
         "horizon_months": 24.0,
         "horizon_coverage": 0.608,
+        "ci": {
+          "horizon_coverage": [
+            0.58,
+            0.635
+          ]
+        },
         "median_follow_up_months": 28.2,
         "time_unit": "days",
         "n_negative_times": 0
@@ -264,6 +312,12 @@
           "ER status: clinical file vs 2012 paper: 0 of 780 (0%)"
         ],
         "n_rows_disagreeing": 0,
+        "ci": {
+          "max_disagreement_rate": [
+            0.0,
+            0.005
+          ]
+        },
         "elsewhere": [
           "PAM50 subtype: RNA-seq call vs 2012 microarray call: 52 of 508 (10%)",
           "Vital status (clinical) vs overall-survival event (curated): 1 of 1236 (0%)"
@@ -341,7 +395,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "b61ca0756cbf030d",
+    "cert_id": "1791e5b02c966151",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -355,9 +409,9 @@
         "CMP-002",
         "UNIT-001"
       ],
-      "issued_at": "2026-11-12T16:43:14+00:00"
+      "issued_at": "2026-11-12T16:47:03+00:00"
     },
-    "signature": "vt6QzAaK+20hym9U3b/ZZqJRIgtsmOg8m91aHCwoPfmV6OYALVk3Nn8raiR4BKMpBzrq0BwLIW9NuCABHdV9Cw==",
+    "signature": "xzGZFaIVLtUnfO2tCo/iLcKpUQeTeR8aQA9WRDjU57swvNyPc0vYlD9LLHTuz2BM+kWpDBQJjA3Jrs/wT6ZjBw==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

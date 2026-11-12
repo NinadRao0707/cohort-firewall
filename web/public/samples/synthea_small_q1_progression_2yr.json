@@ -35,6 +35,8 @@
         "her2_ihc",
         "tumor_size"
       ],
+      "uncertainty": "Exact count; no sampling uncertainty applies to this check.",
+      "borderline": false,
       "finding_id": "F1",
       "check_performed": "Enough outcome events",
       "rows_or_groups_affected": "12 events, 124 non-events",
@@ -65,6 +67,8 @@
         "tumor_size",
         "progression_2yr"
       ],
+      "uncertainty": "max_feature_missing_rate = 26.1% (95% range 19.9% to 33.5%); the range crosses the rule's threshold, so this finding is borderline",
+      "borderline": true,
       "finding_id": "F2",
       "check_performed": "Missing values",
       "rows_or_groups_affected": "about 41 of 157 records",
@@ -90,6 +94,8 @@
         "race",
         "ethnicity"
       ],
+      "uncertainty": "Exact count; no sampling uncertainty applies to this check.",
+      "borderline": false,
       "finding_id": "F3",
       "check_performed": "Subgroup coverage (bias)",
       "rows_or_groups_affected": "race=black (n=12); race=asian (n=10); race=other (n=5); race=hawaiian (n=2); race=native (n=1); ethnicity=hispanic (n=30)",
@@ -102,6 +108,36 @@
     }
   ],
   "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Enough outcome events,progression_2yr; age_at_diagnosis; stage_group; er_status; pr_status; her2_ihc; tumor_size,\"12 events, 124 non-events\",[EVT-001] Only 12 records in the smaller outcome class; too few to develop or evaluate a model.,Too few events make estimates unstable and models overfit. The data can't support this question as asked.,high,high,\"Measured minority_class_n = 12. Rule EVT-001 (minority_class_n < 20 -> BLOCKED), policy v0.5.0, on synthea_breast_cohort.\",\"10 events per model parameter is a rule of thumb, not a sample-size calculation.\",Use a larger cohort or a more common outcome. To reconsider: At least 20 records in the smaller outcome group.,yes\r\nF2,Missing values,age_at_diagnosis; stage_group; er_status; pr_status; her2_ihc; tumor_size; progression_2yr,about 41 of 157 records,[CMP-004] Predictor 'tumor_size' is missing for 26% of the cohort.,Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured max_feature_missing_rate = 0.261. Rule CMP-004 (max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.\",Counts missing values; it can't tell why they are missing.,\"Plan and document an imputation strategy, or drop the predictor. To reconsider: A documented imputation plan, or the result with and without that predictor.\",yes\r\nF3,Subgroup coverage (bias),race; ethnicity,race=black (n=12); race=asian (n=10); race=other (n=5); race=hawaiian (n=2); race=native (n=1); ethnicity=hispanic (n=30),\"[SUB-002] Some subgroups are too small to evaluate model behavior reliably: race=black (n=12), race=asian (n=10), race=other (n=5), race=hawaiian (n=2), race=native (n=1), ethnicity=hispanic (n=30).\",\"With few patients in a group, the model's behaviour in that group can't be judged. Usable for this question only after the next step is taken and reported.\",medium,high,\"Measured n_small_subgroups = 6. Rule SUB-002 (n_small_subgroups > 0 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.\",Minimum counts only; no comparison with a reference population.,\"Report subgroup performance with uncertainty, or obtain more data for these groups. To reconsider: More records for those groups, or results reported with uncertainty.\",yes\r\n",
+  "plain_summary": "The data can't support this question as asked. 157 records match the group being studied. What needs attention: Only 12 records in the smaller outcome class; too few to develop or evaluate a model. Predictor 'tumor_size' is missing for 26% of the cohort. There are 1 more issue(s) below. A person must review before use.",
+  "next_steps": [
+    {
+      "rank": 1,
+      "rule_id": "EVT-001",
+      "verdict": "BLOCKED",
+      "action": "Use a larger cohort or a more common outcome.",
+      "size": "12 events, 124 non-events",
+      "unblocks": true,
+      "evidence_to_reconsider": "At least 20 records in the smaller outcome group."
+    },
+    {
+      "rank": 2,
+      "rule_id": "CMP-004",
+      "verdict": "CONDITIONAL",
+      "action": "Plan and document an imputation strategy, or drop the predictor.",
+      "size": "about 41 of 157 records",
+      "unblocks": false,
+      "evidence_to_reconsider": "A documented imputation plan, or the result with and without that predictor."
+    },
+    {
+      "rank": 3,
+      "rule_id": "SUB-002",
+      "verdict": "CONDITIONAL",
+      "action": "Report subgroup performance with uncertainty, or obtain more data for these groups.",
+      "size": "race=black (n=12); race=asian (n=10); race=other (n=5); race=hawaiian (n=2); race=native (n=1); ethnicity=hispanic (n=30)",
+      "unblocks": false,
+      "evidence_to_reconsider": "More records for those groups, or results reported with uncertainty."
+    }
+  ],
   "checks": [
     {
       "check": "metadata",
@@ -201,7 +237,17 @@
       "metrics": {
         "outcome_missing_rate": 0.134,
         "max_feature_missing_rate": 0.261,
-        "worst_feature": "tumor_size"
+        "worst_feature": "tumor_size",
+        "ci": {
+          "max_feature_missing_rate": [
+            0.199,
+            0.335
+          ],
+          "outcome_missing_rate": [
+            0.089,
+            0.196
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -222,7 +268,14 @@
         "n_nonevents": 124,
         "minority_class_n": 12,
         "n_parameters": 8,
-        "events_per_parameter": 1.5
+        "events_per_parameter": 1.5,
+        "event_rate": 0.088,
+        "ci": {
+          "event_rate": [
+            0.051,
+            0.148
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -263,6 +316,12 @@
       "metrics": {
         "horizon_months": 24.0,
         "horizon_coverage": 0.866,
+        "ci": {
+          "horizon_coverage": [
+            0.804,
+            0.911
+          ]
+        },
         "median_follow_up_months": 62.9,
         "time_unit": "months",
         "n_negative_times": 0
@@ -385,7 +444,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "4be6f897e44e1c8f",
+    "cert_id": "8f5bd56ae199a1d4",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -400,9 +459,9 @@
         "EVT-001",
         "SUB-002"
       ],
-      "issued_at": "2026-11-12T16:43:25+00:00"
+      "issued_at": "2026-11-12T16:47:13+00:00"
     },
-    "signature": "ASlUAuIf9hlVOHA9jiMj5y89MV/RJERwNpDlOwXc1pKLPtH3m1j2hzWFj5EpKf0qpeqU5zTW2weT0lVvjGu+Dg==",
+    "signature": "heIFDc9JhZMeVrPmMqiiwS1bXR0DqoDMf/L+aCI7eYnYVJSdBA+DoWqmWqk4liHTmQ6afNq0SczMdaNcoIt2Dw==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

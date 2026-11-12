@@ -27,6 +27,8 @@
         "has_dictionary": false
       },
       "fields_used": [],
+      "uncertainty": "Exact count; no sampling uncertainty applies to this check.",
+      "borderline": false,
       "finding_id": "F1",
       "check_performed": "Documentation, license and provenance",
       "rows_or_groups_affected": "whole dataset",
@@ -43,6 +45,8 @@
       "verdict": "INSUFFICIENT_EVIDENCE",
       "reason": "Rule META-009 references a metric the check did not produce.",
       "remedy": "Fix the rule/engine mismatch.",
+      "uncertainty": "Exact count; no sampling uncertainty applies to this check.",
+      "borderline": false,
       "finding_id": "F2",
       "check_performed": "Documentation, license and provenance",
       "fields_used": [],
@@ -56,6 +60,27 @@
     }
   ],
   "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,\"Documentation, license and provenance\",,whole dataset,\"[META-001] No data dictionary was supplied, so column meaning, timing and provenance cannot be verified.\",\"Without source, license and patient-data details, the data's permitted use can't be confirmed. This can't be confirmed, so the data does not pass for this question.\",high,high,\"Measured has_dictionary = False. Rule META-001 (has_dictionary == False -> INSUFFICIENT_EVIDENCE), policy v0.5.0, on the supplied dataset.\",Relies on what the data dictionary declares beyond the pinned checksums.,\"Upload a data dictionary (dataset source, license, provenance, and per-column role/timing). To reconsider: A data dictionary for this release.\",yes\r\nF2,\"Documentation, license and provenance\",,whole dataset,[META-009] Rule META-009 references a metric the check did not produce.,\"Without source, license and patient-data details, the data's permitted use can't be confirmed. This can't be confirmed, so the data does not pass for this question.\",high,high,\"Measured . Rule META-009 (), policy v0.5.0, on the supplied dataset.\",Relies on what the data dictionary declares beyond the pinned checksums.,Fix the rule/engine mismatch. To reconsider:,yes\r\n",
+  "plain_summary": "The tool can't confirm something this question needs, so the data doesn't pass. 2,400 records match the group being studied. What needs attention: No data dictionary was supplied, so column meaning, timing and provenance cannot be verified. Rule META-009 references a metric the check did not produce. A person must review before use.",
+  "next_steps": [
+    {
+      "rank": 1,
+      "rule_id": "META-001",
+      "verdict": "INSUFFICIENT_EVIDENCE",
+      "action": "Upload a data dictionary (dataset source, license, provenance, and per-column role/timing).",
+      "size": "whole dataset",
+      "unblocks": true,
+      "evidence_to_reconsider": "A data dictionary for this release."
+    },
+    {
+      "rank": 2,
+      "rule_id": "META-009",
+      "verdict": "INSUFFICIENT_EVIDENCE",
+      "action": "Fix the rule/engine mismatch.",
+      "size": "whole dataset",
+      "unblocks": true,
+      "evidence_to_reconsider": ""
+    }
+  ],
   "checks": [
     {
       "check": "metadata",
@@ -145,7 +170,17 @@
       "metrics": {
         "outcome_missing_rate": 0.091,
         "max_feature_missing_rate": 0.0,
-        "worst_feature": "age_at_diagnosis"
+        "worst_feature": "age_at_diagnosis",
+        "ci": {
+          "max_feature_missing_rate": [
+            0.0,
+            0.002
+          ],
+          "outcome_missing_rate": [
+            0.08,
+            0.103
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -167,7 +202,14 @@
         "n_nonevents": 1712,
         "minority_class_n": 469,
         "n_parameters": 9,
-        "events_per_parameter": 52.11
+        "events_per_parameter": 52.11,
+        "event_rate": 0.215,
+        "ci": {
+          "event_rate": [
+            0.198,
+            0.233
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -210,6 +252,12 @@
       "metrics": {
         "horizon_months": 24.0,
         "horizon_coverage": 0.909,
+        "ci": {
+          "horizon_coverage": [
+            0.897,
+            0.92
+          ]
+        },
         "median_follow_up_months": 47.0,
         "time_unit": "months",
         "n_negative_times": 0
@@ -326,7 +374,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "2fadd15a372ca106",
+    "cert_id": "04191a04b4c967a8",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -340,9 +388,9 @@
         "META-001",
         "META-009"
       ],
-      "issued_at": "2026-11-12T16:43:14+00:00"
+      "issued_at": "2026-11-12T16:47:02+00:00"
     },
-    "signature": "Wcd0A42x03HyjlxpGDb3nf1czjGRnMPbOMMuT7or2NCvVLdY4wUqifLclPEjc1ZUkGgp7SnN+xAAatVSNc5WDQ==",
+    "signature": "qSBup4JFnWEJ5dSaETwlJjDrEs/ALG4PFJ3S4Wsaf3k8r8UwXRb/z7ZAB6+FE9D4TEeE6oKdNxRhEYfKESn2AA==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

@@ -34,6 +34,8 @@
       "fields_used": [
         "race"
       ],
+      "uncertainty": "Exact count; no sampling uncertainty applies to this check.",
+      "borderline": false,
       "finding_id": "F1",
       "check_performed": "Subgroup coverage (bias)",
       "rows_or_groups_affected": "race",
@@ -63,6 +65,8 @@
         "age_at_diagnosis",
         "pfi_2yr"
       ],
+      "uncertainty": "outcome_missing_rate = 41.8% (95% range 38.9% to 44.7%)",
+      "borderline": false,
       "finding_id": "F2",
       "check_performed": "Missing values",
       "rows_or_groups_affected": "about 460 of 1101 records",
@@ -93,6 +97,8 @@
         "her2_ihc_status",
         "age_at_diagnosis"
       ],
+      "uncertainty": "Exact count; no sampling uncertainty applies to this check.",
+      "borderline": false,
       "finding_id": "F3",
       "check_performed": "Enough outcome events",
       "rows_or_groups_affected": "62 events, 579 non-events",
@@ -105,6 +111,36 @@
     }
   ],
   "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Subgroup coverage (bias),race,race,[SUB-001] Subgroup attribute(s) needed to evaluate fairness are not recorded: race.,\"With few patients in a group, the model's behaviour in that group can't be judged. This can't be confirmed, so the data does not pass for this question.\",high,high,\"Measured n_missing_subgroup_columns = 1. Rule SUB-001 (n_missing_subgroup_columns > 0 -> INSUFFICIENT_EVIDENCE), policy v0.5.0, on tcga_brca_raw.\",Minimum counts only; no comparison with a reference population.,\"Use a dataset that records these attributes, or justify why subgroup evaluation is not needed. To reconsider: A dataset that records the attribute, or a reason subgroup evaluation isn't needed.\",yes\r\nF2,Missing values,stage_group; er_status; pr_status; her2_ihc_status; age_at_diagnosis; pfi_2yr,about 460 of 1101 records,[CMP-002] The outcome is missing for 42% of the cohort.,Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured outcome_missing_rate = 0.418. Rule CMP-002 (outcome_missing_rate > 0.2 and outcome_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on tcga_brca_raw.\",Counts missing values; it can't tell why they are missing.,\"Explain why outcomes are missing and analyze whether missingness is related to patient characteristics. To reconsider: An explanation of why outcomes are missing, and a check that missingness is unrelated to the predictors.\",yes\r\nF3,Enough outcome events,pfi_2yr; stage_group; er_status; pr_status; her2_ihc_status; age_at_diagnosis,\"62 events, 579 non-events\",[EVT-002] 5.64 events per model parameter (11 parameters); high overfitting risk.,Too few events make estimates unstable and models overfit. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured minority_class_n = 62, events_per_parameter = 5.64. Rule EVT-002 (minority_class_n >= 20 and events_per_parameter < 10 -> CONDITIONAL), policy v0.5.0, on tcga_brca_raw.\",\"10 events per model parameter is a rule of thumb, not a sample-size calculation.\",\"Reduce predictors, use penalized models, and report validation with uncertainty. To reconsider: Fewer predictors or more events, or a penalized model with validation.\",yes\r\n",
+  "plain_summary": "The tool can't confirm something this question needs, so the data doesn't pass. 1,101 records match the group being studied. What needs attention: Subgroup attribute(s) needed to evaluate fairness are not recorded: race. The outcome is missing for 42% of the cohort. There are 1 more issue(s) below. A person must review before use.",
+  "next_steps": [
+    {
+      "rank": 1,
+      "rule_id": "SUB-001",
+      "verdict": "INSUFFICIENT_EVIDENCE",
+      "action": "Use a dataset that records these attributes, or justify why subgroup evaluation is not needed.",
+      "size": "race",
+      "unblocks": true,
+      "evidence_to_reconsider": "A dataset that records the attribute, or a reason subgroup evaluation isn't needed."
+    },
+    {
+      "rank": 2,
+      "rule_id": "CMP-002",
+      "verdict": "CONDITIONAL",
+      "action": "Explain why outcomes are missing and analyze whether missingness is related to patient characteristics.",
+      "size": "about 460 of 1101 records",
+      "unblocks": false,
+      "evidence_to_reconsider": "An explanation of why outcomes are missing, and a check that missingness is unrelated to the predictors."
+    },
+    {
+      "rank": 3,
+      "rule_id": "EVT-002",
+      "verdict": "CONDITIONAL",
+      "action": "Reduce predictors, use penalized models, and report validation with uncertainty.",
+      "size": "62 events, 579 non-events",
+      "unblocks": false,
+      "evidence_to_reconsider": "Fewer predictors or more events, or a penalized model with validation."
+    }
+  ],
   "checks": [
     {
       "check": "metadata",
@@ -201,7 +237,17 @@
       "metrics": {
         "outcome_missing_rate": 0.418,
         "max_feature_missing_rate": 0.165,
-        "worst_feature": "her2_ihc_status"
+        "worst_feature": "her2_ihc_status",
+        "ci": {
+          "max_feature_missing_rate": [
+            0.145,
+            0.188
+          ],
+          "outcome_missing_rate": [
+            0.389,
+            0.447
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -221,7 +267,14 @@
         "n_nonevents": 579,
         "minority_class_n": 62,
         "n_parameters": 11,
-        "events_per_parameter": 5.64
+        "events_per_parameter": 5.64,
+        "event_rate": 0.097,
+        "ci": {
+          "event_rate": [
+            0.076,
+            0.122
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -260,6 +313,12 @@
       "metrics": {
         "horizon_months": 24.0,
         "horizon_coverage": 0.582,
+        "ci": {
+          "horizon_coverage": [
+            0.553,
+            0.611
+          ]
+        },
         "median_follow_up_months": 25.4,
         "time_unit": "days",
         "n_negative_times": 0
@@ -312,6 +371,12 @@
           "PR status: clinical file vs 2012 paper: 0 of 779 (0%)"
         ],
         "n_rows_disagreeing": 0,
+        "ci": {
+          "max_disagreement_rate": [
+            0.0,
+            0.005
+          ]
+        },
         "elsewhere": [
           "PAM50 subtype: RNA-seq call vs 2012 microarray call: 52 of 508 (10%)",
           "Vital status (clinical) vs overall-survival event (curated): 1 of 1097 (0%)"
@@ -401,7 +466,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "92aecb75827c864c",
+    "cert_id": "21c311bab8e3683f",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -416,9 +481,9 @@
         "EVT-002",
         "SUB-001"
       ],
-      "issued_at": "2026-11-12T16:43:14+00:00"
+      "issued_at": "2026-11-12T16:47:03+00:00"
     },
-    "signature": "EW+KiNbtBMmuyj74eVe7UGfU+bqxtEKhk9DX5vlR9aYXtib66ePGCiUfUzfk9ES/K/F7riU0j7ROcUKhr7FuCA==",
+    "signature": "B/igXbCpJK4jWiE4ZHEQthKlkrfIn+xDBFdFVpWsYW7PrimEJ7lz+MShhjEFqSyTS3HM6IBkaJMT647JqPXODA==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

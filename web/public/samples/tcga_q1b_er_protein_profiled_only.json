@@ -20,6 +20,8 @@
   ],
   "findings": [],
   "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\n",
+  "plain_summary": "The data can support this question as stated. 698 records match the group being studied. No check found a problem for this question. A person must review before use.",
+  "next_steps": [],
   "checks": [
     {
       "check": "metadata",
@@ -115,7 +117,13 @@
       "metrics": {
         "outcome_missing_rate": null,
         "max_feature_missing_rate": 0.0,
-        "worst_feature": "er_status"
+        "worst_feature": "er_status",
+        "ci": {
+          "max_feature_missing_rate": [
+            0.0,
+            0.005
+          ]
+        }
       },
       "note": "",
       "fields": [
@@ -183,6 +191,12 @@
           "ER status: clinical file vs 2012 paper: 0 of 631 (0%)"
         ],
         "n_rows_disagreeing": 0,
+        "ci": {
+          "max_disagreement_rate": [
+            0.0,
+            0.006
+          ]
+        },
         "elsewhere": [
           "PAM50 subtype: RNA-seq call vs 2012 microarray call: 39 of 392 (10%)"
         ],
@@ -279,7 +293,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "2a0a1ce34b15e4de",
+    "cert_id": "c4649fe788ccdb54",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -290,9 +304,9 @@
       "spec_sha256": "ce381e96d79a7541db2bdc2316538efb55debde26e6d6da1d4eecbc148c5a810",
       "verdict": "READY",
       "rule_ids": [],
-      "issued_at": "2026-11-12T16:43:14+00:00"
+      "issued_at": "2026-11-12T16:47:02+00:00"
     },
-    "signature": "ExT1U3ozEp90VeEP3WM5VnA0VWVHvgxKWB0yHPo8Dg7+VKiLKirOF7R2G98F1cR1rUdkSawirMTcD/TVWpAEAA==",
+    "signature": "BZOQwEuQopecjHrSyll7PJ5nqK45eZErc0djYBg2qBU/aFbHvjzOEBAhoPzroqq1/AS3lcqsTkcZPuzoy6zIAQ==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",
