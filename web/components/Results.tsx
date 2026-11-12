@@ -12,7 +12,7 @@ export function Results({ result }: { result: EvaluateResponse }) {
   const counted = result.findings.filter((f) => !f.accepted).length;
   return (
     <div className="results">
-      <VerdictGate verdict={result.verdict} question={result.spec?.question_text as string | undefined}
+      <VerdictGate verdict={result.verdict}
                    summary={result.plain_summary?.replace(/^[^.]*\.\s*/, "")} review={result.human_review} />
       <Tabs initial={counted ? "steps" : "samples"} tabs={[
         { id: "steps", label: "Next steps", count: result.next_steps?.length ?? 0,

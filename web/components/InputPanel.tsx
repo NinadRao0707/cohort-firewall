@@ -58,7 +58,7 @@ export function InputPanel({ busy, onSubmit, onSample }: {
         {!apiConfigured && <p className="quiet">The API isn't connected. Try a sample result instead.</p>}
       </form>
 
-      <label className="field samples">
+      <label className="field">
         <span>Or open a saved result</span>
         <select defaultValue="" onChange={(e) => e.target.value && onSample(e.target.value)}>
           <option value="" disabled>Choose a saved result…</option>
