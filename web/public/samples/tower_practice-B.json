@@ -870,7 +870,7 @@
     }
   ],
   "certificate": {
-    "cert_id": "cfd430118e6abc13",
+    "cert_id": "4e50f6ea9cb9a676",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
@@ -885,9 +885,9 @@
         "TWR-MEM-1",
         "TWR-SWAP-1"
       ],
-      "issued_at": "2026-11-12T16:47:13+00:00"
+      "issued_at": "2026-11-12T17:10:04+00:00"
     },
-    "signature": "hqhO56r5wVTFuKjKsaKM7Z2RMISUeSU3fUaaNvoqcIjbW0j3G9pWWQjfWeQO5SNunJEV9vRDbCrxVJfHTijyAQ==",
+    "signature": "TYzWqs2UXJ5KouBPl25UTrqjdOn1bm3AYOqmMTxS1y+MSoRv/B1rz4h3bctDL9bJkpaUNelvLU//4WSeE3KmBA==",
     "alg": "Ed25519"
   },
   "baseline_unverified_files": [],

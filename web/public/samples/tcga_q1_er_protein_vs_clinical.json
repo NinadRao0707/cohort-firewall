@@ -23,8 +23,8 @@
       "rule_id": "CMP-004",
       "check": "completeness",
       "verdict": "CONDITIONAL",
-      "reason": "Predictor 'er_alpha_rppa' is missing for 33% of the cohort.",
-      "remedy": "Plan and document an imputation strategy, or drop the predictor.",
+      "reason": "Field 'er_alpha_rppa' is missing for 33% of the cohort.",
+      "remedy": "Plan and document an imputation strategy, or drop the field.",
       "reconsider": "A documented imputation plan, or the result with and without that predictor.",
       "rule_condition": "max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL",
       "measured": {
@@ -47,14 +47,14 @@
       "needs_human_review": true
     }
   ],
-  "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Missing values,er_status; er_alpha_rppa,about 348 of 1046 records,[CMP-004] Predictor 'er_alpha_rppa' is missing for 33% of the cohort.,Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured max_feature_missing_rate = 0.333. Rule CMP-004 (max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on tcga_brca_raw.\",Counts missing values; it can't tell why they are missing.,\"Plan and document an imputation strategy, or drop the predictor. To reconsider: A documented imputation plan, or the result with and without that predictor.\",yes\r\n",
-  "plain_summary": "The data can support this question only after the steps below are taken and reported. 1,046 records match the group being studied. What needs attention: Predictor 'er_alpha_rppa' is missing for 33% of the cohort. A person must review before use.",
+  "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Missing values,er_status; er_alpha_rppa,about 348 of 1046 records,[CMP-004] Field 'er_alpha_rppa' is missing for 33% of the cohort.,Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured max_feature_missing_rate = 0.333. Rule CMP-004 (max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on tcga_brca_raw.\",Counts missing values; it can't tell why they are missing.,\"Plan and document an imputation strategy, or drop the field. To reconsider: A documented imputation plan, or the result with and without that predictor.\",yes\r\n",
+  "plain_summary": "The data can support this question only after the steps below are taken and reported. 1,046 records match the group being studied. What needs attention: Field 'er_alpha_rppa' is missing for 33% of the cohort. A person must review before use.",
   "next_steps": [
     {
       "rank": 1,
       "rule_id": "CMP-004",
       "verdict": "CONDITIONAL",
-      "action": "Plan and document an imputation strategy, or drop the predictor.",
+      "action": "Plan and document an imputation strategy, or drop the field.",
       "size": "about 348 of 1046 records",
       "unblocks": false,
       "evidence_to_reconsider": "A documented imputation plan, or the result with and without that predictor."
@@ -185,7 +185,7 @@
       "check": "temporal",
       "status": "skipped",
       "metrics": {},
-      "note": "",
+      "note": "No time horizon applies to this question.",
       "fields": []
     },
     {
@@ -320,16 +320,16 @@
     "acceptable_limitations": []
   },
   "report": {
-    "text": "**Verdict: Conditional** for the question: \"Is the frozen TCGA-BRCA release suitable for a descriptive research comparison of ER-alpha protein levels between clinically ER-positive and ER-negative primary tumors?\"\n\nWhy:\n- [CMP-004] (Conditional) Predictor 'er_alpha_rppa' is missing for 33% of the cohort.\n\nTo make this dataset ready for this question:\n- [CMP-004] Plan and document an imputation strategy, or drop the predictor.",
+    "text": "**Verdict: Conditional** for the question: \"Is the frozen TCGA-BRCA release suitable for a descriptive research comparison of ER-alpha protein levels between clinically ER-positive and ER-negative primary tumors?\"\n\nWhy:\n- [CMP-004] (Conditional) Field 'er_alpha_rppa' is missing for 33% of the cohort.\n\nTo make this dataset ready for this question:\n- [CMP-004] Plan and document an imputation strategy, or drop the field.",
     "source": "template"
   },
   "certificate": {
-    "cert_id": "b5a7e86ade16e2c1",
+    "cert_id": "d5cf972fba34dc82",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
       "policy_version": "0.5.0",
-      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
+      "policy_sha256": "7de7cb07dca7af7f95f2e6aa40f376e24d6d77e364c7b363f03aa832f22b54f5",
       "dataset_sha256": "d0c44cc4fca5e160f4cc855a9731173c78990b7935304ead70d09e64190812fa",
       "dictionary_sha256": "adb6b17fbed5e5e3261844460c25a6fb9e43b0df404841d85dac0556b21964f3",
       "spec_sha256": "c2a276fd1c9f6a793a65ed5579223257e065ba8ac3d417b0b82395d7db871fa7",
@@ -337,9 +337,9 @@
       "rule_ids": [
         "CMP-004"
       ],
-      "issued_at": "2026-11-12T16:47:02+00:00"
+      "issued_at": "2026-11-12T17:09:53+00:00"
     },
-    "signature": "2gXbjHPA7SVY//nxK8lqHFj5WdlTtgx/Jq/XwWiPE+3gjdZpBsCOQB6tClu+e9NvXGUjrczsM6KFWE3eTNt2Dw==",
+    "signature": "oBxjijLHlAvp1Xr5CPKQ0hO3gzkDMC8ZueFZlYeFV0KoySnEL3IZISRmV0jxP8+hL8VqZOseYdZY4wMbS8S9Ag==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

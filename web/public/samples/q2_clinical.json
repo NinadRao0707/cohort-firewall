@@ -364,12 +364,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "a3cd81b94d2c50e2",
+    "cert_id": "6431765941652c11",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
       "policy_version": "0.5.0",
-      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
+      "policy_sha256": "7de7cb07dca7af7f95f2e6aa40f376e24d6d77e364c7b363f03aa832f22b54f5",
       "dataset_sha256": "31275bc4e6681487c7e17cd7939b7e5d1dd855d369321a7e890bb19b6b037e32",
       "dictionary_sha256": "c02c9a8546824f97ab9b4101d03b77945bf02c43b431ee06569b7172f99c3dad",
       "spec_sha256": "73ceb7771288d98c221e79125fc0858bb00db2b428fa9065ccdd586a1741cff2",
@@ -378,9 +378,9 @@
         "SCOPE-001",
         "SCOPE-002"
       ],
-      "issued_at": "2026-11-12T16:47:02+00:00"
+      "issued_at": "2026-11-12T17:09:53+00:00"
     },
-    "signature": "CXBo2PyZmv+cR9ir4SZbsbsaxWSrpHxu+cYpOFMhqyZaISWME05vrhgLXSr5+Up9T9myHVCGYZKfSMkdoGlrBw==",
+    "signature": "4L4NZ1xvy5HXqe2ihv/9xh7vT89uxLqd9JSBk9hoQkK8MZ2+1gzBQIXW0Rbj4x3gwP+FOaJc8lVjmPkRZvEpAg==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

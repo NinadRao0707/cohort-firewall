@@ -149,7 +149,7 @@
       "check": "temporal",
       "status": "skipped",
       "metrics": {},
-      "note": "",
+      "note": "No time horizon applies to this question.",
       "fields": []
     },
     {
@@ -293,20 +293,20 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "c4649fe788ccdb54",
+    "cert_id": "c03b4159f59c5317",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
       "policy_version": "0.5.0",
-      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
+      "policy_sha256": "7de7cb07dca7af7f95f2e6aa40f376e24d6d77e364c7b363f03aa832f22b54f5",
       "dataset_sha256": "d0c44cc4fca5e160f4cc855a9731173c78990b7935304ead70d09e64190812fa",
       "dictionary_sha256": "adb6b17fbed5e5e3261844460c25a6fb9e43b0df404841d85dac0556b21964f3",
       "spec_sha256": "ce381e96d79a7541db2bdc2316538efb55debde26e6d6da1d4eecbc148c5a810",
       "verdict": "READY",
       "rule_ids": [],
-      "issued_at": "2026-11-12T16:47:02+00:00"
+      "issued_at": "2026-11-12T17:09:53+00:00"
     },
-    "signature": "BZOQwEuQopecjHrSyll7PJ5nqK45eZErc0djYBg2qBU/aFbHvjzOEBAhoPzroqq1/AS3lcqsTkcZPuzoy6zIAQ==",
+    "signature": "uFif6WKszQkEbmgP3xxm5k1i/1zcMW0ULwJvrSbYpvaZEv5r43i2ZQOmacn+jODYIrXitIiUQ6FYXW/uWp7kDA==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

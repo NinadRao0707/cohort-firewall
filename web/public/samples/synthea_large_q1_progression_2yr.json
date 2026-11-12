@@ -19,8 +19,8 @@
       "rule_id": "CMP-004",
       "check": "completeness",
       "verdict": "CONDITIONAL",
-      "reason": "Predictor 'tumor_size' is missing for 27% of the cohort.",
-      "remedy": "Plan and document an imputation strategy, or drop the predictor.",
+      "reason": "Field 'tumor_size' is missing for 27% of the cohort.",
+      "remedy": "Plan and document an imputation strategy, or drop the field.",
       "reconsider": "A documented imputation plan, or the result with and without that predictor.",
       "rule_condition": "max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL",
       "measured": {
@@ -75,14 +75,14 @@
       "needs_human_review": true
     }
   ],
-  "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Missing values,age_at_diagnosis; stage_group; er_status; pr_status; her2_ihc; tumor_size; progression_2yr,about 309 of 1142 records,[CMP-004] Predictor 'tumor_size' is missing for 27% of the cohort.,Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured max_feature_missing_rate = 0.271. Rule CMP-004 (max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.\",Counts missing values; it can't tell why they are missing.,\"Plan and document an imputation strategy, or drop the predictor. To reconsider: A documented imputation plan, or the result with and without that predictor.\",yes\r\nF2,Subgroup coverage (bias),race; ethnicity,race=hawaiian (n=13); race=other (n=13); race=native (n=2),\"[SUB-002] Some subgroups are too small to evaluate model behavior reliably: race=hawaiian (n=13), race=other (n=13), race=native (n=2).\",\"With few patients in a group, the model's behaviour in that group can't be judged. Usable for this question only after the next step is taken and reported.\",medium,high,\"Measured n_small_subgroups = 3. Rule SUB-002 (n_small_subgroups > 0 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.\",Minimum counts only; no comparison with a reference population.,\"Report subgroup performance with uncertainty, or obtain more data for these groups. To reconsider: More records for those groups, or results reported with uncertainty.\",yes\r\n",
-  "plain_summary": "The data can support this question only after the steps below are taken and reported. 1,142 records match the group being studied. What needs attention: Predictor 'tumor_size' is missing for 27% of the cohort. Some subgroups are too small to evaluate model behavior reliably: race=hawaiian (n=13), race=other (n=13), race=native (n=2). A person must review before use.",
+  "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Missing values,age_at_diagnosis; stage_group; er_status; pr_status; her2_ihc; tumor_size; progression_2yr,about 309 of 1142 records,[CMP-004] Field 'tumor_size' is missing for 27% of the cohort.,Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured max_feature_missing_rate = 0.271. Rule CMP-004 (max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.\",Counts missing values; it can't tell why they are missing.,\"Plan and document an imputation strategy, or drop the field. To reconsider: A documented imputation plan, or the result with and without that predictor.\",yes\r\nF2,Subgroup coverage (bias),race; ethnicity,race=hawaiian (n=13); race=other (n=13); race=native (n=2),\"[SUB-002] Some subgroups are too small to evaluate model behavior reliably: race=hawaiian (n=13), race=other (n=13), race=native (n=2).\",\"With few patients in a group, the model's behaviour in that group can't be judged. Usable for this question only after the next step is taken and reported.\",medium,high,\"Measured n_small_subgroups = 3. Rule SUB-002 (n_small_subgroups > 0 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.\",Minimum counts only; no comparison with a reference population.,\"Report subgroup performance with uncertainty, or obtain more data for these groups. To reconsider: More records for those groups, or results reported with uncertainty.\",yes\r\n",
+  "plain_summary": "The data can support this question only after the steps below are taken and reported. 1,142 records match the group being studied. What needs attention: Field 'tumor_size' is missing for 27% of the cohort. Some subgroups are too small to evaluate model behavior reliably: race=hawaiian (n=13), race=other (n=13), race=native (n=2). A person must review before use.",
   "next_steps": [
     {
       "rank": 1,
       "rule_id": "CMP-004",
       "verdict": "CONDITIONAL",
-      "action": "Plan and document an imputation strategy, or drop the predictor.",
+      "action": "Plan and document an imputation strategy, or drop the field.",
       "size": "about 309 of 1142 records",
       "unblocks": false,
       "evidence_to_reconsider": "A documented imputation plan, or the result with and without that predictor."
@@ -396,16 +396,16 @@
     "acceptable_limitations": []
   },
   "report": {
-    "text": "**Verdict: Conditional** for the question: \"Is this dataset suitable for a research study of which baseline factors (stage, receptor status, tumor size, age at diagnosis) are associated with disease worsening within 2 years in breast cancer patients diagnosed since 2012, including whether a model performs consistently across race and ethnicity?\"\n\nWhy:\n- [CMP-004] (Conditional) Predictor 'tumor_size' is missing for 27% of the cohort.\n- [SUB-002] (Conditional) Some subgroups are too small to evaluate model behavior reliably: race=hawaiian (n=13), race=other (n=13), race=native (n=2).\n\nTo make this dataset ready for this question:\n- [CMP-004] Plan and document an imputation strategy, or drop the predictor.\n- [SUB-002] Report subgroup performance with uncertainty, or obtain more data for these groups.",
+    "text": "**Verdict: Conditional** for the question: \"Is this dataset suitable for a research study of which baseline factors (stage, receptor status, tumor size, age at diagnosis) are associated with disease worsening within 2 years in breast cancer patients diagnosed since 2012, including whether a model performs consistently across race and ethnicity?\"\n\nWhy:\n- [CMP-004] (Conditional) Field 'tumor_size' is missing for 27% of the cohort.\n- [SUB-002] (Conditional) Some subgroups are too small to evaluate model behavior reliably: race=hawaiian (n=13), race=other (n=13), race=native (n=2).\n\nTo make this dataset ready for this question:\n- [CMP-004] Plan and document an imputation strategy, or drop the field.\n- [SUB-002] Report subgroup performance with uncertainty, or obtain more data for these groups.",
     "source": "template"
   },
   "certificate": {
-    "cert_id": "26fc43de922ba35d",
+    "cert_id": "44898654647ba004",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
       "policy_version": "0.5.0",
-      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
+      "policy_sha256": "7de7cb07dca7af7f95f2e6aa40f376e24d6d77e364c7b363f03aa832f22b54f5",
       "dataset_sha256": "af34aae37e9e542dca5b81039b8ee1a49f2263b85a5f13588e95f85aa89e289f",
       "dictionary_sha256": "ffb6df259cfc22476a238af54dafa149c97d967140018c814cbbbdd29925a0fa",
       "spec_sha256": "306bf29e4b0a29cfac7f25c574c7ee2c8b105ed1e70362f1925cb5e44bded1c6",
@@ -414,9 +414,9 @@
         "CMP-004",
         "SUB-002"
       ],
-      "issued_at": "2026-11-12T16:47:13+00:00"
+      "issued_at": "2026-11-12T17:10:04+00:00"
     },
-    "signature": "Em+GM6Il2PGJZB7BqhlHZs8P78/s6Lv6iScmT2jBaOnMIxQ4kyi/VQT4xEuQjNK/nKhL8GWCeJP1LbO5EGVVCA==",
+    "signature": "kxKcfGkush3bxc7Bd8Ziwi1yhscALBfAEU30y8TZ+cJGxPMMSb4u6jyIPo1RZ7iUrzYeLYBVaeNhsZSVoyykAw==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

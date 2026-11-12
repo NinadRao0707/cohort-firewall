@@ -379,12 +379,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "6aa06d14af6ccbbe",
+    "cert_id": "5ff30ba3221af86c",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
       "policy_version": "0.5.0",
-      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
+      "policy_sha256": "7de7cb07dca7af7f95f2e6aa40f376e24d6d77e364c7b363f03aa832f22b54f5",
       "dataset_sha256": "331839182916f8854ac8d8a5e0184a6e61ab69f0ac8b55d24a483d79f322307d",
       "dictionary_sha256": "2d41a1cb147a2f70db24151f138a73ea001c74bb5b10aa9b758595f0c89626d8",
       "spec_sha256": "03fd1ec0cbbde8ade1f26f6bc44f0047bd5c3a9e4102bd85c7298017c4806146",
@@ -392,9 +392,9 @@
       "rule_ids": [
         "LEAK-002"
       ],
-      "issued_at": "2026-11-12T16:47:02+00:00"
+      "issued_at": "2026-11-12T17:09:53+00:00"
     },
-    "signature": "13t7zd8gFKiFrAZiIMyy/rqo4EtBobjRPnxd4VG7uf2Tz3QhpjmVMduPWouqL+GOJf1DRnkoTjtEhpKBlEpEDw==",
+    "signature": "5dk2JIRq08RPdj8TVndqGlbVOzqjlZXJg38oCzcY7qmtbgj3JlJg3E23QMmKVQB7NvSamnnOtwM7qeayySmuBw==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

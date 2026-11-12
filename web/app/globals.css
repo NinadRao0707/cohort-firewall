@@ -226,3 +226,4 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="file"]) {
 .summary-text { font-size: 1.0625rem; max-width: 70ch; margin: 0 0 16px; }
 .steps { margin: 0; padding-left: 22px; display: grid; gap: 10px; max-width: 76ch; }
 .steps li span { display: block; font-size: 0.875rem; margin-top: 2px; }
+.status[data-status="accepted"] { color: var(--ink-soft); font-style: italic; }

@@ -23,6 +23,7 @@ function statusOf(c: CheckResult, findings: Finding[]) {
   if (c.status === "not_evaluable") return { text: "Could not run", key: "warn" };
   const own = findings.filter((f) => f.check === c.check);
   if (own.length === 0) return { text: "Passed", key: "pass" };
+  if (own.every((f) => f.accepted)) return { text: "Accepted by the card", key: "accepted" };
   const worst = own.reduce((a, f) =>
     VERDICT_ORDER.indexOf(f.verdict) > VERDICT_ORDER.indexOf(a) ? f.verdict : a, own[0].verdict);
   return { text: VERDICT_COPY[worst].label, key: worst };

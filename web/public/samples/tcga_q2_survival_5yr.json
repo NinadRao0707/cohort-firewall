@@ -375,12 +375,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "fa8fd78e7e6d872e",
+    "cert_id": "30e391a74bd3c232",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
       "policy_version": "0.5.0",
-      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
+      "policy_sha256": "7de7cb07dca7af7f95f2e6aa40f376e24d6d77e364c7b363f03aa832f22b54f5",
       "dataset_sha256": "d0c44cc4fca5e160f4cc855a9731173c78990b7935304ead70d09e64190812fa",
       "dictionary_sha256": "adb6b17fbed5e5e3261844460c25a6fb9e43b0df404841d85dac0556b21964f3",
       "spec_sha256": "01230a5c365c525b87afe53e3647a0da8e9432d8ba08ff8507252b97c620f356",
@@ -388,9 +388,9 @@
       "rule_ids": [
         "TIME-002"
       ],
-      "issued_at": "2026-11-12T16:47:02+00:00"
+      "issued_at": "2026-11-12T17:09:53+00:00"
     },
-    "signature": "WKGAddsXDASneMmgHvGQ6G7Jgkag115h9Oo9L82iVvDLUzSNxnJhiwpUlqlJresWF6oRu6WfcDmrUydpIR2FDg==",
+    "signature": "h4xeRAufgpC7jkeJd+arO/7lNILo75aK7cVwzeqqFWubMn+ox5qbmcJA7ItUeFZk2ZAW5MxXUXuYjJ4bMby2Dg==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

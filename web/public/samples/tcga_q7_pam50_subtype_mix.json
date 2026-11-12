@@ -23,8 +23,8 @@
       "rule_id": "CMP-004",
       "check": "completeness",
       "verdict": "CONDITIONAL",
-      "reason": "Predictor 'pam50_subtype' is missing for 23% of the cohort.",
-      "remedy": "Plan and document an imputation strategy, or drop the predictor.",
+      "reason": "Field 'pam50_subtype' is missing for 23% of the cohort.",
+      "remedy": "Plan and document an imputation strategy, or drop the field.",
       "reconsider": "A documented imputation plan, or the result with and without that predictor.",
       "rule_condition": "max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL",
       "measured": {
@@ -73,14 +73,14 @@
       "needs_human_review": true
     }
   ],
-  "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Missing values,pam50_subtype,about 257 of 1101 records,[CMP-004] Predictor 'pam50_subtype' is missing for 23% of the cohort.,Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured max_feature_missing_rate = 0.233. Rule CMP-004 (max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on tcga_brca_raw.\",Counts missing values; it can't tell why they are missing.,\"Plan and document an imputation strategy, or drop the predictor. To reconsider: A documented imputation plan, or the result with and without that predictor.\",yes\r\nF2,Records agree across sources,pam50_subtype; pam50_nature2012,52 records disagree,[CONS-001] Two sources for a field this question uses disagree: PAM50 subtype: RNA-seq call vs 2012 microarray call: 52 of 508 (10%).,\"Two sources disagree, so the label itself is uncertain for those records. Usable for this question only after the next step is taken and reported.\",medium,high,\"Measured max_disagreement_rate = 0.102. Rule CONS-001 (max_disagreement_rate > 0.05 -> CONDITIONAL), policy v0.5.0, on tcga_brca_raw.\",Compares the source pairs the dictionary declares; vocabularies are normalised.,\"Choose one source for the label, say why, and report how results change with the other. To reconsider: A sensitivity analysis showing the conclusion holds under both sources.\",yes\r\n",
-  "plain_summary": "The data can support this question only after the steps below are taken and reported. 1,101 records match the group being studied. What needs attention: Predictor 'pam50_subtype' is missing for 23% of the cohort. Two sources for a field this question uses disagree: PAM50 subtype: RNA-seq call vs 2012 microarray call: 52 of 508 (10%). A person must review before use.",
+  "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Missing values,pam50_subtype,about 257 of 1101 records,[CMP-004] Field 'pam50_subtype' is missing for 23% of the cohort.,Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured max_feature_missing_rate = 0.233. Rule CMP-004 (max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on tcga_brca_raw.\",Counts missing values; it can't tell why they are missing.,\"Plan and document an imputation strategy, or drop the field. To reconsider: A documented imputation plan, or the result with and without that predictor.\",yes\r\nF2,Records agree across sources,pam50_subtype; pam50_nature2012,52 records disagree,[CONS-001] Two sources for a field this question uses disagree: PAM50 subtype: RNA-seq call vs 2012 microarray call: 52 of 508 (10%).,\"Two sources disagree, so the label itself is uncertain for those records. Usable for this question only after the next step is taken and reported.\",medium,high,\"Measured max_disagreement_rate = 0.102. Rule CONS-001 (max_disagreement_rate > 0.05 -> CONDITIONAL), policy v0.5.0, on tcga_brca_raw.\",Compares the source pairs the dictionary declares; vocabularies are normalised.,\"Choose one source for the label, say why, and report how results change with the other. To reconsider: A sensitivity analysis showing the conclusion holds under both sources.\",yes\r\n",
+  "plain_summary": "The data can support this question only after the steps below are taken and reported. 1,101 records match the group being studied. What needs attention: Field 'pam50_subtype' is missing for 23% of the cohort. Two sources for a field this question uses disagree: PAM50 subtype: RNA-seq call vs 2012 microarray call: 52 of 508 (10%). A person must review before use.",
   "next_steps": [
     {
       "rank": 1,
       "rule_id": "CMP-004",
       "verdict": "CONDITIONAL",
-      "action": "Plan and document an imputation strategy, or drop the predictor.",
+      "action": "Plan and document an imputation strategy, or drop the field.",
       "size": "about 257 of 1101 records",
       "unblocks": false,
       "evidence_to_reconsider": "A documented imputation plan, or the result with and without that predictor."
@@ -216,7 +216,7 @@
       "check": "temporal",
       "status": "skipped",
       "metrics": {},
-      "note": "",
+      "note": "No time horizon applies to this question.",
       "fields": []
     },
     {
@@ -332,16 +332,16 @@
     "acceptable_limitations": []
   },
   "report": {
-    "text": "**Verdict: Conditional** for the question: \"Is the frozen TCGA-BRCA release suitable for a descriptive research figure: the share of primary breast tumors in each PAM50 molecular subtype?\"\n\nWhy:\n- [CMP-004] (Conditional) Predictor 'pam50_subtype' is missing for 23% of the cohort.\n- [CONS-001] (Conditional) Two sources for a field this question uses disagree: PAM50 subtype: RNA-seq call vs 2012 microarray call: 52 of 508 (10%).\n\nTo make this dataset ready for this question:\n- [CMP-004] Plan and document an imputation strategy, or drop the predictor.\n- [CONS-001] Choose one source for the label, say why, and report how results change with the other.",
+    "text": "**Verdict: Conditional** for the question: \"Is the frozen TCGA-BRCA release suitable for a descriptive research figure: the share of primary breast tumors in each PAM50 molecular subtype?\"\n\nWhy:\n- [CMP-004] (Conditional) Field 'pam50_subtype' is missing for 23% of the cohort.\n- [CONS-001] (Conditional) Two sources for a field this question uses disagree: PAM50 subtype: RNA-seq call vs 2012 microarray call: 52 of 508 (10%).\n\nTo make this dataset ready for this question:\n- [CMP-004] Plan and document an imputation strategy, or drop the field.\n- [CONS-001] Choose one source for the label, say why, and report how results change with the other.",
     "source": "template"
   },
   "certificate": {
-    "cert_id": "93eb97dbb92cd5e9",
+    "cert_id": "e90c76634bff14f2",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
       "policy_version": "0.5.0",
-      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
+      "policy_sha256": "7de7cb07dca7af7f95f2e6aa40f376e24d6d77e364c7b363f03aa832f22b54f5",
       "dataset_sha256": "d0c44cc4fca5e160f4cc855a9731173c78990b7935304ead70d09e64190812fa",
       "dictionary_sha256": "adb6b17fbed5e5e3261844460c25a6fb9e43b0df404841d85dac0556b21964f3",
       "spec_sha256": "2fb2b70f4670aff55c50435ec99dba2d58a4e392b29f0e7cdbd7858d998ba8ac",
@@ -350,9 +350,9 @@
         "CMP-004",
         "CONS-001"
       ],
-      "issued_at": "2026-11-12T16:47:03+00:00"
+      "issued_at": "2026-11-12T17:09:54+00:00"
     },
-    "signature": "cO4d4LMmUNW1DmuxjhmxR95H8l/SbSnzbHk99DTjWaRookyAcyrSIIJpo6TywkxJv1UXIl9lFpj/XGzfDtJ/DQ==",
+    "signature": "YfsHWbcTrkWDSZZHecgYPpTA4CK5sm8X6QYOBXGkEmnUBG9xtOqWgT3Oo8uSR6cWuNN9XhrurjokzlFCUvLEDw==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

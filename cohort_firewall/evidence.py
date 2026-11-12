@@ -185,10 +185,12 @@ def summarize(verdict: str, findings: list[dict], n_cohort: int | None, accepted
         issues = " ".join(f["reason"].rstrip(".") + "." for f in ranked[:2])
         more = f" There are {len(ranked) - 2} more issue(s) below." if len(ranked) > 2 else ""
         body = f" What needs attention: {issues}{more}"
+    elif accepted:
+        body = (f" The checks found {len(accepted)} limitation(s), and the question card accepts them for this use: "
+                + "; ".join(f["accepted_as"].rstrip(".") for f in accepted) + ".")
     else:
         body = " No check found a problem for this question."
-    acc = (f" The question card accepts {len(accepted)} limitation(s), which a reviewer must confirm."
-           if accepted else "")
+    acc = (" A reviewer must confirm the accepted limitations really are acceptable." if accepted else "")
     steps = [{"rank": i, "rule_id": f["rule_id"], "verdict": f["verdict"], "action": f["remedy"],
               "size": f.get("rows_or_groups_affected", ""), "unblocks": f["verdict"] != "CONDITIONAL",
               "evidence_to_reconsider": f.get("reconsider", "")}

@@ -82,7 +82,9 @@ export function QuestionReview({ result }: { result: EvaluateResponse }) {
             ))}
           </fieldset>
           <Who {...{ name, role, note, setName, setRole, setNote }}
-               noteHint={decision === "approve" ? "Optional" : "Conditions that apply, or the evidence needed to reconsider"} />
+               noteHint={decision === "approve" && result.findings.length === 0 ? "Optional"
+                 : decision === "approve" ? "Required: why the accepted limitations are acceptable for this use"
+                 : "Conditions that apply, or the evidence needed to reconsider"} />
           {error && <p className="error" role="alert">{error}</p>}
           <button type="submit" disabled={busy}>{busy ? "Recording…" : "Record review"}</button>
         </form>

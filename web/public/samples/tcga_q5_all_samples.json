@@ -395,12 +395,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "1791e5b02c966151",
+    "cert_id": "5a7989e5ba426440",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
       "policy_version": "0.5.0",
-      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
+      "policy_sha256": "7de7cb07dca7af7f95f2e6aa40f376e24d6d77e364c7b363f03aa832f22b54f5",
       "dataset_sha256": "d0c44cc4fca5e160f4cc855a9731173c78990b7935304ead70d09e64190812fa",
       "dictionary_sha256": "adb6b17fbed5e5e3261844460c25a6fb9e43b0df404841d85dac0556b21964f3",
       "spec_sha256": "7d955e5d64d3e00362d976590e8c82ac29d3e32939e93a1e236e56691175fc89",
@@ -409,9 +409,9 @@
         "CMP-002",
         "UNIT-001"
       ],
-      "issued_at": "2026-11-12T16:47:03+00:00"
+      "issued_at": "2026-11-12T17:09:53+00:00"
     },
-    "signature": "xzGZFaIVLtUnfO2tCo/iLcKpUQeTeR8aQA9WRDjU57swvNyPc0vYlD9LLHTuz2BM+kWpDBQJjA3Jrs/wT6ZjBw==",
+    "signature": "E5HFRrh3ckL+Cn/ImE16erubY/Bnw8FM+kzetzZuhnahSEJ5f+yEXpoltCWI+tpE8xfX1ji1X5m3HjdXNEhXAQ==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

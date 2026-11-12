@@ -51,8 +51,8 @@
       "rule_id": "CMP-004",
       "check": "completeness",
       "verdict": "CONDITIONAL",
-      "reason": "Predictor 'tumor_size' is missing for 26% of the cohort.",
-      "remedy": "Plan and document an imputation strategy, or drop the predictor.",
+      "reason": "Field 'tumor_size' is missing for 26% of the cohort.",
+      "remedy": "Plan and document an imputation strategy, or drop the field.",
       "reconsider": "A documented imputation plan, or the result with and without that predictor.",
       "rule_condition": "max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL",
       "measured": {
@@ -107,8 +107,8 @@
       "needs_human_review": true
     }
   ],
-  "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Enough outcome events,progression_2yr; age_at_diagnosis; stage_group; er_status; pr_status; her2_ihc; tumor_size,\"12 events, 124 non-events\",[EVT-001] Only 12 records in the smaller outcome class; too few to develop or evaluate a model.,Too few events make estimates unstable and models overfit. The data can't support this question as asked.,high,high,\"Measured minority_class_n = 12. Rule EVT-001 (minority_class_n < 20 -> BLOCKED), policy v0.5.0, on synthea_breast_cohort.\",\"10 events per model parameter is a rule of thumb, not a sample-size calculation.\",Use a larger cohort or a more common outcome. To reconsider: At least 20 records in the smaller outcome group.,yes\r\nF2,Missing values,age_at_diagnosis; stage_group; er_status; pr_status; her2_ihc; tumor_size; progression_2yr,about 41 of 157 records,[CMP-004] Predictor 'tumor_size' is missing for 26% of the cohort.,Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured max_feature_missing_rate = 0.261. Rule CMP-004 (max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.\",Counts missing values; it can't tell why they are missing.,\"Plan and document an imputation strategy, or drop the predictor. To reconsider: A documented imputation plan, or the result with and without that predictor.\",yes\r\nF3,Subgroup coverage (bias),race; ethnicity,race=black (n=12); race=asian (n=10); race=other (n=5); race=hawaiian (n=2); race=native (n=1); ethnicity=hispanic (n=30),\"[SUB-002] Some subgroups are too small to evaluate model behavior reliably: race=black (n=12), race=asian (n=10), race=other (n=5), race=hawaiian (n=2), race=native (n=1), ethnicity=hispanic (n=30).\",\"With few patients in a group, the model's behaviour in that group can't be judged. Usable for this question only after the next step is taken and reported.\",medium,high,\"Measured n_small_subgroups = 6. Rule SUB-002 (n_small_subgroups > 0 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.\",Minimum counts only; no comparison with a reference population.,\"Report subgroup performance with uncertainty, or obtain more data for these groups. To reconsider: More records for those groups, or results reported with uncertainty.\",yes\r\n",
-  "plain_summary": "The data can't support this question as asked. 157 records match the group being studied. What needs attention: Only 12 records in the smaller outcome class; too few to develop or evaluate a model. Predictor 'tumor_size' is missing for 26% of the cohort. There are 1 more issue(s) below. A person must review before use.",
+  "findings_template_csv": "finding_id,check_performed,fields_used,rows_or_groups_affected,what_was_found,effect_on_intended_use,materiality(high|medium|low|none),confidence(high|medium|low),evidence_or_source,limitation,recommended_next_step,needs_human_review(yes|no)\r\nF1,Enough outcome events,progression_2yr; age_at_diagnosis; stage_group; er_status; pr_status; her2_ihc; tumor_size,\"12 events, 124 non-events\",[EVT-001] Only 12 records in the smaller outcome class; too few to develop or evaluate a model.,Too few events make estimates unstable and models overfit. The data can't support this question as asked.,high,high,\"Measured minority_class_n = 12. Rule EVT-001 (minority_class_n < 20 -> BLOCKED), policy v0.5.0, on synthea_breast_cohort.\",\"10 events per model parameter is a rule of thumb, not a sample-size calculation.\",Use a larger cohort or a more common outcome. To reconsider: At least 20 records in the smaller outcome group.,yes\r\nF2,Missing values,age_at_diagnosis; stage_group; er_status; pr_status; her2_ihc; tumor_size; progression_2yr,about 41 of 157 records,[CMP-004] Field 'tumor_size' is missing for 26% of the cohort.,Missing values shrink the group that can be analysed and can bias it. Usable for this question only after the next step is taken and reported.,medium,high,\"Measured max_feature_missing_rate = 0.261. Rule CMP-004 (max_feature_missing_rate > 0.2 and max_feature_missing_rate <= 0.5 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.\",Counts missing values; it can't tell why they are missing.,\"Plan and document an imputation strategy, or drop the field. To reconsider: A documented imputation plan, or the result with and without that predictor.\",yes\r\nF3,Subgroup coverage (bias),race; ethnicity,race=black (n=12); race=asian (n=10); race=other (n=5); race=hawaiian (n=2); race=native (n=1); ethnicity=hispanic (n=30),\"[SUB-002] Some subgroups are too small to evaluate model behavior reliably: race=black (n=12), race=asian (n=10), race=other (n=5), race=hawaiian (n=2), race=native (n=1), ethnicity=hispanic (n=30).\",\"With few patients in a group, the model's behaviour in that group can't be judged. Usable for this question only after the next step is taken and reported.\",medium,high,\"Measured n_small_subgroups = 6. Rule SUB-002 (n_small_subgroups > 0 -> CONDITIONAL), policy v0.5.0, on synthea_breast_cohort.\",Minimum counts only; no comparison with a reference population.,\"Report subgroup performance with uncertainty, or obtain more data for these groups. To reconsider: More records for those groups, or results reported with uncertainty.\",yes\r\n",
+  "plain_summary": "The data can't support this question as asked. 157 records match the group being studied. What needs attention: Only 12 records in the smaller outcome class; too few to develop or evaluate a model. Field 'tumor_size' is missing for 26% of the cohort. There are 1 more issue(s) below. A person must review before use.",
   "next_steps": [
     {
       "rank": 1,
@@ -123,7 +123,7 @@
       "rank": 2,
       "rule_id": "CMP-004",
       "verdict": "CONDITIONAL",
-      "action": "Plan and document an imputation strategy, or drop the predictor.",
+      "action": "Plan and document an imputation strategy, or drop the field.",
       "size": "about 41 of 157 records",
       "unblocks": false,
       "evidence_to_reconsider": "A documented imputation plan, or the result with and without that predictor."
@@ -440,16 +440,16 @@
     "acceptable_limitations": []
   },
   "report": {
-    "text": "**Verdict: Blocked** for the question: \"Is this dataset suitable for a research study of which baseline factors (stage, receptor status, tumor size, age at diagnosis) are associated with disease worsening within 2 years in breast cancer patients diagnosed since 2012, including whether a model performs consistently across race and ethnicity?\"\n\nWhy:\n- [EVT-001] (Blocked) Only 12 records in the smaller outcome class; too few to develop or evaluate a model.\n- [CMP-004] (Conditional) Predictor 'tumor_size' is missing for 26% of the cohort.\n- [SUB-002] (Conditional) Some subgroups are too small to evaluate model behavior reliably: race=black (n=12), race=asian (n=10), race=other (n=5), race=hawaiian (n=2), race=native (n=1), ethnicity=hispanic (n=30).\n\nTo make this dataset ready for this question:\n- [EVT-001] Use a larger cohort or a more common outcome.\n- [CMP-004] Plan and document an imputation strategy, or drop the predictor.\n- [SUB-002] Report subgroup performance with uncertainty, or obtain more data for these groups.",
+    "text": "**Verdict: Blocked** for the question: \"Is this dataset suitable for a research study of which baseline factors (stage, receptor status, tumor size, age at diagnosis) are associated with disease worsening within 2 years in breast cancer patients diagnosed since 2012, including whether a model performs consistently across race and ethnicity?\"\n\nWhy:\n- [EVT-001] (Blocked) Only 12 records in the smaller outcome class; too few to develop or evaluate a model.\n- [CMP-004] (Conditional) Field 'tumor_size' is missing for 26% of the cohort.\n- [SUB-002] (Conditional) Some subgroups are too small to evaluate model behavior reliably: race=black (n=12), race=asian (n=10), race=other (n=5), race=hawaiian (n=2), race=native (n=1), ethnicity=hispanic (n=30).\n\nTo make this dataset ready for this question:\n- [EVT-001] Use a larger cohort or a more common outcome.\n- [CMP-004] Plan and document an imputation strategy, or drop the field.\n- [SUB-002] Report subgroup performance with uncertainty, or obtain more data for these groups.",
     "source": "template"
   },
   "certificate": {
-    "cert_id": "8f5bd56ae199a1d4",
+    "cert_id": "ab3793543eb14e89",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.1.0",
       "policy_version": "0.5.0",
-      "policy_sha256": "d54daf0e721b2c59f68fff8afa02cfec36cf58e7a7b23b8b21c22f7ff5d47ede",
+      "policy_sha256": "7de7cb07dca7af7f95f2e6aa40f376e24d6d77e364c7b363f03aa832f22b54f5",
       "dataset_sha256": "36c4dd46760187e50e27ea25869566a09c8d6fd515e3a1d9f5975ccf64c751dc",
       "dictionary_sha256": "ffb6df259cfc22476a238af54dafa149c97d967140018c814cbbbdd29925a0fa",
       "spec_sha256": "306bf29e4b0a29cfac7f25c574c7ee2c8b105ed1e70362f1925cb5e44bded1c6",
@@ -459,9 +459,9 @@
         "EVT-001",
         "SUB-002"
       ],
-      "issued_at": "2026-11-12T16:47:13+00:00"
+      "issued_at": "2026-11-12T17:10:04+00:00"
     },
-    "signature": "heIFDc9JhZMeVrPmMqiiwS1bXR0DqoDMf/L+aCI7eYnYVJSdBA+DoWqmWqk4liHTmQ6afNq0SczMdaNcoIt2Dw==",
+    "signature": "g3nwIE380s7iIzIAdZo0wied7XJgU1p4k2ljjF5q1IU0NYgx8/vhO4mPD1psJpdSp19Qxd1bRA7zcjZgBOQpBg==",
     "alg": "Ed25519"
   },
   "engine_version": "0.1.0",

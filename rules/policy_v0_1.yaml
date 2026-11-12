@@ -27,7 +27,7 @@ parameters:
 # findings can never be accepted.
 acceptable:
   CMP-002: "Outcome unknown for up to half of the group"
-  CMP-004: "A predictor missing for up to half of the group"
+  CMP-004: "A field missing for up to half of the group"
   EVT-002: "Fewer than 10 outcome events per model parameter (exploratory analysis)"
   TIME-002: "Follow-up shorter than the horizon for many patients (use censoring-aware methods)"
   SUB-002: "Some subgroups too small to evaluate; report them with uncertainty"
@@ -212,8 +212,8 @@ rules:
     check: completeness
     when: [{metric: max_feature_missing_rate, op: ">", value: 0.5}]
     verdict: BLOCKED
-    reason: "Predictor '{worst_feature}' is missing for {max_feature_missing_rate:.0%} of the cohort."
-    remedy: "Drop the predictor or use a more complete dataset."
+    reason: "Field '{worst_feature}' is missing for {max_feature_missing_rate:.0%} of the cohort."
+    remedy: "Drop the field or use a more complete dataset."
     reconsider: "A more complete version of that field, or the question without it."
 
   - id: CMP-004
@@ -222,8 +222,8 @@ rules:
       - {metric: max_feature_missing_rate, op: ">", value: 0.2}
       - {metric: max_feature_missing_rate, op: "<=", value: 0.5}
     verdict: CONDITIONAL
-    reason: "Predictor '{worst_feature}' is missing for {max_feature_missing_rate:.0%} of the cohort."
-    remedy: "Plan and document an imputation strategy, or drop the predictor."
+    reason: "Field '{worst_feature}' is missing for {max_feature_missing_rate:.0%} of the cohort."
+    remedy: "Plan and document an imputation strategy, or drop the field."
     reconsider: "A documented imputation plan, or the result with and without that predictor."
 
   # ---- enough signal -----------------------------------------------------------------------
