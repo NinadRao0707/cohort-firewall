@@ -17,35 +17,70 @@ import pandas as pd
 
 from .analyses import PARAM_FILES
 
-B_DEFAULT = 150
+B_DEFAULT = 100
+
+
+_CACHE: dict = {}
 
 
 def _load(run, path):
-    return {p: pd.read_csv(path / PARAM_FILES[p][0], **PARAM_FILES[p][1]) for p in run.analysis.params}
+    """The analysis's input files, trimmed to the clinical columns its code reads (found in its source),
+    so each bootstrap draw copies a few columns instead of ~200. Cached for the length of one run."""
+    out = {}
+    src = run.analysis.source or ""
+    for p in run.analysis.params:
+        key = (str(path), p, run.analysis.id)
+        if key not in _CACHE:
+            df = pd.read_csv(path / PARAM_FILES[p][0], **PARAM_FILES[p][1])
+            if p in ("clinical", "survival") and src:
+                idc = _id_col(df)
+                used = [c for c in df.columns if c == idc or f'"{c}"' in src or f"'{c}'" in src or f".{c}" in src]
+                if idc and len(used) > 1:
+                    df = df[used]
+            _CACHE[key] = df
+        out[p] = _CACHE[key]
+    return out
+
+
+def clear_cache():
+    _CACHE.clear()
 
 
 def _id_col(df):
     return "sampleID" if "sampleID" in df.columns else ("sample" if "sample" in df.columns else None)
 
 
-def _resample(frames: dict, ids: list[str], rng) -> dict:
-    """Bootstrap: draw the analysis's own samples with replacement, giving each copy a unique ID that
-    keeps the TCGA sample-type digits, so the organizers' code treats it like the original."""
-    picks = rng.choice(ids, size=len(ids), replace=True)
-    new_ids = [f"{s}#{i}" for i, s in enumerate(picks)]
-    out = {}
+def _prepare(frames: dict, ids: list[str]) -> list:
+    """Precompute, once per analysis, where each of its samples sits in each input frame."""
+    prep = []
     for p, df in frames.items():
         col = _id_col(df) if p in ("clinical", "survival") else None
         if col:
-            d = df.drop_duplicates(col).set_index(col)
-            keep = [s for s in picks if s in d.index]
-            sub = d.loc[keep].copy()
-            sub.index = [n for s, n in zip(picks, new_ids) if s in d.index]
-            out[p] = sub.rename_axis(col).reset_index()
+            d = df.drop_duplicates(col).reset_index(drop=True)
+            pos = {s: i for i, s in enumerate(d[col])}
+            prep.append((p, "rows", d, col, np.array([pos.get(s, -1) for s in ids])))
         else:
-            keep = [(s, n) for s, n in zip(picks, new_ids) if s in df.columns]
-            sub = df[[s for s, _ in keep]].copy()
-            sub.columns = [n for _, n in keep]
+            pos = {s: i for i, s in enumerate(df.columns)}
+            prep.append((p, "cols", df, None, np.array([pos.get(s, -1) for s in ids])))
+    return prep
+
+
+def _resample(prep: list, ids: list[str], rng) -> dict:
+    """Bootstrap: draw the analysis's own samples with replacement, giving each copy a unique ID that
+    keeps the TCGA sample-type digits, so the organizers' code treats it like the original."""
+    draw = rng.integers(0, len(ids), size=len(ids))
+    new_ids = np.array([f"{ids[k]}#{i}" for i, k in enumerate(draw)])
+    out = {}
+    for p, how, df, col, where in prep:
+        w = where[draw]
+        ok = w >= 0
+        if how == "rows":
+            sub = df.iloc[w[ok]].copy()
+            sub[col] = new_ids[ok]
+            out[p] = sub.reset_index(drop=True)
+        else:
+            sub = df.iloc[:, w[ok]].copy()
+            sub.columns = new_ids[ok]
             out[p] = sub
     return out
 
@@ -79,11 +114,12 @@ def noise(run, path_a, B: int = B_DEFAULT, seed: int = 0) -> dict | None:
     if not key or not run.after or len(ids) < 10:
         return None
     frames = _load(run, path_a)
+    prep = _prepare(frames, ids)
     rng = np.random.default_rng(seed)
     vals = []
     for _ in range(B):
         try:
-            r = run.analysis.func(**_resample(frames, ids, rng))
+            r = run.analysis.func(**_resample(prep, ids, rng))
             vals.append(_value(r, key, kind, run.before))
         except Exception:
             continue

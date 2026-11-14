@@ -111,6 +111,41 @@ def _load_rows(p: Path, fname: str, idcol: str) -> FileView:
     return v
 
 
+def _load_matrix_numeric(p: Path, fname: str) -> FileView:
+    """Fast path for all-numeric matrices: pandas' C parser to float64, then one hash per sample column
+    over its raw bytes. Same idea as the text fingerprint (any edit, move or loss changes it), but the
+    work runs in compiled code. Raises ValueError on any non-numeric cell, so the caller falls back."""
+    import numpy as np
+    with _open_text(p) as f:
+        header = f.readline().rstrip("\n").split("\t")
+    cols = header[1:]
+    first: dict[str, int] = {}
+    for i, c in enumerate(cols):
+        first.setdefault(c, i)
+    keep = sorted(first.values())
+    df = pd.read_csv(p, sep="\t", header=None, skiprows=1, usecols=[0] + [i + 1 for i in keep],
+                     index_col=0, dtype={0: str}, engine="c")
+    arr = df.to_numpy()
+    if arr.dtype.kind not in "fiub":
+        raise ValueError("non-numeric values")
+    arr = np.ascontiguousarray(arr.astype(np.float64).T) + 0.0      # +0.0 turns -0.0 into 0.0
+    samples = [cols[i] for i in keep]
+    v = FileView(fname, p, "columns", [str(x) for x in df.index], samples)
+    empty = np.isnan(arr).all(axis=1)
+    for j, s_id in enumerate(samples):
+        v.fingerprints[s_id] = hashlib.blake2b(arr[j].tobytes(), digest_size=16).hexdigest()
+        if empty[j]:
+            v.empty.add(s_id)
+    return v
+
+
+def _load_any_matrix(p: Path, fname: str) -> FileView:
+    try:
+        return _load_matrix_numeric(p, fname)
+    except (ValueError, TypeError):
+        return _load_matrix(p, fname)
+
+
 def _load_matrix(p: Path, fname: str) -> FileView:
     with _open_text(p) as f:
         header = f.readline().rstrip("\n").split("\t")
@@ -140,7 +175,7 @@ def _load_matrix(p: Path, fname: str) -> FileView:
     return v
 
 
-CACHE_VERSION = "fp1"
+CACHE_VERSION = "fp2"
 
 
 def load_release(path: str | Path, name: str | None = None, include_rna: bool = True,
@@ -165,13 +200,22 @@ def load_release(path: str | Path, name: str | None = None, include_rna: bool = 
         Path(cache_dir).mkdir(parents=True, exist_ok=True)
         cached.write_bytes(pickle.dumps(rel))
         return rel
-    files, hashes = {}, {}
-    for fname, (orient, idcol) in LAYOUT.items():
+    from concurrent.futures import ThreadPoolExecutor
+    jobs = [(fname, orient, idcol) for fname, (orient, idcol) in LAYOUT.items()
+            if (path / fname).exists() and not (fname.startswith("rna_") and not include_rna)
+            and (only is None or fname in only)]
+
+    def work(job):
+        fname, orient, idcol = job
         p = path / fname
-        if not p.exists() or (fname.startswith("rna_") and not include_rna) or (only is not None and fname not in only):
-            continue
-        hashes[fname] = {"file": file_sha256(p), "content": content_sha256(p)}
-        files[fname] = _load_rows(p, fname, idcol) if orient == "rows" else _load_matrix(p, fname)
+        view = _load_rows(p, fname, idcol) if orient == "rows" else _load_any_matrix(p, fname)
+        return fname, {"file": file_sha256(p), "content": content_sha256(p)}, view
+
+    # Files are read in parallel: decompression and pandas' parser release the GIL for most of the work.
+    with ThreadPoolExecutor(max_workers=max(1, min(6, len(jobs)))) as pool:
+        results = list(pool.map(work, jobs))
+    files = {f: v for f, _, v in results}
+    hashes = {f: h for f, h, _ in results}
     return Release(name or path.name, path, files, hashes)
 
 

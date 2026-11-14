@@ -40,7 +40,8 @@ def run_tower(challenge_repo: Path, path_b: Path, path_a: Path | None = None,
     doc = build_findings(rel_a, rel_b, changes, runs, unverified, team, question,
                          include_summaries=include_summaries)
     # How much each rerun analysis moved relative to sampling noise, and whether the repairs fix it.
-    from .impact import noise, repair_simulation, sentence
+    from .impact import clear_cache, noise, repair_simulation, sentence
+    clear_cache()
     impact_lines, impact_short = [], []
     import os as _os
     for r in runs:
