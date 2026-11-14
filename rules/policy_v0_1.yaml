@@ -190,6 +190,23 @@ rules:
     reconsider: "Population conditions that match some records."
 
   # ---- completeness ----------------------------------------------------------------------
+  # Where the 20% (warning) and 50% (serious) cut-offs come from:
+  #   These are the team's own defaults, not a published standard, and no single agreed threshold
+  #   exists. They sit within the range the missing-data literature quotes:
+  #   - Jakobsen JC, Gluud C, Wetterslev J, Winkel P. When and how should multiple imputation be used
+  #     for handling missing data in randomised clinical trials - a practical guide with flowcharts.
+  #     BMC Med Res Methodol. 2017;17:162. doi:10.1186/s12874-017-0442-1
+  #     (rule of thumb: under ~5% missing may be ignorable; with 40% or more missing in important
+  #     variables, results should be treated as hypothesis-generating only)
+  #   - Madley-Dowd P, Hughes R, Tilling K, Heron J. The proportion of missing data should not be used
+  #     to guide decisions on multiple imputation. J Clin Epidemiol. 2019;110:63-73.
+  #     doi:10.1016/j.jclinepi.2019.02.016
+  #     (summarises guidance that bias is likely above 10% missing; shows such cut-offs have a limited
+  #     evidence base and that WHY data are missing matters more than HOW MUCH)
+  #   So: above 20% we ask for a documented handling plan (Conditional), and above 50% missing for the
+  #   outcome or a field the question needs, the data can't support the question (Blocked). Because the
+  #   proportion alone isn't decisive, every finding shows the measured rate with a 95% range, marks
+  #   borderline cases, and asks why the data are missing. Edit the values below to change the policy.
   - id: CMP-001
     check: completeness
     when: [{metric: outcome_missing_rate, op: ">", value: 0.5}]

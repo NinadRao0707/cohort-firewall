@@ -53,6 +53,17 @@ Worst finding wins: Blocked > Insufficient Evidence > Conditional > Ready.
 Thresholds are defaults in [`rules/policy_v0_1.yaml`](../rules/policy_v0_1.yaml) (version 0.5.1):
 10 events per parameter, 50 records per subgroup, 20% and 50% missingness, 5% source disagreement.
 
+**Why 20% and 50% for missing values.** These are our defaults, not a published standard; no single
+agreed threshold exists. They sit within the range the literature quotes: Jakobsen et al. (2017)
+give a rule of thumb that results with 40% or more missing in important variables should be treated
+as hypothesis-generating only, and Madley-Dowd et al. (2019) summarise guidance that bias is likely
+above 10% missing, while showing that such cut-offs have a limited evidence base and that the reason
+data are missing matters more than the amount. So the tool asks for a handling plan above 20%, blocks
+above 50%, shows each measured rate with a 95% range, and asks why the data are missing.
+
+- Jakobsen JC, Gluud C, Wetterslev J, Winkel P. *BMC Med Res Methodol.* 2017;17:162. doi:10.1186/s12874-017-0442-1
+- Madley-Dowd P, Hughes R, Tilling K, Heron J. *J Clin Epidemiol.* 2019;110:63–73. doi:10.1016/j.jclinepi.2019.02.016
+
 ## Acceptable limitations
 A question card may accept only the Conditional rules the policy lists (for example CMP-004, TIME-002,
 SUB-002, CONS-001). An accepted finding stays visible and marked as accepted, no longer lowers the
