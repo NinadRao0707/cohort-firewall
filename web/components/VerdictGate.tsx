@@ -21,6 +21,7 @@ export function VerdictGate({ verdict, question, line, summary, review, cant }: 
       <div className="gate-side">
         {question && <p className="gate-question">{question}</p>}
         {summary && <p className="gate-summary">{summary}</p>}
+        {summary && <p className="gate-provenance">Written from the rule results and measured values on this page; no AI was used.</p>}
         {cant && cant.length > 0 && (
           <p className="gate-cant"><strong>What this can&apos;t tell you:</strong> {cant.join("; ")}.</p>
         )}

@@ -244,3 +244,4 @@ button.link { background: none; border: 0; padding: 2px 0; color: var(--ink); fo
   border: 1px solid var(--rule); }
 .impact-pill[data-label="beyond sampling noise"] { color: var(--blocked); border-color: currentColor; }
 .impact-pill[data-label="borderline"] { color: var(--conditional); border-color: currentColor; }
+.gate-provenance { margin: 6px 0 0; font-size: 0.75rem; color: var(--ink-soft); }
