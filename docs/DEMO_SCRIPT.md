@@ -39,6 +39,9 @@ Every working tool finds the same changes, so spend the time on what happens aft
 **All findings**, add a note and **Record review**; the review is signed and saved with the evidence.
 
 ## 2:40 – 3:00 · Close  [Working tool 15 · Communication 5]
+**Record → Verify the ledger:** "Every check and every decision goes into a signed, hash-chained
+ledger. If anyone later changes a verdict or deletes a review, the chain breaks at that entry."
+
 "44 planted changes across five runs, all found, none invented. A fresh clone runs in four commands,
 and findings.json goes straight to a Repair Review Desk."
 
@@ -50,6 +53,7 @@ and findings.json goes straight to a Repair Review Desk."
 | What can it miss? | A swap that also edits values shows as value edits; identifier detection is pattern-based. Both are in the Limitations panel |
 | 10% vs the organizers' 11%? | We count primary tumors with both PAM50 calls (52 of 508); their denominator may differ |
 | Does Ready mean safe to deploy? | No. Ready means fit for this research question, and a person still reviews |
+| How do you know nobody changed a result later? | Results and reviews are signed, and every one is chained in the audit ledger; `python scripts/tamper_demo.py` shows a changed verdict being caught |
 | Can you accept a problem to get Ready? | Only listed Conditional ones; Blocked never. It stays visible, and approval then needs a written reason |
 
 For the live envelope test, see [`HIDDEN_TEST.md`](HIDDEN_TEST.md).

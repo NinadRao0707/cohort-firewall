@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { Verdict } from "@/lib/types";
 import type { FindingsDoc, TowerAnalysis, TowerFinding } from "@/lib/tower";
 import { CertificatePanel } from "./CertificatePanel";
+import { LedgerPanel } from "./LedgerPanel";
 import { ReleaseReview } from "./ReviewPanel";
 import { NextSteps } from "./Summary";
 import { Tabs } from "./Tabs";
@@ -110,6 +111,7 @@ export function TowerResults({ doc }: { doc: FindingsDoc }) {
             <details className="fold"><summary>Limitations of this check</summary>
               <ul className="plain-list">{(doc.limitations ?? []).map((l) => <li key={l}>{l}</li>)}</ul></details>
             {doc.certificate ? <CertificatePanel cert={doc.certificate as never} /> : null}
+            <LedgerPanel entry={doc.x_ledger} />
           </>
         ) },
       ]} />

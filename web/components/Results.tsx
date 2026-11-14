@@ -1,5 +1,6 @@
 import type { EvaluateResponse } from "@/lib/types";
 import { CertificatePanel } from "./CertificatePanel";
+import { LedgerPanel } from "./LedgerPanel";
 import { ChecksTable } from "./ChecksTable";
 import { Findings } from "./Findings";
 import { Funnel } from "./Funnel";
@@ -38,6 +39,7 @@ export function Results({ result }: { result: EvaluateResponse }) {
           <>
             <QuestionReview key={result.certificate.cert_id} result={result} />
             <CertificatePanel cert={result.certificate} />
+            <LedgerPanel entry={result.x_ledger} />
           </>
         ) },
       ]} />

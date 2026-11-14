@@ -164,7 +164,48 @@ def test_envelope_without_rna():
     assert run_envelope_case(verbose=False)
 
 
+def run_shared_profile_case(verbose=True):
+    """A copy of a profile that several baseline samples share (a quiet copy-number genome) is still
+    a duplicate: reported as one, with the candidate sources named, and no unchanged sample cited."""
+    import shutil
+    import pandas as pd
+    from cohort_firewall.tower.run import run_tower
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        make_baseline(tmp / "b")
+        cn = pd.read_csv(tmp / "b" / "copy_number_gistic.tsv.gz", sep="\t", dtype=str)
+        quiet = list(cn.columns[1:4])
+        for c in quiet:
+            cn[c] = "0"
+        cn.to_csv(tmp / "b" / "copy_number_gistic.tsv.gz", sep="\t", index=False)
+        make_challenge_repo(tmp / "c", tmp / "b")
+        rel = tmp / "c" / "data" / "tcga-brca" / "releases" / "shared"
+        rel.mkdir(parents=True)
+        for f in (tmp / "b").iterdir():
+            shutil.copy(f, rel / f.name)
+        cn["TCGA-ZZ-8888-01"] = cn[quiet[0]]
+        cn.to_csv(rel / "copy_number_gistic.tsv.gz", sep="\t", index=False)
+        doc = run_tower(tmp / "c", rel)
+        dups = [f for f in doc["findings"] if f["kind"] == "duplicate"]
+        cited = {e["id"] for f in doc["findings"] for e in f["evidence"] if e.get("kind") == "sample"}
+        problems = []
+        if len(dups) != 1 or dups[0]["evidence"][0]["id"] != "TCGA-ZZ-8888-01":
+            problems.append(f"expected one duplicate for TCGA-ZZ-8888-01, got {[f['summary'] for f in dups]}")
+        if cited & set(quiet):
+            problems.append(f"unchanged samples cited: {sorted(cited & set(quiet))}")
+        if verbose:
+            print(f"{'PASS' if not problems else 'FAIL'}  shared_profile_copy          duplicates={len(dups)}")
+            for p in problems:
+                print("      -", p)
+        return not problems
+
+
+def test_shared_profile_copy():
+    assert run_shared_profile_case(verbose=False)
+
+
 if __name__ == "__main__":
     ok_all = run_all()
     ok_env = run_envelope_case()
-    sys.exit(0 if ok_all and ok_env else 1)
+    ok_shared = run_shared_profile_case()
+    sys.exit(0 if ok_all and ok_env and ok_shared else 1)

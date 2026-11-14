@@ -162,6 +162,32 @@ samples, all checks and the review.
 
 Details: [`docs/DESIGN.md`](docs/DESIGN.md) and [`docs/CONTROL_TOWER.md`](docs/CONTROL_TOWER.md).
 
+## Security by design
+Built by cybersecurity students, it treats every data release the way a security team treats a software
+release: nothing is trusted until it's verified, and every decision leaves evidence.
+
+| Control | What it does |
+|---|---|
+| **Verified provenance** | The baseline must match the event's published checksums, or every verdict is Insufficient Evidence |
+| **Default deny** | Anything the tool can't verify fails closed; nothing passes by default |
+| **Signed results** | Each result carries an Ed25519 certificate binding the data checksums, the question, the rules and the verdicts |
+| **Signed, evidence-bound reviews** | A review attaches only to a result whose signature verifies; if the evidence changes, the certificate changes and a fresh review is needed |
+| **Tamper-evident audit ledger** | Every check, envelope opening and review is a signed entry chained to the one before it (like a Certificate Transparency log). Editing, deleting or reordering any past entry breaks the chain at that entry |
+| **Injection-safe** | Text inside the data can never steer a verdict; instruction-like text is reported by location only |
+| **Identifier screening** | Identifier-like fields and values block the data |
+| **Least privilege** | The API opens only release folders it lists itself; envelope input is validated and run without a shell |
+| **No secrets in the repo** | Keys are generated locally and git-ignored; history scanned with Gitleaks |
+
+```bash
+python -m cohort_firewall.ledger verify   # "Ledger intact: N entries, head …"
+python -m cohort_firewall.ledger show     # the latest entries
+python scripts/tamper_demo.py             # change a past verdict in a copy, and watch verify catch it
+```
+In the app: **Record** (Release check) or **Review** (Question check) → **Verify the ledger**.
+
+**Limitation:** removing entries from the very end leaves a shorter valid chain. Record the head hash
+elsewhere (a review note, a ticket) to detect that, as transparency logs do.
+
 ## Limitations
 These are also shown in the product, under **Limitations of this check**, and on every finding.
 
@@ -175,9 +201,10 @@ These are also shown in the product, under **Limitations of this check**, and on
 ## Tests
 ```bash
 source .venv/bin/activate
-python tests/test_tower.py                                    # 11 release scenarios, including an envelope without RNA
+python tests/test_tower.py                                    # 12 release scenarios, incl. no RNA and shared-profile copies
 python data/make_variants.py && python tests/test_variants.py # 26 seeded-defect readiness cases
 python tests/test_review.py                                   # 13 review rules: approval limits, forged results
+python tests/test_ledger.py                                   # audit ledger: edits, deletions, reordering, forgeries
 bash scripts/rehearse.sh                                      # 3 private releases, graded against their answer keys
 bash scripts/fresh_clone_test.sh                              # what a judge does, from an empty folder
 ```

@@ -43,6 +43,13 @@ def main(argv=None):
     print(f"Baseline {doc['data']['releases'][0]['name']}: "
           f"{'all match frozen checksums' if not unverified else 'UNVERIFIED: ' + ', '.join(unverified)}")
     print(f"New release {doc['data']['releases'][1]['name']}: {len(doc['data']['releases'][1]['files'])} files")
+    from .. import ledger
+    c = doc.get("certificate") or {}
+    doc["x_ledger"] = ledger.append("release_check", {
+        "cert_id": c.get("cert_id"), "verdict": doc.get("verdict"),
+        "releases": [r["name"] for r in doc["data"]["releases"]],
+        "analyses": {a["id"]: a["verdict"] for a in doc.get("analyses", [])},
+        "findings": len(doc.get("findings", [])), "via": "command line"})
     args.out.write_text(json.dumps(doc, indent=2))
 
     print(f"\n{len(doc['findings'])} findings, {len(doc['repairs'])} proposed repairs")
@@ -54,6 +61,9 @@ def main(argv=None):
         for r in a["verdict_rules"]:
             print(f"      [{r['rule_id']}] {r['reason']}")
     print(f"\nOverall: {doc['verdict']}   ->  {args.out}")
+    if doc.get("x_ledger", {}).get("seq"):
+        print(f"Logged as audit-ledger entry #{doc['x_ledger']['seq']} ({doc['x_ledger']['hash'][:12]}); "
+              "check the chain with: python -m cohort_firewall.ledger verify")
 
 
 if __name__ == "__main__":

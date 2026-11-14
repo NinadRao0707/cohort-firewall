@@ -80,9 +80,11 @@ def _evidence(change: Change, rel_b: str, limit: int = 25) -> list[dict]:
     """Cite only samples that changed. For a copy, the sample whose profile was copied is unchanged:
     it is named in the note, not cited as a changed sample."""
     if change.type in {"copied_profile", "new_duplicate"} and len(change.samples) > 1:
-        src = change.samples[1]
-        return [{"kind": "sample", "id": change.samples[0], "release": rel_b, "file": change.file,
-                 "note": f"carries the exact profile of {src}, which is unchanged"}]
+        cands = change.detail.get("candidates")
+        note = (f"carries a profile shared by {len(cands)} unchanged baseline samples "
+                f"({', '.join(cands[:6])}{'…' if len(cands) > 6 else ''}); the exact source can't be told apart"
+                if change.detail.get("ambiguous") else f"carries the exact profile of {change.samples[1]}, which is unchanged")
+        return [{"kind": "sample", "id": change.samples[0], "release": rel_b, "file": change.file, "note": note}]
     refs = [{"kind": "sample", "id": s, "release": rel_b, "file": change.file} for s in change.samples[:limit]]
     if len(change.samples) > limit:
         refs.append({"kind": "file", "id": change.file, "release": rel_b,
@@ -196,6 +198,10 @@ def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: 
             a = ch.samples[0] if ch.samples else ""
             b = ch.samples[1] if len(ch.samples) > 1 else ""
             summary = SUMMARY.get(ch.type, ch.type).format(a=a, b=b, file=ch.file, n=len(ch.samples))
+            if ch.detail.get("ambiguous"):
+                cands = ch.detail["candidates"]
+                summary = (f"New sample {a} in {ch.file} is an exact copy of a profile shared by {len(cands)} "
+                           f"baseline samples ({', '.join(cands[:4])}{'…' if len(cands) > 4 else ''})")
         severity, severity_reason = _rate(ch, affects, runs)
         findings.append({
             "id": fid, "kind": ch.kind, "summary": summary, "severity": severity, "confidence": "high",

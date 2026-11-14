@@ -236,3 +236,4 @@ button.link { background: none; border: 0; padding: 2px 0; color: var(--ink); fo
 .cert-result[data-state="idle"] { font-weight: 400; color: var(--ink-soft); }
 .gate-cant { margin: 10px 0 0; font-size: 0.875rem; color: var(--ink-soft); line-height: 1.55; }
 .gate-cant strong { color: var(--ink); font-weight: 600; }
+.ledger { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--rule); }

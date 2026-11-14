@@ -127,6 +127,12 @@ def diff_file(a, b) -> list[Change]:
         if len(owners) == 1:
             src = next(iter(owners))
             changes.append(Change("new_duplicate", a.name, [sid, src], {"carries_profile_of": src}))
+        elif len(owners) > 1:
+            # The profile exists in the baseline, but several samples share it (for example a quiet
+            # copy-number genome), so the exact source can't be named. It is still a copy.
+            cands = sorted(owners)
+            changes.append(Change("new_duplicate", a.name, [sid, *cands[:10]],
+                                  {"carries_profile_of": cands[0], "candidates": cands, "ambiguous": True}))
         else:
             changes.append(Change("added", a.name, [sid]))
     for sid in sorted(A - B):

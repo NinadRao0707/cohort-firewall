@@ -62,6 +62,7 @@ export interface EvaluateResponse {
   spec: { question_text?: string } & Record<string, unknown>;
   report: { text: string; source: "llm" | "template" };
   findings_template_csv?: string;
+  x_ledger?: { seq?: number; hash?: string };
   plain_summary?: string;
   next_steps?: QuestionStep[];
   funnel?: {

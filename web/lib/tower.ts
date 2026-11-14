@@ -35,6 +35,7 @@ export interface FindingsDoc {
   limitations?: string[]; certificate?: unknown; baseline_unverified_files?: string[];
   timing_seconds?: { baseline: number; total: number };
   not_compared?: string[];
+  x_ledger?: { seq?: number; hash?: string };
   plain_summary?: string;
   next_steps?: { rank: number; action: string; samples: string[]; n_samples: number; resolves: string[]; affects_analyses: string[] }[];
 }

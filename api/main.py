@@ -18,7 +18,7 @@ from pydantic import BaseModel
 
 from cohort_firewall import certificate
 from cohort_firewall.engine import DEFAULT_POLICY, evaluate_dataset
-from cohort_firewall import datasets
+from cohort_firewall import datasets, ledger
 from cohort_firewall.policy import Policy
 from cohort_firewall.review import ReviewError, review_question, review_release, reviews_for, verify_review
 from cohort_firewall.tower.run import list_releases, release_folders, run_tower
@@ -85,7 +85,33 @@ async def evaluate(
         _store(result)
     except Exception:
         result["storage_warning"] = "Run was evaluated but not stored."
+    result["x_ledger"] = _log_question(result)
     return result
+
+
+def _log_question(r: dict) -> dict:
+    c = r.get("certificate") or {}
+    return ledger.append("question_check", {
+        "cert_id": c.get("cert_id"), "verdict": r.get("verdict"),
+        "rules": [f["rule_id"] for f in r.get("findings", [])],
+        "dataset_sha256": (c.get("payload") or {}).get("dataset_sha256")})
+
+
+def _log_release(doc: dict) -> dict:
+    c = doc.get("certificate") or {}
+    return ledger.append("release_check", {
+        "cert_id": c.get("cert_id"), "verdict": doc.get("verdict"),
+        "releases": [r["name"] for r in doc["data"]["releases"]],
+        "analyses": {a["id"]: a["verdict"] for a in doc.get("analyses", [])},
+        "findings": len(doc.get("findings", [])),
+        "dataset_sha256": (c.get("payload") or {}).get("dataset_sha256")})
+
+
+@app.get("/ledger")
+def get_ledger(limit: int = 10):
+    entries = ledger.read_all()[-max(1, min(limit, 50)):]
+    return {"verify": ledger.verify(), "recent": [
+        {k: e[k] for k in ("seq", "ts", "event", "subject", "hash")} for e in reversed(entries)]}
 
 
 class VerifyRequest(BaseModel):
@@ -133,7 +159,8 @@ def tower_run(req: TowerRequest):
     except FileNotFoundError as e:
         raise HTTPException(400, f"Missing input: {e}. Run fetch.py in the challenge repo first.")
     TOWER_OUT.mkdir(exist_ok=True)
-    (TOWER_OUT / f"findings-{req.release}.json").write_text(json.dumps(doc, indent=2))
+    doc["x_ledger"] = _log_release(doc)
+    (TOWER_OUT / f"findings-{req.release.replace(' ', '-')}.json").write_text(json.dumps(doc, indent=2))
     return doc
 
 
@@ -166,6 +193,7 @@ def tower_unseal(req: UnsealRequest):
     name = "envelope " + ("practice" if env.lower() == "practice" else f"E{int(env.lstrip('Ee')):02d}")
     if name not in release_folders(CHALLENGE_REPO):
         raise HTTPException(400, f"Opened, but no release folder was found. Output: {log[-300:]}")
+    ledger.append("envelope_opened", {"envelope": name})
     return {"name": name, "log": log}
 
 
@@ -245,7 +273,9 @@ def evaluate_card(req: CardRequest):
     d = datasets.get(req.dataset_id)
     if d is None:
         raise HTTPException(404, f"Unknown dataset '{req.dataset_id}'.")
-    return evaluate_dataset(d["csv"].read_bytes(), json.loads(d["dictionary"].read_text()), spec=req.spec)
+    result = evaluate_dataset(d["csv"].read_bytes(), json.loads(d["dictionary"].read_text()), spec=req.spec)
+    result["x_ledger"] = _log_question(result)
+    return result
 
 
 class QuestionReview(BaseModel):
@@ -260,7 +290,11 @@ class QuestionReview(BaseModel):
 @app.post("/review/question")
 def post_question_review(req: QuestionReview):
     try:
-        return review_question(req.result, req.reviewer, req.role, req.decision, req.acknowledged, req.note)
+        rec = review_question(req.result, req.reviewer, req.role, req.decision, req.acknowledged, req.note)
+        r = rec["review"]
+        rec["ledger"] = ledger.append("review", {"review_id": r["review_id"], "cert_id": r["subject"]["cert_id"],
+                                                 "decision": r["decision"], "reviewer": r["reviewer"]["name"]})
+        return rec
     except ReviewError as e:
         raise HTTPException(400, str(e))
 
@@ -277,7 +311,12 @@ class ReleaseReview(BaseModel):
 @app.post("/review/release")
 def post_release_review(req: ReleaseReview):
     try:
-        return review_release(req.findings, req.reviewer, req.role, req.decisions, req.acknowledged, req.note)
+        rec = review_release(req.findings, req.reviewer, req.role, req.decisions, req.acknowledged, req.note)
+        r = rec["review"]
+        rec["ledger"] = ledger.append("review", {"review_id": r["review_id"], "cert_id": r["subject"]["cert_id"],
+                                                 "decision": {d["analysis"]: d["decision"] for d in r["decisions"]},
+                                                 "reviewer": r["reviewer"]["name"]})
+        return rec
     except ReviewError as e:
         raise HTTPException(400, str(e))
 

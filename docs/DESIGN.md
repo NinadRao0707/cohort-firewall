@@ -95,5 +95,6 @@ review itself is signed (Ed25519) and saved with the evidence record.
 | A clinical question mislabelled as research | A wording guard (SCOPE-002) backs up the intended-use field |
 | Results edited after the fact | Certificates bind data checksums, question, rule version and verdicts; edits fail verification |
 | A review attached to a forged result | Reviews are accepted only for results whose certificate verifies |
+| History rewritten later (a verdict or decision quietly changed or deleted) | Hash-chained, signed audit ledger; `python -m cohort_firewall.ledger verify` names the first broken entry |
 | Arbitrary paths from the browser | The API only opens release folders it lists itself; envelope input is validated and passed without a shell |
 | Data retention | Uploads are evaluated in memory; stored records hold checksums and results |
