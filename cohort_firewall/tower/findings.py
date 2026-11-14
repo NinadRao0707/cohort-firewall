@@ -211,6 +211,7 @@ def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: 
             "limitation": LIMITATION.get(ch.type, "Detected by comparing exact values between releases."),
             "needs_human_review": severity in {"high", "medium"} or bool(affects),
             **({"x_summary_of_other_findings": True} if ch.type in DERIVED else {}),
+            **({"x_p_by_chance": ch.detail["p_by_chance"]} if ch.detail.get("p_by_chance") is not None else {}),
         })
         action, targets, why = None, [], ""
         if ch.type == "swap":
@@ -319,7 +320,7 @@ def _tower_summary(name_a: str, name_b: str, findings: list[dict], analyses: lis
         m = _re.search(r"for (\S+) = '([^']+)' fell from (\d+) to (\d+)", f["summary"])
         if m:
             b, a2 = int(m.group(3)), int(m.group(4))
-            drops.append((m.group(2), m.group(1), b - a2, b, (b - a2) / max(b, 1)))
+            drops.append((m.group(2), m.group(1), b - a2, b, (b - a2) / max(b, 1), f.get("x_p_by_chance")))
     if len(drops) >= 2:
         drops.sort(key=lambda x: -x[4])
         top, rest = drops[0], drops[1:]
@@ -328,9 +329,13 @@ def _tower_summary(name_a: str, name_b: str, findings: list[dict], analyses: lis
             others = max((d[4] for d in same_col), default=0)
             versus = (f"against {others:.1%} or less for every other {top[1]} group" if others
                       else f"while no other {top[1]} group lost any")
+            p = top[5]
+            chance = (f" Random losses would be this concentrated with probability {p:.2g} (hypergeometric test); "
+                      f"that fits a targeted removal or a filtering error, and the tool can't tell which."
+                      if p is not None and p < 0.05 else "")
             concentrated = (f"The losses are concentrated in one group: {top[0]} lost {top[2]} of {top[3]} genuine "
                             f"profiles ({top[4]:.1%}), {versus}, so results for {top[0]} move more than the "
-                            f"total count suggests. ")
+                            f"total count suggests.{chance} ")
     summary = (f"Compared with {name_a}, release {name_b} has {changed}. " + concentrated
                + ((lambda t: t[:1].upper() + t[1:])(masked.split(":", 1)[1].strip().rstrip(".")) + ". " if masked else "")
                + "; ".join(parts) + ". A person must review before the new release is used.")

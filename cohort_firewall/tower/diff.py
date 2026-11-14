@@ -163,6 +163,16 @@ def _genuine_pair(a: Release, b: Release, fname: str) -> tuple[set[str], set[str
     return ga, gb
 
 
+def _hyper_tail(N: int, K: int, n: int, k: int) -> float | None:
+    """P(at least k of n lost profiles fall in a group of K, out of N) if losses were random
+    (hypergeometric upper tail, as in a one-sided Fisher exact test)."""
+    from math import comb
+    if not (0 < n <= N and 0 <= K <= N and k > 0):
+        return None
+    total = comb(N, n)
+    return min(1.0, sum(comb(K, i) * comb(N - K, n - i) for i in range(k, min(K, n) + 1)) / total)
+
+
 def coverage_changes(a: Release, b: Release) -> list[Change]:
     """Genuine-profile counts per clinical subgroup, per file, release A vs B."""
     clin = b.files.get("clinical.tsv") or a.files.get("clinical.tsv")
@@ -179,13 +189,17 @@ def coverage_changes(a: Release, b: Release) -> list[Change]:
                 continue
             ga, gb = _genuine_pair(a, b, fname)
             groups = sorted({label[s] for s in ga | gb if s in label})
+            lost_all = [s for s in ga - gb if s in label]
+            n_total = sum(1 for s in ga if s in label)
             for g in groups:
                 na = sum(1 for s in ga if label.get(s) == g)
                 nb = sum(1 for s in gb if label.get(s) == g)
                 if nb < na:
                     lost = sorted(s for s in ga - gb if label.get(s) == g)
                     out.append(Change("coverage_loss", fname, lost, {
-                        "subgroup_column": col, "subgroup": g, "before": na, "after": nb}))
+                        "subgroup_column": col, "subgroup": g, "before": na, "after": nb,
+                        "lost_in_file": len(lost_all), "labelled_in_file": n_total,
+                        "p_by_chance": _hyper_tail(n_total, na, len(lost_all), len(lost))}))
     return out
 
 

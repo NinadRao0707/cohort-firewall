@@ -39,6 +39,25 @@ function AnalysisRow({ a }: { a: TowerAnalysis }) {
       {moved.length > 0 && (
         <p className="moved">{moved.map((k) => <span key={k}>{k.replaceAll("_", " ")}: {show(a.before![k])} → <b>{show(a.after![k])}</b></span>)}</p>
       )}
+      {a.x_impact?.noise && (
+        <div className="impact">
+          <p><span className="impact-k">How much it moved</span>
+            <span className="impact-pill" data-label={a.x_impact.noise.label}>{a.x_impact.noise.ratio}× sampling noise · {a.x_impact.noise.label}</span></p>
+          <p className="quiet">{a.x_impact.noise.kind === "scalar"
+            ? `${a.x_impact.noise.metric} changed ${a.x_impact.noise.delta}; sampling alone moves it about ${a.x_impact.noise.noise} (${a.x_impact.noise.noise_name}, from rerunning the organizers' code on resampled baseline data).`
+            : `The mix shifted ${a.x_impact.noise.shift} points; resampling alone shifts it up to ${a.x_impact.noise.noise} points 95% of the time.`}
+            {a.x_impact.noise.label !== "beyond sampling noise" && a.verdict !== "Ready" ? " A small shift doesn't make it safe: the verdict comes from what changed, not how much." : ""}</p>
+        </div>
+      )}
+      {a.x_impact?.repair && (
+        <div className="impact">
+          <p><span className="impact-k">If you apply the repairs</span>
+            {a.x_impact.repair.back_to_baseline ? "it returns to its baseline value." : `it becomes ${a.x_impact.repair.after_all_repairs} (baseline ${a.x_impact.repair.baseline}).`}</p>
+          {a.x_impact.repair.by_kind.length > 0 && (
+            <p className="quiet">Share of the shift: {a.x_impact.repair.by_kind.map((k) => `${k.kind.replaceAll("_", " ")} ${k.share_of_shift_pct}% (${k.findings.join(", ")})`).join("; ")}.</p>
+          )}
+        </div>
+      )}
       {a.before && (
         <details className="fold"><summary>All values</summary>
           <div className="table-scroll"><table className="checks compare">
@@ -68,6 +87,10 @@ function ChangeRow({ f }: { f: TowerFinding }) {
           {f.x_severity_reason && <p><span>Why this severity:</span> {f.x_severity_reason.replace(/^(High|Medium|Low): /, "")}</p>}
           <p><span>Samples that changed:</span> <code>{f.evidence.filter((e) => e.kind === "sample").map((e) => e.id).join(", ") || "file-level"}</code></p>
           {f.evidence.filter((e) => e.note).map((e, i) => <p key={i} className="quiet">{e.id}: {e.note}</p>)}
+          {typeof f.x_p_by_chance === "number" && (
+            <p><span>Chance this is random:</span> p = {f.x_p_by_chance.toPrecision(2)} (hypergeometric test).
+              {f.x_p_by_chance < 0.05 ? " Unlikely by chance: fits a targeted removal or a filtering error; the tool can't tell which." : " Consistent with chance."}</p>
+          )}
           {f.limitation && <p><span>Limitation:</span> {f.limitation}</p>}
         </div>
       )}

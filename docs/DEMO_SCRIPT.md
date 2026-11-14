@@ -14,9 +14,11 @@ still answer the questions people ask."
 Every working tool finds the same changes, so spend the time on what happens after.
 1. **+ Open envelope** → `practice` → **Open and compare**. "It finds the swap, the 5 copies and the
    5 removals, and the sample count stayed at 747, so a count check would miss all of it."
-2. **Why it matters:** "All 5 removed samples are Her2, which loses 8% of its profiles while every
-   other subtype loses under 1%. Anyone studying Her2 is hit far harder than the total suggests."
-   A1 is **Blocked** (difference 3.051 → 3.019); A2 is **left alone**, because nothing it reads changed.
+2. **Why it matters:** "All 5 removed samples are Her2, and the chance of random losses clustering
+   like that is tiny (read the p-value). That fits targeted removal or a filtering bug; we can't tell
+   which." A1 is **Blocked**; its card says how far it moved compared with sampling noise, and that a
+   small shift doesn't make it safe. A2 is **left alone**, because nothing it reads changed.
+   Read "If you apply the repairs": it returns to baseline, and which problem accounts for the shift.
 3. **What to do next:** **Next steps** tab: restore 2 swapped profiles, exclude 5 copied IDs, check
    the removals. **Changes → Details** shows why each one is high, medium or low.
 4. **What it can't tell you:** read the line under the summary: which release is correct, and edits

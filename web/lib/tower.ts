@@ -11,7 +11,7 @@ export interface TowerFinding {
   severity: "high" | "medium" | "low" | "none"; confidence: "high" | "medium" | "low";
   evidence: EvidenceRef[]; affects_analyses?: string[]; not_affected_analyses?: string[];
   limitation?: string; needs_human_review?: boolean;
-  x_severity_reason?: string; x_summary_of_other_findings?: boolean;
+  x_severity_reason?: string; x_summary_of_other_findings?: boolean; x_p_by_chance?: number;
 }
 
 export interface TowerAnalysis {
@@ -20,6 +20,14 @@ export interface TowerAnalysis {
   verdict_rules?: { rule_id: string; verdict: ShareVerdict; reason: string; remedy: string }[];
   affected_by?: string[]; needs_human_review?: boolean;
   before?: Record<string, unknown>; after?: Record<string, unknown>;
+  x_impact?: {
+    noise?: { kind: string; metric: string; ratio: number; label: string; noise: number; noise_name: string;
+              delta?: number; before?: number; after?: number; shift?: number; baseline_ci95?: number[];
+              after_inside_baseline_ci?: boolean } | null;
+    repair?: { metric: string; baseline: number; new_release: number; after_all_repairs: number; back_to_baseline: boolean;
+               by_kind: { kind: string; findings: string[]; share_of_shift_pct: number }[] } | null;
+    sentence?: string;
+  };
 }
 
 export interface TowerRepair {

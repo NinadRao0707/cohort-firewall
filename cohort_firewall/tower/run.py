@@ -39,6 +39,38 @@ def run_tower(challenge_repo: Path, path_b: Path, path_a: Path | None = None,
                 f"({', '.join(x.id for x in analyses)}) that were run on {rel_a.name}?")
     doc = build_findings(rel_a, rel_b, changes, runs, unverified, team, question,
                          include_summaries=include_summaries)
+    # How much each rerun analysis moved relative to sampling noise, and whether the repairs fix it.
+    from .impact import noise, repair_simulation, sentence
+    impact_lines, impact_short = [], []
+    import os as _os
+    for r in runs:
+        if r.after is None or _os.environ.get("CF_IMPACT", "1") == "0":
+            continue
+        try:
+            m = noise(r, a)
+            rp = repair_simulation(r, a, b, doc["findings"])
+        except Exception as e:  # never let the extra analysis break the comparison
+            m, rp = None, None
+            doc.setdefault("x_impact_errors", []).append(f"{r.analysis.id}: {e}")
+        entry = next(x for x in doc["analyses"] if x["id"] == r.analysis.id)
+        text = sentence(r.analysis.id, m, rp, entry.get("verdict", ""))
+        if m:
+            short = f"{r.analysis.id} moved {m['ratio']:g}× its sampling noise ({m['label']})"
+            if rp:
+                short += "; the proposed repairs bring it back to baseline" if rp["back_to_baseline"] else \
+                    f"; after the proposed repairs it is {rp['after_all_repairs']:g} (baseline {rp['baseline']:g})"
+            impact_short.append((short, m["label"] != "beyond sampling noise" and entry.get("verdict") != "Ready"))
+        import json as _json
+        entry["x_impact"] = _json.loads(_json.dumps({"noise": m, "repair": rp, "sentence": text},
+                                                    default=lambda o: o.item() if hasattr(o, "item") else str(o)))
+        if text:
+            impact_lines.append(text)
+    if impact_short:
+        line = ". ".join(s for s, _ in impact_short) + "."
+        if any(small for _, small in impact_short):
+            line += " Small shifts don't make a release safe: verdicts come from what changed, not how much."
+        doc["plain_summary"] = doc["plain_summary"].replace(" A person must review", " " + line + " A person must review", 1)
+
     doc["baseline_unverified_files"] = unverified
     doc["not_compared"] = not_compared
     if not_compared:

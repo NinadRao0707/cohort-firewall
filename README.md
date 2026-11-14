@@ -50,6 +50,12 @@ Compare a new release with the event's frozen release.
 4. **Hands off a `findings.json`** in the event's shared format v0.2, with proposed repairs, ready for a
    Repair Review Desk.
 
+**Why it matters, not just what changed.** For each affected analysis the tool reports how far it
+moved compared with sampling noise (a bootstrap of the organizers' own code), simulates the proposed
+repairs to show the analysis returning to baseline and which problem accounts for how much of the
+shift, and tests whether losses concentrated in one subtype could be chance. See
+[`docs/CONTROL_TOWER.md`](docs/CONTROL_TOWER.md#why-it-matters-size-repairs-and-chance).
+
 ### Question check (readiness)
 Describe a research question as a set of filters: intended use, who is studied, outcome, predictors,
 fairness attributes and acceptable limitations. The verdict changes when the question changes.
