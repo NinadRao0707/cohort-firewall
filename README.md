@@ -15,6 +15,7 @@ evidence, the rule and the fix behind every one.
 | **Track** | Cohort Firewall |
 | **Product** | Cohort Control Tower (featured), extended with question-readiness verdicts |
 | **Team** | Ninad Rao, Kareesa Rao, Sreelasya Changalasetty, Sanica Chaudhary |
+| **Product output** | `findings.json` in shared format v0.2. Example: [`examples/outputs/findings-practice-B.json`](examples/outputs/findings-practice-B.json) |
 | **Demo video** | _Link added before the code freeze_ |
 
 ## Contents
