@@ -193,6 +193,9 @@ def run_shared_profile_case(verbose=True):
             problems.append(f"expected one duplicate for TCGA-ZZ-8888-01, got {[f['summary'] for f in dups]}")
         if cited & set(quiet):
             problems.append(f"unchanged samples cited: {sorted(cited & set(quiet))}")
+        unl = [f for f in doc["findings"] if f.get("kind") == "unlinked_record"]
+        if not unl or unl[0]["evidence"][0]["id"] != "TCGA-ZZ-8888-01":
+            problems.append("new sample with no clinical record was not reported as unlinked_record")
         if verbose:
             print(f"{'PASS' if not problems else 'FAIL'}  shared_profile_copy          duplicates={len(dups)}")
             for p in problems:

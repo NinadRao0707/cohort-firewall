@@ -45,6 +45,7 @@ class Change:
         return {"swap": "sample_swap", "copied_profile": "duplicate", "new_duplicate": "duplicate",
                 "removed": "membership_change", "added": "membership_change",
                 "values_missing": "missing_data", "coverage_loss": "missing_data",
+                "unlinked": "unlinked_record",
                 "count_masks_membership": "membership_change",
                 "label_change": "label_conflict" if self.detail.get("key_labels") else "other",
                 }.get(self.type, "other")
@@ -203,6 +204,26 @@ def coverage_changes(a: Release, b: Release) -> list[Change]:
     return out
 
 
+def unlinked_changes(a: Release, b: Release) -> list[Change]:
+    """Relational integrity: samples in a data file of the new release that have no clinical record,
+    so no analysis can assign them to a group. Only NEW orphans are reported; samples that already had
+    no clinical record in the baseline didn't change and are not flagged."""
+    cb, ca = b.files.get("clinical.tsv"), a.files.get("clinical.tsv")
+    if cb is None:
+        return []
+    ids_b, ids_a = set(cb.samples), set(ca.samples) if ca else set()
+    out = []
+    for fname, vb in sorted(b.files.items()):
+        if fname == "clinical.tsv":
+            continue
+        va = a.files.get(fname)
+        before = (set(va.samples) - ids_a) if va else set()
+        new = sorted((set(vb.samples) - ids_b) - before)
+        if new:
+            out.append(Change("unlinked", fname, new, {"n": len(new)}))
+    return out
+
+
 def diff_releases(a: Release, b: Release) -> list[Change]:
     changes = []
     for fname in sorted(set(a.files) | set(b.files)):
@@ -212,4 +233,4 @@ def diff_releases(a: Release, b: Release) -> list[Change]:
             changes.append(Change("file_added", fname, [], {"missing_in": a.name}))
         else:
             changes.extend(diff_file(a.files[fname], b.files[fname]))
-    return changes + coverage_changes(a, b)
+    return changes + unlinked_changes(a, b) + coverage_changes(a, b)

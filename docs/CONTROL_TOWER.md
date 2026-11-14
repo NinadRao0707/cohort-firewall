@@ -38,6 +38,7 @@ checked against `sources.csv`. If it doesn't match, every verdict is Insufficien
 | Clinical field changed for a sample | `label_conflict` | Flag for review |
 | Values lost or edited | `missing_data` / `other` | Flag for review |
 | Fewer genuine profiles in an ER or PAM50 subgroup | `missing_data` (summary) | – |
+| A new sample in a data file with no clinical record (relational integrity) | `unlinked_record` | – |
 
 A profile counts as copied only if it was unique in the baseline and most of the sample's values
 changed, so samples that happen to share values are never accused.
@@ -50,9 +51,11 @@ Every working tool finds the same changes, so the Control Tower also measures wh
 
 | Question | Method | Example output |
 |---|---|---|
-| Is the shift bigger than sampling noise? | Bootstrap (Efron, 1979): rerun the organizers' own analysis code 150 times on baseline samples drawn with replacement. A1 uses the standard error of its difference; A2 uses total variation distance against its 95th percentile | *"A1 moved 0.31× its sampling noise (within sampling noise)"* |
+| Is the shift bigger than sampling noise? | Bootstrap (Efron, 1979): rerun the organizers' own analysis code 100 times on baseline samples drawn with replacement. A1 uses the standard error of its difference; A2 uses total variation distance against its 95th percentile | *"A1 moved 0.31× its sampling noise (within sampling noise)"* |
 | Do the proposed repairs work, and which problem matters most? | Repair simulation: restore changed samples from the baseline and drop copies in memory, rerun, then repair one kind of change at a time | *"With all repairs it returns to its baseline value. The swaps account for 100% of the shift."* |
 | Could losses this concentrated in one subtype be random? | Hypergeometric upper tail (one-sided Fisher exact test) over the genuine profiles lost per subgroup | *"Random losses would be this concentrated with probability 1.4e-05; that fits a targeted removal or a filtering error, and the tool can't tell which."* |
+
+| Do the changed samples cluster at one tissue source site? | Site from TCGA barcode characters 6–7; hypergeometric test against the baseline's site mix | *"The 7 changed samples come from 7 tissue source sites, with no sign that one site drives the changes"* |
 
 Size is reported, never used to clear a problem: a swap that barely moves a mean is still a swap, and
 another analysis of the same samples could move further. Set `CF_IMPACT=0` to skip the bootstrap and

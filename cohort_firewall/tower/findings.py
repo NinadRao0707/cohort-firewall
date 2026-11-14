@@ -20,6 +20,7 @@ SEVERITY = {"swap": "high", "copied_profile": "high", "new_duplicate": "high", "
             "added": "low", "values_missing": "medium", "values_edited": "medium",
             "features_changed": "medium", "file_missing": "high", "file_added": "low"}
 LIMITATION = {
+    "unlinked": "Checks sample IDs against clinical.tsv in the same release; samples that already lacked a clinical record in the baseline are not flagged.",
     "swap": "Exact-match detection: a swap combined with small value edits appears as two value edits instead.",
     "copied_profile": "Exact-match detection: a near-copy with small edits appears as a value edit instead.",
     "new_duplicate": "Exact-match detection: a near-copy with small edits appears as a new sample instead.",
@@ -29,6 +30,7 @@ LIMITATION = {
 }
 GROUPABLE = {"added", "removed", "values_missing", "values_edited"}
 SUMMARY = {
+    "unlinked": "{n} sample(s) in {file} have no clinical record, so no analysis can place them in a group",
     "swap": "{a} and {b} exchanged profiles in {file}",
     "copied_profile": "{a} now carries the exact profile of {b} in {file}; its own profile is gone",
     "new_duplicate": "New sample {a} in {file} is an exact copy of {b}",
@@ -130,6 +132,9 @@ def _rate(ch: Change, affects: list[str], runs: list[AnalysisRun]) -> tuple[str,
         if ch.detail.get("key_labels"):
             return "medium", f"Medium: {cols} is a key clinical label, but this sample isn't in a protected analysis."
         return "low", f"Low: the changed fields ({cols}) aren't used to group or filter the protected analyses."
+    if ch.type == "unlinked":
+        return "medium", (f"Medium: these samples can't be joined to clinical data, so any analysis that needs "
+                          f"a label silently drops them{' (' + who + ')' if who else ''}.")
     if ch.type == "coverage_loss":
         d = ch.detail
         drop = (d["before"] - d["after"]) / max(d["before"], 1)
@@ -275,7 +280,8 @@ def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: 
         "engine": {"name": "cohort-firewall", "version": ENGINE_VERSION,
                    "tower_policy": Policy.load(TOWER_POLICY).version},
     }
-    doc.update(_tower_summary(rel_a.name, rel_b.name, findings, analyses, repairs))
+    universe = sorted(set(rel_a.files["clinical.tsv"].samples)) if "clinical.tsv" in rel_a.files else []
+    doc.update(_tower_summary(rel_a.name, rel_b.name, findings, analyses, repairs, universe))
     hashes = json.dumps(doc["data"], sort_keys=True).encode()
     from ..review import tower_binding
     doc["certificate"] = issue(dataset_bytes=hashes, dictionary=None,
@@ -297,7 +303,30 @@ KIND_TEXT = {"sample_swap": "sample swap(s)", "duplicate": "profile(s) copied on
              "missing_data": "missing-data change(s)", "other": "other change(s)"}
 
 
-def _tower_summary(name_a: str, name_b: str, findings: list[dict], analyses: list[dict], repairs: list[dict]) -> dict:
+def site_check(findings: list[dict], universe: list[str]) -> dict | None:
+    """Do the changed samples cluster at one tissue source site (TCGA barcode characters 6-7)?
+    Hypergeometric test against the baseline's site mix. A cluster points at one site's submission or
+    processing; it says nothing about intent."""
+    from .diff import _hyper_tail
+    changed = sorted({e["id"] for f in findings if not f.get("x_summary_of_other_findings")
+                      for e in f.get("evidence", []) if e.get("kind") == "sample" and e["id"].startswith("TCGA-")})
+    pool = [s for s in universe if s.startswith("TCGA-") and len(s) >= 7]
+    changed = [s for s in changed if len(s) >= 7]
+    if len(changed) < 3 or not pool:
+        return None
+    site = lambda s: s[5:7]
+    counts: dict[str, int] = {}
+    for s in changed:
+        counts[site(s)] = counts.get(site(s), 0) + 1
+    top, k = max(counts.items(), key=lambda kv: kv[1])
+    N, K, n = len(pool), sum(1 for s in pool if site(s) == top), len(changed)
+    p = _hyper_tail(N, K, n, k) if K else None
+    return {"changed_samples": n, "sites": len(counts), "top_site": top, "in_top_site": k,
+            "expected_in_top_site": round(n * K / N, 1) if N else None, "p_by_chance": p}
+
+
+def _tower_summary(name_a: str, name_b: str, findings: list[dict], analyses: list[dict], repairs: list[dict],
+                   universe: list[str] | None = None) -> dict:
     """Plain-English summary and ranked next steps for a release comparison."""
     core = [f for f in findings if not f.get("x_summary_of_other_findings")]
     counts: dict[str, int] = {}
@@ -336,7 +365,16 @@ def _tower_summary(name_a: str, name_b: str, findings: list[dict], analyses: lis
             concentrated = (f"The losses are concentrated in one group: {top[0]} lost {top[2]} of {top[3]} genuine "
                             f"profiles ({top[4]:.1%}), {versus}, so results for {top[0]} move more than the "
                             f"total count suggests.{chance} ")
-    summary = (f"Compared with {name_a}, release {name_b} has {changed}. " + concentrated
+    sc = site_check(findings, universe or [])
+    site_line = ""
+    if sc and sc["p_by_chance"] is not None and sc["p_by_chance"] < 0.01 and sc["in_top_site"] >= 3:
+        site_line = (f"The changed samples cluster at tissue source site {sc['top_site']}: {sc['in_top_site']} of "
+                     f"{sc['changed_samples']} (about {sc['expected_in_top_site']} expected; p = {sc['p_by_chance']:.2g}), "
+                     f"so check that site's submission. ")
+    elif sc:
+        site_line = (f"The {sc['changed_samples']} changed samples come from {sc['sites']} tissue source sites, "
+                     f"with no sign that one site drives the changes. ")
+    summary = (f"Compared with {name_a}, release {name_b} has {changed}. " + concentrated + site_line
                + ((lambda t: t[:1].upper() + t[1:])(masked.split(":", 1)[1].strip().rstrip(".")) + ". " if masked else "")
                + "; ".join(parts) + ". A person must review before the new release is used.")
     affected_by_finding = {}
@@ -356,4 +394,4 @@ def _tower_summary(name_a: str, name_b: str, findings: list[dict], analyses: lis
                       "action": ACTION_TEXT.get(action, action).format(n=len(set(g["samples"])), file=file),
                       "samples": sorted(set(g["samples"]))[:12], "n_samples": len(set(g["samples"])),
                       "resolves": sorted(set(g["findings"])), "affects_analyses": unblocks})
-    return {"plain_summary": summary, "next_steps": steps}
+    return {"plain_summary": summary, "next_steps": steps, "x_site_check": sc}

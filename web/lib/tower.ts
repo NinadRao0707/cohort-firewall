@@ -44,6 +44,9 @@ export interface FindingsDoc {
   timing_seconds?: { baseline: number; total: number };
   not_compared?: string[];
   x_ledger?: { seq?: number; hash?: string };
+  x_shareable_summary?: { text: string; note: string };
+  x_site_check?: { changed_samples: number; sites: number; top_site: string; in_top_site: number;
+                   expected_in_top_site: number | null; p_by_chance: number | null } | null;
   plain_summary?: string;
   next_steps?: { rank: number; action: string; samples: string[]; n_samples: number; resolves: string[]; affects_analyses: string[] }[];
 }

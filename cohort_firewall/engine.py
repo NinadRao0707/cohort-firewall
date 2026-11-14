@@ -70,7 +70,12 @@ def evaluate_dataset(dataset_bytes: bytes, dictionary: dict | None, spec: dict |
     cert = issue(dataset_bytes=dataset_bytes, dictionary=dictionary, spec_json=qs.canonical_json(),
                  policy_version=policy.version, policy_sha256=policy.sha256,
                  verdict=ev["verdict"], rule_ids=[f["rule_id"] for f in ev["findings"]])
+    summary_part = summarize(ev["verdict"], ev["findings"],
+                             next((c["metrics"].get("n_cohort") for c in checks if c["check"] == "cohort"), None),
+                             [f for f in ev["findings"] if f.get("accepted")])
+    from .disclosure import NOTE, suppress
     return {
+        "shareable_summary": {"text": suppress(summary_part["plain_summary"]), "note": NOTE},
         "verdict": ev["verdict"],
         "human_review": human_review(ev["verdict"], [f for f in ev["findings"] if f.get("accepted")]),
         "accepted_limitations": [{"rule_id": f["rule_id"], "as": f["accepted_as"]}

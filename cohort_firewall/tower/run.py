@@ -72,6 +72,9 @@ def run_tower(challenge_repo: Path, path_b: Path, path_a: Path | None = None,
             line += " Small shifts don't make a release safe: verdicts come from what changed, not how much."
         doc["plain_summary"] = doc["plain_summary"].replace(" A person must review", " " + line + " A person must review", 1)
 
+    from ..disclosure import NOTE, suppress
+    doc["x_shareable_summary"] = {"text": suppress(doc["plain_summary"]), "note": NOTE}
+
     doc["baseline_unverified_files"] = unverified
     doc["not_compared"] = not_compared
     if not_compared:

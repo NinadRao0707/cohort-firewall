@@ -16,7 +16,7 @@ evidence, the rule and the fix behind every one.
 | **Product** | Cohort Control Tower (featured), extended with question-readiness verdicts |
 | **Team** | Ninad Rao, Kareesa Rao, Sreelasya Changalasetty, Sanica Chaudhary |
 | **Product output** | `findings.json` in shared format v0.2. Example: [`examples/outputs/findings-practice-B.json`](examples/outputs/findings-practice-B.json) |
-| **Demo video** | https://northeastern-my.sharepoint.com/:v:/g/personal/rao_nin_northeastern_edu/IQBZ9mWTuOlvTb24QVmLqFrNAV66R7PzwkkzTQ3tQV8E2u4?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0_Link added before the code freeze_e=DIoj5N |
+| **Demo video** | _Link added before the code freeze_ |
 
 ## Contents
 - [Who it's for](#who-its-for)
@@ -43,7 +43,8 @@ Compare a new release with the event's frozen release.
 
 1. **Finds what changed, without being told what to look for:** swapped samples, profiles copied onto
    other IDs, samples added or removed, a sample count that stayed the same while membership changed,
-   changed clinical labels, and coverage lost per ER status and PAM50 subtype.
+   changed clinical labels, new samples with no clinical record, and coverage lost per ER status and
+   PAM50 subtype. It also tests whether the changes cluster at one tissue source site.
 2. **Maps each change to the analyses it affects.** Affected analyses are rerun with before and after
    values. Unaffected analyses are **not rerun**, and the tool says why.
 3. **Gives each analysis a verdict** with the rule, the evidence and the fix.
@@ -182,6 +183,7 @@ release: nothing is trusted until it's verified, and every decision leaves evide
 | **Tamper-evident audit ledger** | Every check, envelope opening and review is a signed entry chained to the one before it (like a Certificate Transparency log). Editing, deleting or reordering any past entry breaks the chain at that entry |
 | **Injection-safe** | Text inside the data can never steer a verdict; instruction-like text is reported by location only |
 | **Identifier screening** | Identifier-like fields and values block the data |
+| **Small-cell suppression** | The shareable summary hides counts from 1 to 10 (CMS rule); the evidence record keeps exact counts for reviewers |
 | **Least privilege** | The API opens only release folders it lists itself; envelope input is validated and run without a shell |
 | **No secrets in the repo** | Keys are generated locally and git-ignored; history scanned with Gitleaks |
 
@@ -212,6 +214,7 @@ python tests/test_tower.py                                    # 12 release scena
 python data/make_variants.py && python tests/test_variants.py # 26 seeded-defect readiness cases
 python tests/test_review.py                                   # 13 review rules: approval limits, forged results
 python tests/test_ledger.py                                   # audit ledger: edits, deletions, reordering, forgeries
+python tests/test_disclosure.py                               # small-cell suppression keeps IDs, hides counts 1-10
 bash scripts/rehearse.sh                                      # 3 private releases, graded against their answer keys
 bash scripts/fresh_clone_test.sh                              # what a judge does, from an empty folder
 ```
@@ -254,6 +257,7 @@ report text that changes the verdict is rejected.
 | [`docs/CONTROL_TOWER.md`](docs/CONTROL_TOWER.md) | How release comparison works |
 | [`docs/HIDDEN_TEST.md`](docs/HIDDEN_TEST.md) | Opening a sealed envelope and running the tool live |
 | [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md) | The 3-minute demo and likely questions |
+| [`docs/USER_TEST.md`](docs/USER_TEST.md) | A 5-minute test of whether users reach the right conclusions |
 | [`docs/SYNTHEA_SETUP.md`](docs/SYNTHEA_SETUP.md) | Optional synthetic data for engine testing |
 | [`web/README.md`](web/README.md) | Working on the web app |
 | [`rehearsal/README.md`](rehearsal/README.md) | The private rehearsal releases |
