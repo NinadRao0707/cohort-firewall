@@ -14,6 +14,12 @@ from .run import run_tower
 
 
 def main(argv=None):
+    import sys as _sys
+    for _stream in (_sys.stdout, _sys.stderr):   # Windows consoles: print arrows and ticks safely
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--challenge-repo", type=Path, default=Path("~/oncosys-hackathon-challenge").expanduser())
     ap.add_argument("--a", type=Path, help="baseline release folder (default: <repo>/data/tcga-brca/raw)")

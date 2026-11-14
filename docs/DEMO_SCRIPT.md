@@ -11,12 +11,16 @@ anyone reruns an analysis, they need to know what changed, what it breaks, and w
 still answer the questions people ask."
 
 ## 0:15 – 1:00 · Release check  [Finding data problems 20 · Reasoning 20 · Next steps 10]
-1. **+ Open envelope** → `practice` → **Open and compare**.
-2. Read the plain-English summary: the protein sample count is unchanged at 747, but 5 samples were
-   removed and 5 copies added. "A count check alone would miss this."
-3. **Analyses** tab: A1 is **Blocked**, with its moved values highlighted. A2 is **Ready, not rerun**:
-   nothing it reads changed.
-4. **Next steps** tab: restore 2 swapped profiles, exclude 5 copied IDs.
+Every working tool finds the same changes, so spend the time on what happens after.
+1. **+ Open envelope** → `practice` → **Open and compare**. "It finds the swap, the 5 copies and the
+   5 removals, and the sample count stayed at 747, so a count check would miss all of it."
+2. **Why it matters:** "All 5 removed samples are Her2, which loses 8% of its profiles while every
+   other subtype loses under 1%. Anyone studying Her2 is hit far harder than the total suggests."
+   A1 is **Blocked** (difference 3.051 → 3.019); A2 is **left alone**, because nothing it reads changed.
+3. **What to do next:** **Next steps** tab: restore 2 swapped profiles, exclude 5 copied IDs, check
+   the removals. **Changes → Details** shows why each one is high, medium or low.
+4. **What it can't tell you:** read the line under the summary: which release is correct, and edits
+   hidden inside a swapped profile.
 
 ## 1:00 – 1:45 · Question check  [Reasoning 20 · Finding data problems 20]
 1. **Examples** → *PAM50 subtype mix* → **Check readiness**: **Conditional**. "The two PAM50 calls in

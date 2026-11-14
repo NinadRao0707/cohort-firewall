@@ -17,7 +17,7 @@ export default function Home() {
   useEffect(() => { if (result || error) out.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }, [result, error]);
 
   async function run(task: () => Promise<EvaluateResponse>) {
-    setBusy(true); setError("");
+    setBusy(true); setError(""); setResult(null);
     try { setResult(await task()); } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
   }
   function onUpload(s: Submission) {
@@ -34,7 +34,7 @@ export default function Home() {
       <Nav current="question" />
       <section className="toolbar" aria-label="Question">
         {apiConfigured ? <QuestionCard busy={busy} onSubmit={(id, spec) => run(() => evaluateCard(id, spec))} />
-          : <p className="quiet">The API isn&apos;t running, so only saved results can be opened.</p>}
+          : <p className="quiet">Live checks need the API, so this copy shows saved results only. Open one below, or run the tool locally (see the README) to check your own question.</p>}
         <div className="toolbar-foot">
           <ChipPopover variant="plain" title="Other ways to check" label="Upload files or open a saved result" width={380}>
             {() => <InputPanel busy={busy} onSubmit={onUpload} onSample={(n) => run(() => loadSample(n))} />}

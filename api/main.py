@@ -158,7 +158,8 @@ def tower_unseal(req: UnsealRequest):
     if not script.exists():
         raise HTTPException(400, "envelopes/unseal.py not found. Run git pull in the challenge repo.")
     proc = subprocess.run([sys.executable, str(script), env, *words], cwd=CHALLENGE_REPO,
-                          capture_output=True, text=True, timeout=180)
+                          capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=180,
+                          env={**os.environ, "PYTHONIOENCODING": "utf-8"})
     log = (proc.stdout + proc.stderr).strip()
     if proc.returncode != 0:
         raise HTTPException(400, log.splitlines()[-1].strip(" ✗") if log else "unseal.py failed.")
@@ -194,7 +195,8 @@ def tower_build(req: BuildRequest):
     cfg_path = cfg_dir / f"{name}.json"
     cfg_path.write_text(json.dumps(cfg, indent=2))
     proc = subprocess.run([sys.executable, str(script), "--config", str(cfg_path)], cwd=CHALLENGE_REPO,
-                          capture_output=True, text=True, timeout=300)
+                          capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=300,
+                          env={**os.environ, "PYTHONIOENCODING": "utf-8"})
     if proc.returncode != 0:
         raise HTTPException(400, f"make_release.py failed: {(proc.stderr or proc.stdout).strip()[-500:]}")
     # CHANGES.json (the answer key) is written by the script but never read or returned here.

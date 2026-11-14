@@ -305,7 +305,27 @@ def _tower_summary(name_a: str, name_b: str, findings: list[dict], analyses: lis
             parts.append(f"{a['id']} is {a['verdict']}"
                          + (f" because of {', '.join(a['affected_by'][:4])}" if a.get("affected_by") else ""))
     masked = next((f["summary"] for f in findings if "count unchanged" in f["summary"]), "")
-    summary = (f"Compared with {name_a}, release {name_b} has {changed}. "
+    cov = [f for f in findings if f.get("x_summary_of_other_findings") and "genuine profiles for" in f["summary"]]
+    concentrated = ""
+    drops = []
+    for f in cov:
+        import re as _re
+        m = _re.search(r"for (\S+) = '([^']+)' fell from (\d+) to (\d+)", f["summary"])
+        if m:
+            b, a2 = int(m.group(3)), int(m.group(4))
+            drops.append((m.group(2), m.group(1), b - a2, b, (b - a2) / max(b, 1)))
+    if len(drops) >= 2:
+        drops.sort(key=lambda x: -x[4])
+        top, rest = drops[0], drops[1:]
+        same_col = [d for d in rest if d[1] == top[1]]
+        if top[4] >= 0.05 and all(d[4] * 3 <= top[4] for d in same_col):
+            others = max((d[4] for d in same_col), default=0)
+            versus = (f"against {others:.1%} or less for every other {top[1]} group" if others
+                      else f"while no other {top[1]} group lost any")
+            concentrated = (f"The losses are concentrated in one group: {top[0]} lost {top[2]} of {top[3]} genuine "
+                            f"profiles ({top[4]:.1%}), {versus}, so results for {top[0]} move more than the "
+                            f"total count suggests. ")
+    summary = (f"Compared with {name_a}, release {name_b} has {changed}. " + concentrated
                + ((lambda t: t[:1].upper() + t[1:])(masked.split(":", 1)[1].strip().rstrip(".")) + ". " if masked else "")
                + "; ".join(parts) + ". A person must review before the new release is used.")
     affected_by_finding = {}

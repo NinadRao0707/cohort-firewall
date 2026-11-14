@@ -30,7 +30,7 @@ export default function TowerPage() {
   useEffect(() => { if (doc || error) out.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }, [doc, error]);
 
   async function go(task: () => Promise<FindingsDoc>) {
-    setBusy(true); setError("");
+    setBusy(true); setError(""); setDoc(null);
     try { setDoc(await task()); } catch (e) { setError((e as Error).message); } finally { setBusy(false); setStage(""); }
   }
   function openEnvelope() {

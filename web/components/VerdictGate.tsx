@@ -1,8 +1,9 @@
 import { VERDICT_COPY, VERDICT_ORDER, type Verdict } from "@/lib/types";
 
 /** The verdict on its four-step scale (left), and the plain-English answer (right). */
-export function VerdictGate({ verdict, question, line, summary, review }: {
+export function VerdictGate({ verdict, question, line, summary, review, cant }: {
   verdict: Verdict; question?: string; line?: string; summary?: string; review?: { level: string; text: string };
+  cant?: string[];
 }) {
   const copy = VERDICT_COPY[verdict];
   return (
@@ -20,6 +21,9 @@ export function VerdictGate({ verdict, question, line, summary, review }: {
       <div className="gate-side">
         {question && <p className="gate-question">{question}</p>}
         {summary && <p className="gate-summary">{summary}</p>}
+        {cant && cant.length > 0 && (
+          <p className="gate-cant"><strong>What this can&apos;t tell you:</strong> {cant.join("; ")}.</p>
+        )}
       </div>
     </section>
   );

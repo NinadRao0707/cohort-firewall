@@ -13,6 +13,8 @@ export function Results({ result }: { result: EvaluateResponse }) {
   return (
     <div className="results">
       <VerdictGate verdict={result.verdict}
+                   cant={["whether the research answer will be meaningful: it checks the data, not the science",
+                          "about problems its rules don't cover, so Ready is not proof the data is flawless"]}
                    summary={result.plain_summary?.replace(/^[^.]*\.\s*/, "")} review={result.human_review} />
       <Tabs initial={counted ? "steps" : "samples"} tabs={[
         { id: "steps", label: "Next steps", count: result.next_steps?.length ?? 0,

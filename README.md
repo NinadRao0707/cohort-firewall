@@ -98,6 +98,9 @@ bash scripts/run.sh
 
 Then open **http://localhost:3000/tower** (Release check) or **http://localhost:3000** (Question check).
 
+**Windows:** run the two scripts from WSL or Git Bash. Without them, follow the steps in `scripts/setup.sh`
+by hand: `py -m venv .venv`, `.venv\Scripts\activate`, `pip install -r requirements.txt`, then the commands it lists.
+
 `setup.sh` creates the Python environment, clones the event's challenge repository next to this one
 (or uses `$CF_CHALLENGE_REPO`), fetches the frozen TCGA-BRCA files and verifies their checksums,
 builds practice release B, builds the readiness table, signs the saved samples with a key generated

@@ -90,6 +90,9 @@ export function TowerResults({ doc }: { doc: FindingsDoc }) {
   return (
     <div className="results">
       <VerdictGate verdict={verdict} line={TOWER_LINE[verdict]} summary={doc.plain_summary}
+                   cant={["which release is correct, so every repair needs a person's decision",
+                          "about edits hidden inside a swapped or copied profile, which show up as value edits",
+                          ...(doc.not_compared?.length ? [`anything about ${doc.not_compared.join(", ")}, which this release doesn't include`] : [])]}
                    question={`${release?.name} compared with ${baseline?.name}${doc.baseline_unverified_files?.length
                      ? " (baseline does not match the frozen checksums)" : ""}${doc.timing_seconds ? `, ${doc.timing_seconds.total} s` : ""}`} />
       <Tabs tabs={[
