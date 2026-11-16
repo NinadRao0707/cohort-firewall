@@ -12,6 +12,7 @@ export interface TowerFinding {
   evidence: EvidenceRef[]; affects_analyses?: string[]; not_affected_analyses?: string[];
   limitation?: string; needs_human_review?: boolean;
   x_severity_reason?: string; x_summary_of_other_findings?: boolean; x_p_by_chance?: number;
+  x_confidence_reason?: string;
 }
 
 export interface TowerAnalysis {
@@ -48,7 +49,10 @@ export interface FindingsDoc {
   x_site_check?: { changed_samples: number; sites: number; top_site: string; in_top_site: number;
                    expected_in_top_site: number | null; p_by_chance: number | null } | null;
   plain_summary?: string;
-  next_steps?: { rank: number; action: string; samples: string[]; n_samples: number; resolves: string[]; affects_analyses: string[] }[];
+  next_steps?: { rank: number; action: string; samples: string[]; n_samples: number; resolves: string[];
+                 affects_analyses: string[]; evidence_to_reconsider?: string }[];
+  x_summaries?: TowerFinding[];
+  x_headline?: string;
 }
 
 export async function listReleases(): Promise<{ name: string; files: string[] }[]> {

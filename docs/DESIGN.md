@@ -94,8 +94,8 @@ controlled-access data is Blocked; an undeclared status is Insufficient Evidence
 | Conditional | Approve with conditions, reject, ask for more evidence |
 | Blocked, Insufficient Evidence | Reject, ask for more evidence |
 
-Approval requires acknowledging every finding; any decision other than a clean approval requires a
-note. The verdict being reviewed is read from the signed certificate, never from the browser. The
+Every decision needs a named reviewer and a written note, Ready included; approval also requires
+acknowledging every finding. The verdict being reviewed is read from the signed certificate, never from the browser. The
 review itself is signed (Ed25519) and saved with the evidence record.
 
 ## Threat model

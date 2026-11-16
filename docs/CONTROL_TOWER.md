@@ -43,6 +43,21 @@ checked against `sources.csv`. If it doesn't match, every verdict is Insufficien
 A profile counts as copied only if it was unique in the baseline and most of the sample's values
 changed, so samples that happen to share values are never accused.
 
+**Probable swaps.** Exact matching can't see a swap that also had a few values edited. A near-match
+pass looks at samples whose values were edited in the same file and reports a pair as a probable swap
+when each one's new profile correlates with the other's old profile (r ≥ 0.95) clearly better than with
+its own (by 0.05 or more), and the match is mutual. Probable swaps have medium confidence; samples
+that were merely edited are not called swaps (there's a test for both).
+
+**Confidence follows the evidence.** Exact swaps and copies are high; probable swaps and copies of a
+profile several samples share are medium; a subgroup loss is high, medium or low according to its
+chance test. Each finding states why (`x_confidence_reason`).
+
+**Summaries are kept apart.** Findings that only restate others (coverage per subgroup, count
+unchanged but membership changed) go in `x_summaries` with IDs S1, S2…, so a Repair Review Desk never
+counts one problem twice. `--summary-findings` puts them back in `findings`; `--no-summary-findings`
+leaves them out.
+
 **Evidence cites only samples that changed.** For a copy, the sample whose profile was copied is
 unchanged: it is named in the evidence note and the summary, never cited as a changed sample.
 

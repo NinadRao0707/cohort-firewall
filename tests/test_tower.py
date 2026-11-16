@@ -75,7 +75,7 @@ def run_all(verbose=True):
             problems = [f"{k}: expected {v}, got {got.get(k)}" for k, v in expected.items() if got.get(k) != v]
             problems += [f"missing finding kind {k}" for k in kinds - found]
             if name == "count_unchanged_membership_changed" and not any(
-                    "count unchanged" in f["summary"] for f in doc["findings"]):
+                    "count unchanged" in f["summary"] for f in doc["findings"] + doc.get("x_summaries", [])):
                 problems.append("did not report that the count was unchanged while membership changed")
             if name == "protein_copied_profiles":
                 # sources of copies keep their data: coverage loss must not exceed the overwritten samples
@@ -143,7 +143,8 @@ def run_envelope_case(verbose=True):
             problems.append(f"not_compared = {doc.get('not_compared')}")
         if doc["data"]["releases"][1]["name"] != "E07":
             problems.append(f"release named {doc['data']['releases'][1]['name']!r}, expected 'E07'")
-        if {f["kind"] for f in doc["findings"]} != {"sample_swap", "missing_data"} or \
+        if {f["kind"] for f in doc["findings"]} != {"sample_swap"} or \
+                "missing_data" not in {f["kind"] for f in doc.get("x_summaries", [])} or \
                 {a["id"]: a["verdict"] for a in doc["analyses"]} != {"A1": "Blocked", "A2": "Ready"}:
             problems.append(f"unexpected result: {[f['kind'] for f in doc['findings']]}")
         if schema_path().exists():
@@ -207,8 +208,54 @@ def test_shared_profile_copy():
     assert run_shared_profile_case(verbose=False)
 
 
+def run_near_swap_case(verbose=True):
+    """A swap with small value edits on top is reported as a probable swap (medium confidence), and two
+    samples that were merely edited, not swapped, are not."""
+    import shutil
+    import numpy as np
+    import pandas as pd
+    from cohort_firewall.tower.run import run_tower
+    problems = []
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        make_baseline(tmp / "b")
+        make_challenge_repo(tmp / "c", tmp / "b")
+        rng = np.random.default_rng(5)
+        for case in ("swap_plus_edits", "edits_only"):
+            rel = tmp / "c" / "data" / "tcga-brca" / "releases" / case
+            rel.mkdir(parents=True)
+            for f in (tmp / "b").iterdir():
+                shutil.copy(f, rel / f.name)
+            p = pd.read_csv(rel / "protein_rppa.tsv.gz", sep="\t", index_col=0)
+            x, y = p.columns[3], p.columns[8]
+            if case == "swap_plus_edits":
+                p[[x, y]] = p[[y, x]].to_numpy()
+            for c in (x, y):                      # small edits on ~10% of values
+                idx = rng.choice(len(p), size=max(2, len(p) // 10), replace=False)
+                p.iloc[idx, p.columns.get_loc(c)] += 0.05
+            p.round(6).to_csv(rel / "protein_rppa.tsv.gz", sep="\t")
+            doc = run_tower(tmp / "c", rel)
+            swaps = [f for f in doc["findings"] if f["kind"] == "sample_swap"]
+            if case == "swap_plus_edits":
+                cited = {e["id"] for f in swaps for e in f["evidence"]}
+                if not swaps or cited != {x, y} or swaps[0]["confidence"] != "medium":
+                    problems.append(f"swap with edits not reported as a medium-confidence probable swap: {swaps}")
+            elif swaps:
+                problems.append("plain edits were wrongly reported as a swap")
+    if verbose:
+        print(f"{'PASS' if not problems else 'FAIL'}  near_match_swap              probable swap found; plain edits not called a swap")
+        for p_ in problems:
+            print("      -", p_)
+    return not problems
+
+
+def test_near_swap():
+    assert run_near_swap_case(verbose=False)
+
+
 if __name__ == "__main__":
     ok_all = run_all()
     ok_env = run_envelope_case()
     ok_shared = run_shared_profile_case()
-    sys.exit(0 if ok_all and ok_env and ok_shared else 1)
+    ok_near = run_near_swap_case()
+    sys.exit(0 if ok_all and ok_env and ok_shared and ok_near else 1)

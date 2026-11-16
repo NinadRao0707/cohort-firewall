@@ -46,9 +46,9 @@ def _check_one(verdict: str, decision: str, required: set[str], acknowledged: se
     if decision in APPROVALS and not required <= acknowledged:
         missing = ", ".join(sorted(required - acknowledged))
         raise ReviewError(f"{who}: approving requires confirming you reviewed the evidence for {missing}.")
-    if (decision != "approve" or required) and len(note.strip()) < 10:
-        raise ReviewError(f"{who}: write a short note (why the findings are acceptable, what conditions apply, "
-                          "or what evidence is needed).")
+    if len(note.strip()) < 10:
+        raise ReviewError(f"{who}: write a short note. Every decision needs one, Ready included: what you "
+                          "checked, what conditions apply, or what evidence is needed.")
 
 
 def _sign(payload: dict) -> dict:

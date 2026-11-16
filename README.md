@@ -16,7 +16,7 @@ evidence, the rule and the fix behind every one.
 | **Product** | Cohort Control Tower (featured), extended with question-readiness verdicts |
 | **Team** | Ninad Rao, Kareesa Rao, Sreelasya Changalasetty, Sanica Chaudhary |
 | **Product output** | `findings.json` in shared format v0.2. Example: [`examples/outputs/findings-practice-B.json`](examples/outputs/findings-practice-B.json) |
-| **Demo video** | https://youtu.be/6q2zScy7b7Y |
+| **Demo video** | _Link added before the code freeze_ |
 
 ## Contents
 - [Who it's for](#who-its-for)
@@ -109,7 +109,7 @@ Then open **http://localhost:3000/tower** (Release check) or **http://localhost:
 **Windows:** run the two scripts from WSL or Git Bash. Without them, follow the steps in `scripts/setup.sh`
 by hand: `py -m venv .venv`, `.venv\Scripts\activate`, `pip install -r requirements.txt`, then the commands it lists.
 
-`setup.sh` creates the Python environment, clones the event's challenge repository next to this one
+`setup.sh` creates the Python environment (installing the exact versions in `requirements.lock` when present), clones the event's challenge repository next to this one
 (or uses `$CF_CHALLENGE_REPO`), fetches the frozen TCGA-BRCA files and verifies their checksums,
 builds practice release B, builds the readiness table, signs the saved samples with a key generated
 on your machine, runs the test suites and installs the web app. It's safe to run again. `run.sh`
@@ -200,7 +200,8 @@ elsewhere (a review note, a ticket) to detect that, as transparency logs do.
 ## Limitations
 These are also shown in the product, under **Limitations of this check**, and on every finding.
 
-- Change detection compares exact values: a swap or copy that also edits values is reported as value edits.
+- Change detection compares exact values. A swap with small edits on top is caught by a near-match pass
+  and reported as a *probable* swap with medium confidence; other edits hidden inside a copied profile show as value edits.
 - The tool shows *what* changed, not which release is correct. Every repair needs a person's decision.
 - Identifier detection is pattern-based; a pass doesn't prove no personal information is present.
 - Leakage detection checks one field at a time.
@@ -210,9 +211,9 @@ These are also shown in the product, under **Limitations of this check**, and on
 ## Tests
 ```bash
 source .venv/bin/activate
-python tests/test_tower.py                                    # 12 release scenarios, incl. no RNA and shared-profile copies
+python tests/test_tower.py                                    # 13 release scenarios, incl. no RNA, shared-profile copies, near-match swaps
 python data/make_variants.py && python tests/test_variants.py # 26 seeded-defect readiness cases
-python tests/test_review.py                                   # 13 review rules: approval limits, forged results
+python tests/test_review.py                                   # 14 review rules: approval limits, notes on every verdict, forged results
 python tests/test_ledger.py                                   # audit ledger: edits, deletions, reordering, forgeries
 python tests/test_disclosure.py                               # small-cell suppression keeps IDs, hides counts 1-10
 bash scripts/rehearse.sh                                      # 3 private releases, graded against their answer keys

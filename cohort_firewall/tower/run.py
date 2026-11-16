@@ -11,7 +11,7 @@ from .releases import frozen_checksums, load_release
 
 def run_tower(challenge_repo: Path, path_b: Path, path_a: Path | None = None,
               team: str = "Cohort Firewall", include_rna: bool = True,
-              include_summaries: bool = True) -> dict:
+              include_summaries: bool = True, summaries_in_findings: bool = False) -> dict:
     repo = Path(challenge_repo).expanduser()
     a = Path(path_a).expanduser() if path_a else repo / "data" / "tcga-brca" / "raw"
     b = Path(path_b).expanduser()
@@ -38,7 +38,7 @@ def run_tower(challenge_repo: Path, path_b: Path, path_a: Path | None = None,
     question = (f"Is release {rel_b.name} still fit for the protected analyses "
                 f"({', '.join(x.id for x in analyses)}) that were run on {rel_a.name}?")
     doc = build_findings(rel_a, rel_b, changes, runs, unverified, team, question,
-                         include_summaries=include_summaries)
+                         include_summaries=include_summaries, summaries_in_findings=summaries_in_findings)
     # How much each rerun analysis moved relative to sampling noise, and whether the repairs fix it.
     from .impact import clear_cache, noise, repair_simulation, sentence
     clear_cache()

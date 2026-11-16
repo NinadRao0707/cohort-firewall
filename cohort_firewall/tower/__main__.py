@@ -28,7 +28,9 @@ def main(argv=None):
     ap.add_argument("--team", default="Cohort Firewall")
     ap.add_argument("--no-rna", action="store_true", help="skip the 64 MB RNA file")
     ap.add_argument("--no-summary-findings", action="store_true",
-                    help="leave out findings that only summarize others (coverage, count-masked membership)")
+                    help="Leave out summary findings entirely (by default they go in x_summaries, not findings)")
+    ap.add_argument("--summary-findings", action="store_true",
+                    help="Put summary findings back in the findings list (the old behaviour)")
     args = ap.parse_args(argv)
     repo = args.challenge_repo.expanduser()
     path_a = (args.a or repo / "data" / "tcga-brca" / "raw").expanduser()
@@ -38,7 +40,7 @@ def main(argv=None):
             sys.exit(f"Not found: {p}")
 
     doc = run_tower(repo, path_b, args.a, team=args.team, include_rna=not args.no_rna,
-                    include_summaries=not args.no_summary_findings)
+                    include_summaries=not args.no_summary_findings, summaries_in_findings=args.summary_findings)
     unverified = doc["baseline_unverified_files"]
     print(f"Baseline {doc['data']['releases'][0]['name']}: "
           f"{'all match frozen checksums' if not unverified else 'UNVERIFIED: ' + ', '.join(unverified)}")

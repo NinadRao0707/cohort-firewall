@@ -42,7 +42,7 @@ class Change:
 
     @property
     def kind(self) -> str:
-        return {"swap": "sample_swap", "copied_profile": "duplicate", "new_duplicate": "duplicate",
+        return {"swap": "sample_swap", "probable_swap": "sample_swap", "copied_profile": "duplicate", "new_duplicate": "duplicate",
                 "removed": "membership_change", "added": "membership_change",
                 "values_missing": "missing_data", "coverage_loss": "missing_data",
                 "unlinked": "unlinked_record",
@@ -53,6 +53,58 @@ class Change:
 
 def _missing(v: str) -> bool:
     return v.strip() in MISSING
+
+
+def _as_float(v):
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return float("nan")
+
+
+def _near_swaps(changes: list[Change], vals_a: dict, vals_b: dict, fname: str,
+                r_min: float = 0.95, gain: float = 0.05) -> list[Change]:
+    """A swap with small value edits on top fails the exact-match test and shows up as two edited
+    samples. Among samples with edited values in this file, find pairs where each one's new profile
+    correlates with the OTHER's old profile (r >= 0.95) clearly better than with its own (+0.05),
+    and the match is mutual. Report those as probable swaps, with lower confidence than exact ones."""
+    import numpy as np
+    ids = [c.samples[0] for c in changes if c.type == "values_edited" and c.file == fname]
+    if not 2 <= len(ids) <= 400:
+        return changes
+    A = np.array([[_as_float(x) for x in vals_a[s]] for s in ids])
+    Bm = np.array([[_as_float(x) for x in vals_b[s]] for s in ids])
+
+    def z(M):
+        M = M.copy()
+        mean = np.nanmean(M, axis=1, keepdims=True)
+        M = np.where(np.isnan(M), mean, M)
+        M = M - M.mean(axis=1, keepdims=True)
+        norm = np.linalg.norm(M, axis=1, keepdims=True)
+        norm[norm == 0] = np.nan
+        return M / norm
+
+    with np.errstate(invalid="ignore"):
+        C = np.nan_to_num(z(Bm) @ z(A).T, nan=-1.0)       # C[i, j] = corr(new i, old j)
+    own = np.diag(C).copy()
+    D = C.copy()
+    np.fill_diagonal(D, -1.0)
+    best = D.argmax(axis=1)
+    pairs, used = [], set()
+    for i, j in enumerate(best):
+        if i in used or j in used or best[j] != i:
+            continue
+        if min(D[i, j], D[j, i]) >= r_min and D[i, j] >= own[i] + gain and D[j, i] >= own[j] + gain:
+            pairs.append((i, int(j)))
+            used |= {i, int(j)}
+    if not pairs:
+        return changes
+    drop = {ids[k] for pr in pairs for k in pr}
+    out = [c for c in changes if not (c.type == "values_edited" and c.file == fname and c.samples[0] in drop)]
+    for i, j in pairs:
+        out.append(Change("probable_swap", fname, sorted([ids[i], ids[j]]), {
+            "r": round(float((D[i, j] + D[j, i]) / 2), 3), "r_own": round(float((own[i] + own[j]) / 2), 3)}))
+    return out
 
 
 def diff_file(a, b) -> list[Change]:
@@ -122,6 +174,9 @@ def diff_file(a, b) -> list[Change]:
             changes.append(Change("values_edited", a.name, [sid], {
                 "n_values": len(idx), "n_newly_missing": len(newly_missing), "features": feats[:10]}))
         done.add(sid)
+
+    if a.name not in ("clinical.tsv", "survival.tsv"):
+        changes = _near_swaps(changes, vals_a, vals_b, a.name)
 
     for sid in sorted(B - A):
         owners = inv_a.get(fb[sid], set()) if sid not in empty_b else set()

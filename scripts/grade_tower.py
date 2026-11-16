@@ -59,7 +59,7 @@ def main(findings_path, changes_path):
     for what, ok in rows:
         print(f"  {'FOUND ' if ok else 'MISSED'} {what}")
     extra = [f for f in fs if f["id"] not in used and not f.get("x_summary_of_other_findings")]
-    summaries = [f for f in fs if f.get("x_summary_of_other_findings")]
+    summaries = [f for f in fs if f.get("x_summary_of_other_findings")] + list(doc.get("x_summaries", []))
     print(f"Unexplained findings (possible false positives): {len(extra)}")
     for f in extra:
         print(f"  {f['id']} {f['summary']}")

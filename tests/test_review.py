@@ -38,8 +38,10 @@ def run():
     ready, cond, blocked = result("clean"), result("feature_missingness"), result("phi")
     rid = lambda r: [f["rule_id"] for f in r["findings"]]
 
-    rec = review_question(ready, "A. Reviewer", "data steward", "approve", [], "")
-    checks.append(("Ready can be approved, record verifies", verify_review(rec)))
+    checks.append(("Ready approval without a note is refused",
+                   expect_error(review_question, ready, "A. Reviewer", "data steward", "approve", [], "")))
+    rec = review_question(ready, "A. Reviewer", "data steward", "approve", [], "Checked the cohort and outcome definitions.")
+    checks.append(("Ready can be approved with a named reviewer and note, record verifies", verify_review(rec)))
     bad = copy.deepcopy(rec); bad["review"]["decision"] = "reject"
     checks.append(("edited review fails verification", not verify_review(bad)))
     checks.append(("Conditional cannot use plain approve",
@@ -57,7 +59,7 @@ def run():
     forged = copy.deepcopy(blocked); forged["certificate"]["payload"]["verdict"] = "READY"
     checks.append(("result with an edited verdict is refused",
                    expect_error(review_question, forged, "A", "r", "approve", [], "")))
-    checks.append(("reviewer name required", expect_error(review_question, ready, " ", "r", "approve", [], "")))
+    checks.append(("reviewer name required", expect_error(review_question, ready, " ", "r", "approve", [], "Checked the definitions.")))
 
     # Control Tower release review
     from fake_tcga import make_baseline, make_challenge_repo, make_release

@@ -86,6 +86,7 @@ function ChangeRow({ f }: { f: TowerFinding }) {
       {open && (
         <div className="finding-body">
           {f.x_severity_reason && <p><span>Why this severity:</span> {f.x_severity_reason.replace(/^(High|Medium|Low): /, "")}</p>}
+          <p><span>Confidence:</span> {f.confidence}{f.x_confidence_reason ? `. ${f.x_confidence_reason}` : ""}</p>
           <p><span>Samples that changed:</span> <code>{f.evidence.filter((e) => e.kind === "sample").map((e) => e.id).join(", ") || "file-level"}</code></p>
           {f.evidence.filter((e) => e.note).map((e, i) => <p key={i} className="quiet">{e.id}: {e.note}</p>)}
           {typeof f.x_p_by_chance === "number" && (
@@ -124,9 +125,19 @@ export function TowerResults({ doc }: { doc: FindingsDoc }) {
         { id: "analyses", label: "Analyses", count: doc.analyses?.length ?? 0,
           content: <ul className="analyses">{(doc.analyses ?? []).map((a) => <AnalysisRow key={a.id} a={a} />)}</ul> },
         { id: "steps", label: "Next steps", count: doc.next_steps?.length ?? 0, content: <NextSteps steps={doc.next_steps} /> },
-        { id: "changes", label: "Changes", count: doc.findings.length, content: findings.length
-          ? <ul className="findings">{findings.map((f) => <ChangeRow key={f.id} f={f} />)}</ul>
-          : <p className="quiet">No differences from the baseline.</p> },
+        { id: "changes", label: "Changes", count: doc.findings.length, content: (
+          <>
+            {findings.length
+              ? <ul className="findings">{findings.map((f) => <ChangeRow key={f.id} f={f} />)}</ul>
+              : <p className="quiet">No differences from the baseline.</p>}
+            {(doc.x_summaries?.length ?? 0) > 0 && (
+              <details className="fold">
+                <summary>Summaries ({doc.x_summaries!.length}): they restate the changes above, so they aren&apos;t counted as separate problems</summary>
+                <ul className="findings">{doc.x_summaries!.map((f) => <ChangeRow key={f.id} f={f} />)}</ul>
+              </details>
+            )}
+          </>
+        ) },
         { id: "review", label: "Review", content: <ReleaseReview key={(doc.certificate as { cert_id?: string } | undefined)?.cert_id ?? "r"} doc={doc} /> },
         { id: "record", label: "Record", content: (
           <>

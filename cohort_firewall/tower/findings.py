@@ -21,7 +21,8 @@ SEVERITY = {"swap": "high", "copied_profile": "high", "new_duplicate": "high", "
             "features_changed": "medium", "file_missing": "high", "file_added": "low"}
 LIMITATION = {
     "unlinked": "Checks sample IDs against clinical.tsv in the same release; samples that already lacked a clinical record in the baseline are not flagged.",
-    "swap": "Exact-match detection: a swap combined with small value edits appears as two value edits instead.",
+    "swap": "Exact-match detection: a swap combined with small value edits is reported separately as a probable swap.",
+    "probable_swap": "Near match by correlation, not an exact match: confirm against the source before restoring.",
     "copied_profile": "Exact-match detection: a near-copy with small edits appears as a value edit instead.",
     "new_duplicate": "Exact-match detection: a near-copy with small edits appears as a new sample instead.",
     "label_change": "The tool sees that a label changed, not which version is correct.",
@@ -32,6 +33,7 @@ GROUPABLE = {"added", "removed", "values_missing", "values_edited"}
 SUMMARY = {
     "unlinked": "{n} sample(s) in {file} have no clinical record, so no analysis can place them in a group",
     "swap": "{a} and {b} exchanged profiles in {file}",
+    "probable_swap": "{a} and {b} probably exchanged profiles in {file}, with small value edits on top",
     "copied_profile": "{a} now carries the exact profile of {b} in {file}; its own profile is gone",
     "new_duplicate": "New sample {a} in {file} is an exact copy of {b}",
     "removed": "{n} sample(s) disappeared from {file}",
@@ -46,7 +48,7 @@ SUMMARY = {
 
 def _metrics(run: AnalysisRun) -> dict:
     c = run.changes
-    swaps = [x for x in c if x.type == "swap"]
+    swaps = [x for x in c if x.type in ("swap", "probable_swap")]
     dups = [x for x in c if x.type in {"copied_profile", "new_duplicate"}]
     key_lbl = [x for x in c if x.type == "label_change" and x.detail.get("key_labels")]
     other_lbl = [x for x in c if x.type == "label_change" and not x.detail.get("key_labels")]
@@ -96,6 +98,7 @@ def _evidence(change: Change, rel_b: str, limit: int = 25) -> list[dict]:
 
 DERIVED = {"coverage_loss", "count_masks_membership"}
 INTEGRITY = {"swap": "measurements are attached to the wrong samples",
+             "probable_swap": "measurements are probably attached to the wrong samples",
              "copied_profile": "a sample carries another sample's measurements",
              "new_duplicate": "the same measurement is counted under two sample IDs"}
 
@@ -152,11 +155,43 @@ def _rate(ch: Change, affects: list[str], runs: list[AnalysisRun]) -> tuple[str,
     return "low", f"Low: no protected analysis reads the samples or fields that changed in {ch.file}."
 
 
+def _confidence(ch: Change) -> tuple[str, str]:
+    """How sure the tool is, from how the finding was detected: exact matches are high, near matches
+    and ambiguous sources are medium, and a subgroup loss follows its chance test."""
+    t, d = ch.type, ch.detail
+    if t == "probable_swap":
+        return "medium", (f"Near match, not exact: each new profile correlates r = {d.get('r')} with the other "
+                          f"sample's old profile, against r = {d.get('r_own')} with its own.")
+    if t == "swap":
+        return "high", "Exact match: each sample now carries the other's exact baseline profile."
+    if t in ("copied_profile", "new_duplicate"):
+        if d.get("ambiguous"):
+            return "medium", ("Exact copy, but several baseline samples share that profile, so the source "
+                              "can't be told apart.")
+        return "high", "Exact match to one baseline sample's profile."
+    if t == "coverage_loss":
+        p = d.get("p_by_chance")
+        if p is None:
+            return "medium", "Exact counts; no chance test was possible."
+        if p < 0.01:
+            return "high", f"Exact counts, and losses this concentrated are very unlikely by chance (p = {p:.2g})."
+        if p < 0.05:
+            return "medium", f"Exact counts; the concentration is borderline (p = {p:.2g})."
+        return "low", f"Exact counts, but a loss this size is consistent with chance (p = {p:.2g})."
+    if t in ("removed", "added", "unlinked", "count_masks_membership"):
+        return "high", "Sample IDs compared directly between releases."
+    if t in ("label_change", "values_edited", "values_missing"):
+        return "high", "Exact comparison of the values in both releases."
+    return "medium", "Detected from file-level differences."
+
+
 def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: list[AnalysisRun],
                    baseline_unverified: list[str], team: str, question: str,
-                   include_summaries: bool = True) -> dict:
-    """include_summaries=False leaves out findings that only summarize other findings
-    (coverage per subgroup, count-masked membership), for checkers that score each finding."""
+                   include_summaries: bool = True, summaries_in_findings: bool = False) -> dict:
+    """Findings that only summarize other findings (coverage per subgroup, count-masked membership)
+    get IDs S1, S2... and go in their own `x_summaries` list, so a Repair Review Desk never counts
+    one problem twice. summaries_in_findings=True puts them back in `findings`;
+    include_summaries=False leaves them out entirely."""
     if not include_summaries:
         changes = [c for c in changes if c.type not in DERIVED]
     ids_by_change: dict[int, str] = {}
@@ -174,8 +209,14 @@ def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: 
         (Change(t, f, [s for c in chs for s in c.samples], {"members": len(chs)}), chs)
         for (t, f), chs in grouped.items()]
 
-    for n, (ch, members) in enumerate(items, 1):
-        fid = f"F{n}"
+    n_f = n_s = 0
+    for ch, members in items:
+        if ch.type in DERIVED and not summaries_in_findings:
+            n_s += 1
+            fid = f"S{n_s}"
+        else:
+            n_f += 1
+            fid = f"F{n_f}"
         for m in members:
             ids_by_change[id(m)] = fid
         if ch.type in {"coverage_loss", "count_masks_membership"}:
@@ -208,9 +249,10 @@ def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: 
                 summary = (f"New sample {a} in {ch.file} is an exact copy of a profile shared by {len(cands)} "
                            f"baseline samples ({', '.join(cands[:4])}{'…' if len(cands) > 4 else ''})")
         severity, severity_reason = _rate(ch, affects, runs)
+        confidence, confidence_reason = _confidence(ch)
         findings.append({
-            "id": fid, "kind": ch.kind, "summary": summary, "severity": severity, "confidence": "high",
-            "x_severity_reason": severity_reason,
+            "id": fid, "kind": ch.kind, "summary": summary, "severity": severity, "confidence": confidence,
+            "x_severity_reason": severity_reason, "x_confidence_reason": confidence_reason,
             "evidence": _evidence(ch, rel_b.name),
             "affects_analyses": affects, "not_affected_analyses": not_affected,
             "limitation": LIMITATION.get(ch.type, "Detected by comparing exact values between releases."),
@@ -219,7 +261,7 @@ def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: 
             **({"x_p_by_chance": ch.detail["p_by_chance"]} if ch.detail.get("p_by_chance") is not None else {}),
         })
         action, targets, why = None, [], ""
-        if ch.type == "swap":
+        if ch.type in ("swap", "probable_swap"):
             action, why = "restore_from_previous_release", "Both samples' previous profiles are intact in the baseline release."
             targets = ch.samples
         elif ch.type == "copied_profile":
@@ -250,7 +292,7 @@ def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: 
                                     "reason": f["reason"], "remedy": f["remedy"]} for f in ev["findings"]],
                  "affected_by": sorted({ids_by_change[id(c)] for c in r.changes if id(c) in ids_by_change},
                                        key=lambda x: int(x[1:])),
-                 "needs_human_review": ev["verdict"] != "READY"}
+                 "needs_human_review": True}
         if r.before is not None:
             entry["before"] = strip(r.before)
         if r.after is not None:
@@ -269,11 +311,13 @@ def build_findings(rel_a: Release, rel_b: Release, changes: list[Change], runs: 
         ]},
         "question": question,
         "verdict": VERDICT_LABEL[overall],
-        "findings": findings,
+        "findings": [f for f in findings if not (f.get("x_summary_of_other_findings") and f["id"].startswith("S"))],
+        "x_summaries": [f for f in findings if f.get("x_summary_of_other_findings") and f["id"].startswith("S")],
         "analyses": analyses,
         "repairs": repairs,
         "limitations": [
-            "Change detection compares exact values; edits that also alter a swapped or copied profile are reported as value edits.",
+            "Change detection compares exact values. A swap with small edits on top is caught by a near-match pass and "
+            "reported as a probable swap with medium confidence; other edits to a swapped or copied profile show as value edits.",
             "The tool shows what changed, not which release is correct. Every repair needs a person's decision.",
             "Research data-quality check only: no diagnosis, treatment recommendation, risk score or clinical claim.",
         ],
@@ -298,6 +342,21 @@ ACTION_TEXT = {
     "flag_for_review": "Check {n} changed sample(s) in {file} against the source",
 }
 ACTION_ORDER = {"restore_from_previous_release": 0, "exclude": 1, "flag_for_review": 2}
+# "Check against the source" is split by what changed, so each step says exactly what to confirm.
+FLAG_TEXT = {
+    "label_conflict": "Confirm {n} relabelled clinical record(s) in {file} against the source",
+    "membership_change": "Confirm with the data provider that {n} added or removed sample(s) in {file} were intended",
+    "missing_data": "Check {n} sample(s) with lost values in {file} against the source",
+    "other": "Check {n} sample(s) with edited values in {file} against the source",
+}
+RECONSIDER = {
+    "restore_from_previous_release": "Reconsider once the restored profiles match the baseline and a rerun finds no swap or copy.",
+    "exclude": "Reconsider once these IDs are removed, or shown to be genuine new samples with their own measurements.",
+    "label_conflict": "Reconsider once the source record shows which label is correct.",
+    "membership_change": "Reconsider once the provider confirms the change, and the affected analyses are rerun.",
+    "missing_data": "Reconsider once the values are restored or the loss is explained.",
+    "other": "Reconsider once the source confirms the new values.",
+}
 KIND_TEXT = {"sample_swap": "sample swap(s)", "duplicate": "profile(s) copied onto other IDs",
              "membership_change": "membership change(s)", "label_conflict": "clinical label change(s)",
              "missing_data": "missing-data change(s)", "other": "other change(s)"}
@@ -381,17 +440,45 @@ def _tower_summary(name_a: str, name_b: str, findings: list[dict], analyses: lis
     for a in analyses:
         for fid in a.get("affected_by", []):
             affected_by_finding.setdefault(fid, set()).add(a["id"])
+    kind_of = {f["id"]: f.get("kind", "other") for f in findings}
     groups: dict[tuple, dict] = {}
     for r in repairs:
         file = r["targets"][0].get("file", "") if r["targets"] else ""
-        g = groups.setdefault((r["action"], file), {"action": r["action"], "file": file, "samples": [], "findings": []})
+        kind = kind_of.get(r["addresses"][0], "other") if r["action"] == "flag_for_review" else ""
+        g = groups.setdefault((r["action"], file, kind),
+                              {"action": r["action"], "file": file, "kind": kind, "samples": [], "findings": []})
         g["samples"] += [t["id"] for t in r["targets"]]
         g["findings"] += r["addresses"]
     steps = []
-    for (action, file), g in sorted(groups.items(), key=lambda kv: ACTION_ORDER.get(kv[0][0], 9)):
+    for (action, file, kind), g in sorted(groups.items(), key=lambda kv: (ACTION_ORDER.get(kv[0][0], 9), kv[0][2])):
         unblocks = sorted({a for fid in g["findings"] for a in affected_by_finding.get(fid, set())})
-        steps.append({"rank": len(steps) + 1,
-                      "action": ACTION_TEXT.get(action, action).format(n=len(set(g["samples"])), file=file),
-                      "samples": sorted(set(g["samples"]))[:12], "n_samples": len(set(g["samples"])),
-                      "resolves": sorted(set(g["findings"])), "affects_analyses": unblocks})
-    return {"plain_summary": summary, "next_steps": steps, "x_site_check": sc}
+        n = len(set(g["samples"]))
+        text = (FLAG_TEXT.get(kind, ACTION_TEXT["flag_for_review"]) if action == "flag_for_review"
+                else ACTION_TEXT.get(action, action)).format(n=n, file=file)
+        steps.append({"rank": len(steps) + 1, "action": text,
+                      "samples": sorted(set(g["samples"]))[:12], "n_samples": n,
+                      "resolves": sorted(set(g["findings"]), key=lambda x: int(x[1:])), "affects_analyses": unblocks,
+                      "evidence_to_reconsider": RECONSIDER.get(kind or action, "")})
+    # One opening sentence: the verdict, the main reason, and the first step.
+    order = ["Blocked", "Insufficient Evidence", "Conditional", "Ready"]
+    worst = sorted(analyses, key=lambda a: order.index(a["verdict"]) if a["verdict"] in order else 9)
+    top = worst[0] if worst else None
+    plain = {"TWR-SWAP-1": "measurements are attached to the wrong samples",
+             "TWR-DUP-1": "the same measurement is counted under different sample IDs",
+             "TWR-LBL-1": "a clinical label it groups by has changed",
+             "TWR-MEM-1": "samples appeared or disappeared in the data it uses",
+             "TWR-VAL-1": "values it reads were edited or lost",
+             "TWR-OTH-1": "its input files changed",
+             "TWR-RES-1": "its result changed",
+             "TWR-PROV-1": "the baseline doesn't match the frozen checksums",
+             "TWR-RUN-1": "it couldn't be rerun on this release"}
+    if top and top["verdict"] != "Ready" and top.get("verdict_rules"):
+        rule = top["verdict_rules"][0]
+        reason = plain.get(rule["rule_id"], rule["reason"].split(" (")[0].rstrip(".").lower())
+        state = "can't be trusted on this release yet" if top["verdict"] == "Blocked" else "needs review before use"
+        headline = f"{top['verdict']}: {top['id']} {state}, because {reason}."
+        if steps:
+            headline += f" First step: {steps[0]['action'][0].lower() + steps[0]['action'][1:]}."
+    else:
+        headline = "Ready: nothing in this release changes the protected analyses."
+    return {"plain_summary": headline + " " + summary, "x_headline": headline, "next_steps": steps, "x_site_check": sc}

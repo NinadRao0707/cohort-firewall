@@ -27,7 +27,12 @@ step "Python environment"
 # shellcheck disable=SC1091
 source .venv/bin/activate
 pip install -q --upgrade pip
-pip install -q -r requirements.txt
+if [ -f requirements.lock ]; then
+  echo "installing pinned versions from requirements.lock"
+  pip install -q -r requirements.lock
+else
+  pip install -q -r requirements.txt
+fi
 export SSL_CERT_FILE="$(python -m certifi)"   # fixes CERTIFICATE_VERIFY_FAILED on python.org macOS installs
 
 step "Challenge repo and frozen TCGA-BRCA data"

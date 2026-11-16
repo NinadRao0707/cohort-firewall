@@ -115,8 +115,9 @@ def human_review(verdict: str, accepted: list | None = None) -> dict:
                 "text": f"Ready only because the question card accepts {len(accepted)} limitation(s). "
                         "A person must confirm those limitations are acceptable for this use."}
     if verdict == "READY":
-        return {"level": "recommended",
-                "text": "A person should still confirm the question and data match before training."}
+        return {"level": "required",
+                "text": "Ready for this question, but a named reviewer must still confirm the question and data "
+                        "match, and record a note, before use."}
     if verdict == "BLOCKED":
         return {"level": "required",
                 "text": "Do not use this dataset for this question. A person must resolve every Blocked finding first."}

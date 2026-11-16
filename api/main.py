@@ -144,6 +144,7 @@ class TowerRequest(BaseModel):
     release: str
     include_rna: bool = True
     include_summaries: bool = True
+    summaries_in_findings: bool = False
 
 
 @app.post("/tower/run")
@@ -155,7 +156,7 @@ def tower_run(req: TowerRequest):
     path_b = folders[req.release]
     try:
         doc = run_tower(CHALLENGE_REPO, path_b, include_rna=req.include_rna,
-                        include_summaries=req.include_summaries)
+                        include_summaries=req.include_summaries, summaries_in_findings=req.summaries_in_findings)
     except FileNotFoundError as e:
         raise HTTPException(400, f"Missing input: {e}. Run fetch.py in the challenge repo first.")
     TOWER_OUT.mkdir(exist_ok=True)
