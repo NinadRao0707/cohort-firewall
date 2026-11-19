@@ -17,7 +17,7 @@ evidence, the rule and the fix behind every one.
 | **Product** | Cohort Control Tower (featured), extended with question-readiness verdicts |
 | **Team** | Ninad Rao, Kareesa Rao, Sreelasya Changalasetty, Sanica Chaudhary |
 | **Product output** | `findings.json` in shared format v0.2. Example: [`examples/outputs/findings-practice-B.json`](examples/outputs/findings-practice-B.json) |
-| **Demo video** | [Edited walkthrough (3 min)](https://youtu.be/cBD-qu98lZ0) · [Code-freeze submission](https://youtu.be/6q2zScy7b7Y) |
+| **Demo video** | [Edited walkthrough (3 min)](https://youtu.be/HmnjMwQLBB8) · [Code-freeze submission](https://youtu.be/6q2zScy7b7Y) |
 
 ## Contents
 - [Who it's for](#who-its-for)
