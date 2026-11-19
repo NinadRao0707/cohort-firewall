@@ -1,4 +1,8 @@
 {
+  "shareable_summary": {
+    "text": "The data can't support this question as asked. <11,400 records match the group being studied. What needs attention: The question is framed for clinical_decision_support, which is outside the permitted scope (no diagnosis, treatment recommendation, or patient risk score). The question asks for an individual diagnosis, treatment choice, or patient risk score (deterministic guard). A person must review before use.",
+    "note": "Counts from 1 to 10 are shown as <11 (CMS small-cell suppression). A percentage next to a hidden count can still reveal it, so a person should read this before sharing. The full evidence record keeps exact counts and sample IDs for reviewers."
+  },
   "verdict": "BLOCKED",
   "human_review": {
     "level": "required",
@@ -406,12 +410,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "61bb1db6dec1afae",
+    "cert_id": "5004374e18e2786e",
     "payload": {
       "cert_format": "cohort-firewall/1",
-      "engine_version": "0.1.0",
+      "engine_version": "0.2.0",
       "policy_version": "0.5.1",
-      "policy_sha256": "0c59ba3616d3110ab05791c14039fb931b47f52778555a2349ccc089b7592a31",
+      "policy_sha256": "5da4bd3ca0bdb6537e80af86c4569ad20d2389926a75738ed23aa9602ca1ff04",
       "dataset_sha256": "31275bc4e6681487c7e17cd7939b7e5d1dd855d369321a7e890bb19b6b037e32",
       "dictionary_sha256": "c02c9a8546824f97ab9b4101d03b77945bf02c43b431ee06569b7172f99c3dad",
       "spec_sha256": "73ceb7771288d98c221e79125fc0858bb00db2b428fa9065ccdd586a1741cff2",
@@ -420,11 +424,11 @@
         "SCOPE-001",
         "SCOPE-002"
       ],
-      "issued_at": "2026-11-12T18:52:57+00:00"
+      "issued_at": "2026-11-19T16:57:24+00:00"
     },
-    "signature": "HK2Cq2hb8XRq3Soe5ekUSrOJgy6MB7/tBdFoZNPP2GNAdbX7qWHu47/Z74rpGGhaSofnjZZE6NzF0+4vOf7yAg==",
+    "signature": "JWfo65dj/M6ubG4WRJWSy6ahqPgp8sXRbYF7CkhkNldRCy1GguOAbc8LDvrwXRJX4ehnXlW4YfWIAWCx5tqiDQ==",
     "alg": "Ed25519"
   },
-  "engine_version": "0.1.0",
+  "engine_version": "0.2.0",
   "policy_version": "0.5.1"
 }

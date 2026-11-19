@@ -1,4 +1,8 @@
 {
+  "shareable_summary": {
+    "text": "The data can support this question only after the steps below are taken and reported. <11,400 records match the group being studied. What needs attention: Instruction-like text found in the data or dictionary at notes[row 17], dictionary:notes. It was quarantined and had no effect on this verdict. A person must review before use.",
+    "note": "Counts from 1 to 10 are shown as <11 (CMS small-cell suppression). A percentage next to a hidden count can still reveal it, so a person should read this before sharing. The full evidence record keeps exact counts and sample IDs for reviewers."
+  },
   "verdict": "CONDITIONAL",
   "human_review": {
     "level": "required",
@@ -415,12 +419,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "7e554d7c88085611",
+    "cert_id": "ae9198350de41f44",
     "payload": {
       "cert_format": "cohort-firewall/1",
-      "engine_version": "0.1.0",
+      "engine_version": "0.2.0",
       "policy_version": "0.5.1",
-      "policy_sha256": "0c59ba3616d3110ab05791c14039fb931b47f52778555a2349ccc089b7592a31",
+      "policy_sha256": "5da4bd3ca0bdb6537e80af86c4569ad20d2389926a75738ed23aa9602ca1ff04",
       "dataset_sha256": "ab3cdb8142d7a8ef5c25e788ade47a2011dc9ca2ddc727db4025951175ee8e9e",
       "dictionary_sha256": "f701b91db6621516bd33eeafd9919379e3361ff2de5ad38cdb5e1593c3429c8e",
       "spec_sha256": "843d4731ec71bef6469c594caf0270965ec21dab11db52fa14373ace058b3e95",
@@ -428,11 +432,11 @@
       "rule_ids": [
         "INJ-001"
       ],
-      "issued_at": "2026-11-12T18:52:57+00:00"
+      "issued_at": "2026-11-19T16:57:24+00:00"
     },
-    "signature": "5dBV6Is3AEaABmR0uHBz3bjoP3eY6GpQqMaYrULfvKibuZWIxbmVMfF68pQcX935UvUsO3WF+okUg62R9RvyBw==",
+    "signature": "3PNKe4qgsZiFe1c7Mirzo3FUHp5q5S1yFtANDfE1K/ynOe3ynn69fdIj9Jx5vKe9xAJURKpC+oPA8PM0Xk0PAA==",
     "alg": "Ed25519"
   },
-  "engine_version": "0.1.0",
+  "engine_version": "0.2.0",
   "policy_version": "0.5.1"
 }

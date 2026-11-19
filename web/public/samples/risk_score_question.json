@@ -1,4 +1,8 @@
 {
+  "shareable_summary": {
+    "text": "The data can't support this question as asked. <11,400 records match the group being studied. What needs attention: The question asks for an individual diagnosis, treatment choice, or patient risk score (deterministic guard). A person must review before use.",
+    "note": "Counts from 1 to 10 are shown as <11 (CMS small-cell suppression). A percentage next to a hidden count can still reveal it, so a person should read this before sharing. The full evidence record keeps exact counts and sample IDs for reviewers."
+  },
   "verdict": "BLOCKED",
   "human_review": {
     "level": "required",
@@ -412,12 +416,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "f86928f4fcfc7f46",
+    "cert_id": "23a33b5b58f641d1",
     "payload": {
       "cert_format": "cohort-firewall/1",
-      "engine_version": "0.1.0",
+      "engine_version": "0.2.0",
       "policy_version": "0.5.1",
-      "policy_sha256": "0c59ba3616d3110ab05791c14039fb931b47f52778555a2349ccc089b7592a31",
+      "policy_sha256": "5da4bd3ca0bdb6537e80af86c4569ad20d2389926a75738ed23aa9602ca1ff04",
       "dataset_sha256": "31275bc4e6681487c7e17cd7939b7e5d1dd855d369321a7e890bb19b6b037e32",
       "dictionary_sha256": "c02c9a8546824f97ab9b4101d03b77945bf02c43b431ee06569b7172f99c3dad",
       "spec_sha256": "9626018ade6500b82a0bc8021cf78abcf075414194cd2a464891e877696c1117",
@@ -425,11 +429,11 @@
       "rule_ids": [
         "SCOPE-002"
       ],
-      "issued_at": "2026-11-12T18:52:57+00:00"
+      "issued_at": "2026-11-19T16:57:24+00:00"
     },
-    "signature": "Y9x6dwHqekLvgp01msXAO3Lp7lvXbW9mc9NLNPG795jXbo9eJDuIzVMinTTgVfDHr9COyjhkNTiNG9eKO8WfDQ==",
+    "signature": "dbh13q+IzagROrrHV+b005umTPUXFe/5woYTqYGVFXC2EdqG41+cRPiKZKLBfvgGzRI/8/aGJ4zVbVDGwKmKBA==",
     "alg": "Ed25519"
   },
-  "engine_version": "0.1.0",
+  "engine_version": "0.2.0",
   "policy_version": "0.5.1"
 }

@@ -1,4 +1,8 @@
 {
+  "shareable_summary": {
+    "text": "The data can support this question only after the steps below are taken and reported. <11,101 records match the group being studied. What needs attention: Field 'pam50_subtype' is missing for 23% of the cohort. Two sources for a field this question uses disagree: PAM50 subtype: RNA-seq call vs 2012 microarray call: 52 of 508 (10%). A person must review before use.",
+    "note": "Counts from 1 to 10 are shown as <11 (CMS small-cell suppression). A percentage next to a hidden count can still reveal it, so a person should read this before sharing. The full evidence record keeps exact counts and sample IDs for reviewers."
+  },
   "verdict": "CONDITIONAL",
   "human_review": {
     "level": "required",
@@ -363,12 +367,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "e920589750f8d89f",
+    "cert_id": "4988604ae8f338d0",
     "payload": {
       "cert_format": "cohort-firewall/1",
-      "engine_version": "0.1.0",
+      "engine_version": "0.2.0",
       "policy_version": "0.5.1",
-      "policy_sha256": "0c59ba3616d3110ab05791c14039fb931b47f52778555a2349ccc089b7592a31",
+      "policy_sha256": "5da4bd3ca0bdb6537e80af86c4569ad20d2389926a75738ed23aa9602ca1ff04",
       "dataset_sha256": "d0c44cc4fca5e160f4cc855a9731173c78990b7935304ead70d09e64190812fa",
       "dictionary_sha256": "adb6b17fbed5e5e3261844460c25a6fb9e43b0df404841d85dac0556b21964f3",
       "spec_sha256": "2fb2b70f4670aff55c50435ec99dba2d58a4e392b29f0e7cdbd7858d998ba8ac",
@@ -377,11 +381,11 @@
         "CMP-004",
         "CONS-001"
       ],
-      "issued_at": "2026-11-12T18:52:57+00:00"
+      "issued_at": "2026-11-19T16:57:25+00:00"
     },
-    "signature": "g4rjhdBYkhpPBLiR464IWIedZf1EQ+f2nuUmHDrh1vzLYzkWMOCjeQIoKSWSiI+EE+ob2LAKU3oKTSKNVwAyBQ==",
+    "signature": "2tnQaEkPxB1TsuOmc4wE8hxGlzbJsqmvOCM9BFgKziI9VP4gQgF1TZgPs6ALlJIYdVI/7NDdhFaFprAdSePXCQ==",
     "alg": "Ed25519"
   },
-  "engine_version": "0.1.0",
+  "engine_version": "0.2.0",
   "policy_version": "0.5.1"
 }

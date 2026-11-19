@@ -1,4 +1,8 @@
 {
+  "shareable_summary": {
+    "text": "The data can support this question only after the steps below are taken and reported. <11,400 records match the group being studied. What needs attention: Predictor(s) separate the outcome almost perfectly on their own (max AUC 0.971): ca15_3_rise_followup. A person must review before use.",
+    "note": "Counts from 1 to 10 are shown as <11 (CMS small-cell suppression). A percentage next to a hidden count can still reveal it, so a person should read this before sharing. The full evidence record keeps exact counts and sample IDs for reviewers."
+  },
   "verdict": "CONDITIONAL",
   "human_review": {
     "level": "required",
@@ -426,12 +430,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "cc65217f17e59b53",
+    "cert_id": "49fce7d0980aef3a",
     "payload": {
       "cert_format": "cohort-firewall/1",
-      "engine_version": "0.1.0",
+      "engine_version": "0.2.0",
       "policy_version": "0.5.1",
-      "policy_sha256": "0c59ba3616d3110ab05791c14039fb931b47f52778555a2349ccc089b7592a31",
+      "policy_sha256": "5da4bd3ca0bdb6537e80af86c4569ad20d2389926a75738ed23aa9602ca1ff04",
       "dataset_sha256": "331839182916f8854ac8d8a5e0184a6e61ab69f0ac8b55d24a483d79f322307d",
       "dictionary_sha256": "2d41a1cb147a2f70db24151f138a73ea001c74bb5b10aa9b758595f0c89626d8",
       "spec_sha256": "03fd1ec0cbbde8ade1f26f6bc44f0047bd5c3a9e4102bd85c7298017c4806146",
@@ -439,11 +443,11 @@
       "rule_ids": [
         "LEAK-002"
       ],
-      "issued_at": "2026-11-12T18:52:57+00:00"
+      "issued_at": "2026-11-19T16:57:24+00:00"
     },
-    "signature": "5Sv4+e0sSa/4CPfGSxBzFcsw8Qp3VGTs4ogW5lPfFqoI2lLBTTZ79WTADhO7WB7gfF1Hwm6pEwhmhteSLmhTCA==",
+    "signature": "BouQdugCVPoXh5KdIzPH2VXwkSkNALSp9lS4fmc4wmm+vweHJ7HMP62Licam1xZIRA5y14e2KCjCYuUAgQlKBQ==",
     "alg": "Ed25519"
   },
-  "engine_version": "0.1.0",
+  "engine_version": "0.2.0",
   "policy_version": "0.5.1"
 }

@@ -24,7 +24,14 @@ What this shows:
   are removed and 5 copies added; the tool reports that a count check alone would miss it.
 
 Each release also produces summary findings (subgroup coverage, count unchanged but membership
-changed). They are tagged `x_summary_of_other_findings` and can be left out with `--no-summary-findings`.
+changed). Since the post-hackathon update they're kept in their own `x_summaries` list with IDs S1,
+S2…, so `findings` lists each problem once (practice-B: 7 findings plus 6 summaries).
+
+### Independent reproduction
+After the event, the organizers reran the code-freeze version (commit `ab5084f`) on a clean computer,
+following only this README. The one-command setup finished in 45 seconds and all 64 test checks
+passed. On a new release the tool had never seen, it found all four planted changes with no false
+alarms and correctly left the unaffected analysis alone. The web app was not part of that run.
 
 **Speed:** unsealing an envelope takes about 2 s; the comparison takes about 14 s the first time
 (building the baseline cache) and about 7 s after that.

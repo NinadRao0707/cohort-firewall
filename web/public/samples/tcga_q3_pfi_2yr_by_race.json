@@ -1,4 +1,8 @@
 {
+  "shareable_summary": {
+    "text": "The tool can't confirm something this question needs, so the data doesn't pass. <11,101 records match the group being studied. What needs attention: Subgroup attribute(s) needed to evaluate fairness are not recorded: race. The outcome is missing for 42% of the cohort. There are <11 more issue(s) below. A person must review before use.",
+    "note": "Counts from 1 to 10 are shown as <11 (CMS small-cell suppression). A percentage next to a hidden count can still reveal it, so a person should read this before sharing. The full evidence record keeps exact counts and sample IDs for reviewers."
+  },
   "verdict": "INSUFFICIENT_EVIDENCE",
   "human_review": {
     "level": "required",
@@ -505,12 +509,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "275baa05916ced49",
+    "cert_id": "33e40dd7afacd511",
     "payload": {
       "cert_format": "cohort-firewall/1",
-      "engine_version": "0.1.0",
+      "engine_version": "0.2.0",
       "policy_version": "0.5.1",
-      "policy_sha256": "0c59ba3616d3110ab05791c14039fb931b47f52778555a2349ccc089b7592a31",
+      "policy_sha256": "5da4bd3ca0bdb6537e80af86c4569ad20d2389926a75738ed23aa9602ca1ff04",
       "dataset_sha256": "d0c44cc4fca5e160f4cc855a9731173c78990b7935304ead70d09e64190812fa",
       "dictionary_sha256": "adb6b17fbed5e5e3261844460c25a6fb9e43b0df404841d85dac0556b21964f3",
       "spec_sha256": "74944093c10f6ca35444d3d6ccc968cc10b52a93279c5d4002e5986a529f4932",
@@ -520,11 +524,11 @@
         "EVT-002",
         "SUB-001"
       ],
-      "issued_at": "2026-11-12T18:52:57+00:00"
+      "issued_at": "2026-11-19T16:57:25+00:00"
     },
-    "signature": "Fr45wqYvcgOxBHB8I6Vmolf8FHmnFXuL1m0j5ATl/aeR7MpX508zEa9qnNIPBynFEHsibApSXsUggp4Qw/SCDg==",
+    "signature": "q6OwkqH/iBjZ3Pft8K3qzjTomPJ2Q5Yb9VaZNkUMYqioDk5f7ibTr3uttoehh7eQ75lB0hGy2qBWdRBy1T9PBw==",
     "alg": "Ed25519"
   },
-  "engine_version": "0.1.0",
+  "engine_version": "0.2.0",
   "policy_version": "0.5.1"
 }

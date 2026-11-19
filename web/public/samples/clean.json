@@ -1,8 +1,12 @@
 {
+  "shareable_summary": {
+    "text": "The data can support this question as stated. <11,400 records match the group being studied. No check found a problem for this question. A person must review before use.",
+    "note": "Counts from 1 to 10 are shown as <11 (CMS small-cell suppression). A percentage next to a hidden count can still reveal it, so a person should read this before sharing. The full evidence record keeps exact counts and sample IDs for reviewers."
+  },
   "verdict": "READY",
   "human_review": {
-    "level": "recommended",
-    "text": "A person should still confirm the question and data match before training."
+    "level": "required",
+    "text": "Ready for this question, but a named reviewer must still confirm the question and data match, and record a note, before use."
   },
   "accepted_limitations": [],
   "ignored_acceptances": [],
@@ -374,22 +378,22 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "94b3de93923aaaf0",
+    "cert_id": "40bdb71dbc57c096",
     "payload": {
       "cert_format": "cohort-firewall/1",
-      "engine_version": "0.1.0",
+      "engine_version": "0.2.0",
       "policy_version": "0.5.1",
-      "policy_sha256": "0c59ba3616d3110ab05791c14039fb931b47f52778555a2349ccc089b7592a31",
+      "policy_sha256": "5da4bd3ca0bdb6537e80af86c4569ad20d2389926a75738ed23aa9602ca1ff04",
       "dataset_sha256": "31275bc4e6681487c7e17cd7939b7e5d1dd855d369321a7e890bb19b6b037e32",
       "dictionary_sha256": "c02c9a8546824f97ab9b4101d03b77945bf02c43b431ee06569b7172f99c3dad",
       "spec_sha256": "843d4731ec71bef6469c594caf0270965ec21dab11db52fa14373ace058b3e95",
       "verdict": "READY",
       "rule_ids": [],
-      "issued_at": "2026-11-12T18:52:56+00:00"
+      "issued_at": "2026-11-19T16:57:24+00:00"
     },
-    "signature": "NZ3Wvavf80JZs9Cjdd+Cewjyg6oqvxCnu4YmYNHMTZMJjWkWdtaRZAx4NCev+/J/fvfVrzHJYAA2fRVfKKM8CQ==",
+    "signature": "4tinyd69WFf8EStR8L0ZPzsnu0tWAQpg5MdE8ROtXAxtgkq8FaFkfYkdRKoqXAQ30yLGOPHCJ2Klni2Lu8xdAw==",
     "alg": "Ed25519"
   },
-  "engine_version": "0.1.0",
+  "engine_version": "0.2.0",
   "policy_version": "0.5.1"
 }

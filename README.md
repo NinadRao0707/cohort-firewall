@@ -12,11 +12,12 @@ evidence, the rule and the fix behind every one.
 | | |
 |---|---|
 | **Event** | OncoSys AI Healthcare Hackathon at Northeastern, Nov 11–14, 2026 |
+| **Result** | **Second place, Track 1 (Best Cohort Firewall)** |
 | **Track** | Cohort Firewall |
 | **Product** | Cohort Control Tower (featured), extended with question-readiness verdicts |
 | **Team** | Ninad Rao, Kareesa Rao, Sreelasya Changalasetty, Sanica Chaudhary |
 | **Product output** | `findings.json` in shared format v0.2. Example: [`examples/outputs/findings-practice-B.json`](examples/outputs/findings-practice-B.json) |
-| **Demo video** | _Link added before the code freeze_ |
+| **Demo video** | [Edited walkthrough (3 min)](https://youtu.be/cBD-qu98lZ0) · [Code-freeze submission](https://youtu.be/6q2zScy7b7Y) |
 
 ## Contents
 - [Who it's for](#who-its-for)
@@ -69,8 +70,9 @@ fairness attributes and acceptable limitations. The verdict changes when the que
 
 ### Human review, on both screens
 A reviewer records **approve**, **approve with conditions**, **reject** or **ask for more evidence**.
-Blocked and Insufficient Evidence results can't be approved, and conditional approval needs every
-finding acknowledged and a written reason. The review is signed and saved with the evidence record.
+Every decision needs a named reviewer and a written note, Ready included. Blocked and Insufficient
+Evidence results can't be approved, and conditional approval also needs every finding acknowledged.
+The review is signed, timestamped and saved with the evidence record.
 
 ## Results
 
@@ -80,6 +82,7 @@ finding acknowledged and a written reason. The review is signed and saved with t
 | Three private releases built with the event's `make_release.py --config` | **22 / 22** changes found, 0 unexplained findings |
 | Practice sealed envelope (Saturday's format, no RNA) | **11 / 11**, about 7 s after unsealing |
 | Fresh clone on a clean folder | Setup, tests, a real comparison, the validator and the web build all pass |
+| **Independent rerun by the organizers** (clean computer, README only, commit `ab5084f`) | One-command setup in 45 s; all 64 test checks passed; 4 / 4 planted changes found on an unseen release, no false alarms; the unaffected analysis correctly left alone. The web app wasn't part of their run |
 
 On the frozen release, the same data gets different verdicts for different questions:
 
@@ -178,6 +181,7 @@ release: nothing is trusted until it's verified, and every decision leaves evide
 |---|---|
 | **Verified provenance** | The baseline must match the event's published checksums, or every verdict is Insufficient Evidence |
 | **Default deny** | Anything the tool can't verify fails closed; nothing passes by default |
+| **Reproducible installs** | `requirements.lock` pins the exact package versions that produced the signed results |
 | **Signed results** | Each result carries an Ed25519 certificate binding the data checksums, the question, the rules and the verdicts |
 | **Signed, evidence-bound reviews** | A review attaches only to a result whose signature verifies; if the evidence changes, the certificate changes and a fresh review is needed |
 | **Tamper-evident audit ledger** | Every check, envelope opening and review is a signed entry chained to the one before it (like a Certificate Transparency log). Editing, deleting or reordering any past entry breaks the chain at that entry |
@@ -196,6 +200,13 @@ In the app: **Record** (Release check) or **Review** (Question check) → **Veri
 
 **Limitation:** removing entries from the very end leaves a shorter valid chain. Record the head hash
 elsewhere (a review note, a ticket) to detect that, as transparency logs do.
+
+## Since the hackathon
+After judging, the organizers shared written feedback with six suggestions. All six are implemented:
+review on every verdict, confidence that follows the evidence, summaries kept apart from findings,
+probable-swap detection for swaps hidden by value edits, a one-sentence release headline with "what
+would change the verdict" on every next step, and pinned dependency versions. See
+[`CHANGELOG.md`](CHANGELOG.md).
 
 ## Limitations
 These are also shown in the product, under **Limitations of this check**, and on every finding.
@@ -263,3 +274,4 @@ report text that changes the verdict is rejected.
 | [`web/README.md`](web/README.md) | Working on the web app |
 | [`rehearsal/README.md`](rehearsal/README.md) | The private rehearsal releases |
 | [`THIRD_PARTY.md`](THIRD_PARTY.md) | Third-party code, data and licenses |
+| [`CHANGELOG.md`](CHANGELOG.md) | What changed since the code-freeze submission |

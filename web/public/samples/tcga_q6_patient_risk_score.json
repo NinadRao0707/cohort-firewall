@@ -1,4 +1,8 @@
 {
+  "shareable_summary": {
+    "text": "The data can't support this question as asked. <11,101 records match the group being studied. What needs attention: The question asks for an individual diagnosis, treatment choice, or patient risk score (deterministic guard). The outcome is missing for 42% of the cohort. There are <11 more issue(s) below. A person must review before use.",
+    "note": "Counts from 1 to 10 are shown as <11 (CMS small-cell suppression). A percentage next to a hidden count can still reveal it, so a person should read this before sharing. The full evidence record keeps exact counts and sample IDs for reviewers."
+  },
   "verdict": "BLOCKED",
   "human_review": {
     "level": "required",
@@ -492,12 +496,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "c7bbe7bf8aab8f0e",
+    "cert_id": "a545b21c2814a5a9",
     "payload": {
       "cert_format": "cohort-firewall/1",
-      "engine_version": "0.1.0",
+      "engine_version": "0.2.0",
       "policy_version": "0.5.1",
-      "policy_sha256": "0c59ba3616d3110ab05791c14039fb931b47f52778555a2349ccc089b7592a31",
+      "policy_sha256": "5da4bd3ca0bdb6537e80af86c4569ad20d2389926a75738ed23aa9602ca1ff04",
       "dataset_sha256": "d0c44cc4fca5e160f4cc855a9731173c78990b7935304ead70d09e64190812fa",
       "dictionary_sha256": "adb6b17fbed5e5e3261844460c25a6fb9e43b0df404841d85dac0556b21964f3",
       "spec_sha256": "6e8664ab4ac69bc0c432519b3d78bb04ac273b4c4edd88727d18a8f4fc688cd2",
@@ -507,11 +511,11 @@
         "EVT-002",
         "SCOPE-002"
       ],
-      "issued_at": "2026-11-12T18:52:57+00:00"
+      "issued_at": "2026-11-19T16:57:25+00:00"
     },
-    "signature": "YjT0Ifu5+kY4xwxxD9KRPdCbu/N6ft+MqXJxYms0lql9BU1bvWgK6RO4ky4iGCbaBLLBEtnkG4uX1Kwyfrf9CQ==",
+    "signature": "RESJvf4zO/JS9jYIxL96qWBpDuv2+anBe4fUdiyUJJPPRBJShFI3p5Fm7ouVEnbqOqK7b09mg8v5nMmg/jokDA==",
     "alg": "Ed25519"
   },
-  "engine_version": "0.1.0",
+  "engine_version": "0.2.0",
   "policy_version": "0.5.1"
 }

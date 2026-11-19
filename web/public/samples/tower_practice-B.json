@@ -90,6 +90,7 @@
       "severity": "high",
       "confidence": "high",
       "x_severity_reason": "High: measurements are attached to the wrong samples in data A1 uses, so its result can't be trusted (A1 difference 3.051 \u2192 3.019).",
+      "x_confidence_reason": "Exact match: each sample now carries the other's exact baseline profile.",
       "evidence": [
         {
           "kind": "sample",
@@ -110,7 +111,7 @@
       "not_affected_analyses": [
         "A2"
       ],
-      "limitation": "Exact-match detection: a swap combined with small value edits appears as two value edits instead.",
+      "limitation": "Exact-match detection: a swap combined with small value edits is reported separately as a probable swap.",
       "needs_human_review": true
     },
     {
@@ -120,6 +121,7 @@
       "severity": "high",
       "confidence": "high",
       "x_severity_reason": "High: the same measurement is counted under two sample IDs in data A1 uses, so its result can't be trusted (A1 difference 3.051 \u2192 3.019).",
+      "x_confidence_reason": "Exact match to one baseline sample's profile.",
       "evidence": [
         {
           "kind": "sample",
@@ -145,6 +147,7 @@
       "severity": "high",
       "confidence": "high",
       "x_severity_reason": "High: the same measurement is counted under two sample IDs in data A1 uses, so its result can't be trusted (A1 difference 3.051 \u2192 3.019).",
+      "x_confidence_reason": "Exact match to one baseline sample's profile.",
       "evidence": [
         {
           "kind": "sample",
@@ -170,6 +173,7 @@
       "severity": "high",
       "confidence": "high",
       "x_severity_reason": "High: the same measurement is counted under two sample IDs in data A1 uses, so its result can't be trusted (A1 difference 3.051 \u2192 3.019).",
+      "x_confidence_reason": "Exact match to one baseline sample's profile.",
       "evidence": [
         {
           "kind": "sample",
@@ -195,6 +199,7 @@
       "severity": "high",
       "confidence": "high",
       "x_severity_reason": "High: the same measurement is counted under two sample IDs in data A1 uses, so its result can't be trusted (A1 difference 3.051 \u2192 3.019).",
+      "x_confidence_reason": "Exact match to one baseline sample's profile.",
       "evidence": [
         {
           "kind": "sample",
@@ -220,6 +225,7 @@
       "severity": "high",
       "confidence": "high",
       "x_severity_reason": "High: the same measurement is counted under two sample IDs in data A1 uses, so its result can't be trusted (A1 difference 3.051 \u2192 3.019).",
+      "x_confidence_reason": "Exact match to one baseline sample's profile.",
       "evidence": [
         {
           "kind": "sample",
@@ -241,10 +247,62 @@
     {
       "id": "F7",
       "kind": "membership_change",
+      "summary": "5 sample(s) disappeared from protein_rppa.tsv.gz",
+      "severity": "medium",
+      "confidence": "high",
+      "x_severity_reason": "Medium: removes samples from the data A1 uses, changing who or what is counted (A1 difference 3.051 \u2192 3.019).",
+      "x_confidence_reason": "Sample IDs compared directly between releases.",
+      "evidence": [
+        {
+          "kind": "sample",
+          "id": "TCGA-A8-A08J-01",
+          "release": "practice-B",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "TCGA-C8-A12Q-01",
+          "release": "practice-B",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "TCGA-C8-A26Y-01",
+          "release": "practice-B",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "TCGA-E9-A1RH-01",
+          "release": "practice-B",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "TCGA-GM-A2DH-01",
+          "release": "practice-B",
+          "file": "protein_rppa.tsv.gz"
+        }
+      ],
+      "affects_analyses": [
+        "A1"
+      ],
+      "not_affected_analyses": [
+        "A2"
+      ],
+      "limitation": "Detected by comparing exact values between releases.",
+      "needs_human_review": true
+    }
+  ],
+  "x_summaries": [
+    {
+      "id": "S1",
+      "kind": "membership_change",
       "summary": "protein_rppa.tsv.gz: sample count unchanged (747) but membership changed: 5 sample(s) removed and 5 added. A count check alone would miss this.",
       "severity": "medium",
       "confidence": "high",
       "x_severity_reason": "Medium: restates the removals and copies above; reported because the unchanged sample count would hide them from a count check.",
+      "x_confidence_reason": "Sample IDs compared directly between releases.",
       "evidence": [
         {
           "kind": "sample",
@@ -318,12 +376,13 @@
       "x_summary_of_other_findings": true
     },
     {
-      "id": "F8",
+      "id": "S2",
       "kind": "missing_data",
       "summary": "protein_rppa.tsv.gz: genuine profiles for breast_carcinoma_estrogen_receptor_status = 'Negative' fell from 170 to 166",
       "severity": "low",
-      "confidence": "high",
+      "confidence": "medium",
       "x_severity_reason": "Low: breast_carcinoma_estrogen_receptor_status = Negative lost 4 of 170 genuine profiles (2.4%); the lost profiles are in data A1 uses. Restates the changes above.",
+      "x_confidence_reason": "Exact counts; the concentration is borderline (p = 0.032).",
       "evidence": [
         {
           "kind": "sample",
@@ -358,15 +417,17 @@
       ],
       "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
       "needs_human_review": true,
-      "x_summary_of_other_findings": true
+      "x_summary_of_other_findings": true,
+      "x_p_by_chance": 0.032496655636211506
     },
     {
-      "id": "F9",
+      "id": "S3",
       "kind": "missing_data",
       "summary": "protein_rppa.tsv.gz: genuine profiles for breast_carcinoma_estrogen_receptor_status = 'Positive' fell from 533 to 531",
       "severity": "low",
-      "confidence": "high",
+      "confidence": "low",
       "x_severity_reason": "Low: breast_carcinoma_estrogen_receptor_status = Positive lost 2 of 533 genuine profiles (0.4%); the lost profiles are in data A1 uses. Restates the changes above.",
+      "x_confidence_reason": "Exact counts, but a loss this size is consistent with chance (p = 1).",
       "evidence": [
         {
           "kind": "sample",
@@ -389,15 +450,17 @@
       ],
       "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
       "needs_human_review": true,
-      "x_summary_of_other_findings": true
+      "x_summary_of_other_findings": true,
+      "x_p_by_chance": 0.9960254838840142
     },
     {
-      "id": "F10",
+      "id": "S4",
       "kind": "missing_data",
       "summary": "protein_rppa.tsv.gz: genuine profiles for PAM50Call_RNAseq = 'Basal' fell from 121 to 120",
       "severity": "low",
-      "confidence": "high",
+      "confidence": "low",
       "x_severity_reason": "Low: PAM50Call_RNAseq = Basal lost 1 of 121 genuine profiles (0.8%); the lost profiles are in data A1 uses. Restates the changes above.",
+      "x_confidence_reason": "Exact counts, but a loss this size is consistent with chance (p = 0.74).",
       "evidence": [
         {
           "kind": "sample",
@@ -414,15 +477,17 @@
       ],
       "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
       "needs_human_review": true,
-      "x_summary_of_other_findings": true
+      "x_summary_of_other_findings": true,
+      "x_p_by_chance": 0.740120706221945
     },
     {
-      "id": "F11",
+      "id": "S5",
       "kind": "missing_data",
       "summary": "protein_rppa.tsv.gz: genuine profiles for PAM50Call_RNAseq = 'Her2' fell from 61 to 56",
       "severity": "medium",
       "confidence": "high",
       "x_severity_reason": "Medium: PAM50Call_RNAseq = Her2 lost 5 of 61 genuine profiles (8.2%); the lost profiles are in data A1 uses. Restates the changes above.",
+      "x_confidence_reason": "Exact counts, and losses this concentrated are very unlikely by chance (p = 8.2e-05).",
       "evidence": [
         {
           "kind": "sample",
@@ -463,15 +528,17 @@
       ],
       "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
       "needs_human_review": true,
-      "x_summary_of_other_findings": true
+      "x_summary_of_other_findings": true,
+      "x_p_by_chance": 8.21180325390165e-05
     },
     {
-      "id": "F12",
+      "id": "S6",
       "kind": "missing_data",
       "summary": "protein_rppa.tsv.gz: genuine profiles for PAM50Call_RNAseq = 'LumA' fell from 330 to 329",
       "severity": "low",
-      "confidence": "high",
+      "confidence": "low",
       "x_severity_reason": "Low: PAM50Call_RNAseq = LumA lost 1 of 330 genuine profiles (0.3%); the lost profiles are in data A1 uses. Restates the changes above.",
+      "x_confidence_reason": "Exact counts, but a loss this size is consistent with chance (p = 0.99).",
       "evidence": [
         {
           "kind": "sample",
@@ -488,55 +555,8 @@
       ],
       "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
       "needs_human_review": true,
-      "x_summary_of_other_findings": true
-    },
-    {
-      "id": "F13",
-      "kind": "membership_change",
-      "summary": "5 sample(s) disappeared from protein_rppa.tsv.gz",
-      "severity": "medium",
-      "confidence": "high",
-      "x_severity_reason": "Medium: removes samples from the data A1 uses, changing who or what is counted (A1 difference 3.051 \u2192 3.019).",
-      "evidence": [
-        {
-          "kind": "sample",
-          "id": "TCGA-A8-A08J-01",
-          "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
-        },
-        {
-          "kind": "sample",
-          "id": "TCGA-C8-A12Q-01",
-          "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
-        },
-        {
-          "kind": "sample",
-          "id": "TCGA-C8-A26Y-01",
-          "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
-        },
-        {
-          "kind": "sample",
-          "id": "TCGA-E9-A1RH-01",
-          "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
-        },
-        {
-          "kind": "sample",
-          "id": "TCGA-GM-A2DH-01",
-          "release": "practice-B",
-          "file": "protein_rppa.tsv.gz"
-        }
-      ],
-      "affects_analyses": [
-        "A1"
-      ],
-      "not_affected_analyses": [
-        "A2"
-      ],
-      "limitation": "Detected by comparing exact values between releases.",
-      "needs_human_review": true
+      "x_summary_of_other_findings": true,
+      "x_p_by_chance": 0.9893788838223871
     }
   ],
   "analyses": [
@@ -577,7 +597,7 @@
         "F4",
         "F5",
         "F6",
-        "F13"
+        "F7"
       ],
       "needs_human_review": true,
       "before": {
@@ -607,6 +627,64 @@
         "mean_negative": -0.843,
         "difference": 3.019,
         "n_sample_ids": 699
+      },
+      "x_impact": {
+        "noise": {
+          "metric": "difference",
+          "kind": "scalar",
+          "before": 3.051,
+          "after": 3.019,
+          "delta": -0.032,
+          "noise": 0.0857,
+          "noise_name": "bootstrap standard error",
+          "baseline_ci95": [
+            2.8928,
+            3.2175
+          ],
+          "after_inside_baseline_ci": true,
+          "sign_flipped": false,
+          "ratio": 0.37,
+          "label": "within sampling noise",
+          "bootstrap_draws": 100
+        },
+        "repair": {
+          "metric": "difference",
+          "baseline": 3.051,
+          "new_release": 3.019,
+          "after_all_repairs": 3.051,
+          "back_to_baseline": true,
+          "by_kind": [
+            {
+              "kind": "sample_swap",
+              "findings": [
+                "F1"
+              ],
+              "value_if_only_this_is_fixed": 3.054,
+              "share_of_shift_pct": 109
+            },
+            {
+              "kind": "duplicate",
+              "findings": [
+                "F2",
+                "F3",
+                "F4",
+                "F5",
+                "F6"
+              ],
+              "value_if_only_this_is_fixed": 3.015,
+              "share_of_shift_pct": -12
+            },
+            {
+              "kind": "membership_change",
+              "findings": [
+                "F7"
+              ],
+              "value_if_only_this_is_fixed": 3.02,
+              "share_of_shift_pct": 3
+            }
+          ]
+        },
+        "sentence": "A1's difference moved -0.032 (3.051 \u2192 3.019), 0.37\u00d7 its sampling noise (bootstrap standard error 0.0857): within sampling noise. A small shift doesn't make it safe: the verdict comes from what changed, not how much, and another analysis of the same samples could move further. The swaps account for 109% of the shift. With all proposed repairs applied it returns to its baseline value."
       }
     },
     {
@@ -620,7 +698,7 @@
       "verdict": "Ready",
       "verdict_rules": [],
       "affected_by": [],
-      "needs_human_review": false,
+      "needs_human_review": true,
       "before": {
         "analysis": "A2",
         "inputs": [
@@ -785,21 +863,22 @@
       ],
       "justification": "The tool cannot tell whether this change is a correction or an error.",
       "addresses": [
-        "F13"
+        "F7"
       ]
     }
   ],
   "limitations": [
-    "Change detection compares exact values; edits that also alter a swapped or copied profile are reported as value edits.",
+    "Change detection compares exact values. A swap with small edits on top is caught by a near-match pass and reported as a probable swap with medium confidence; other edits to a swapped or copied profile show as value edits.",
     "The tool shows what changed, not which release is correct. Every repair needs a person's decision.",
     "Research data-quality check only: no diagnosis, treatment recommendation, risk score or clinical claim."
   ],
   "engine": {
     "name": "cohort-firewall",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "tower_policy": "0.1.0"
   },
-  "plain_summary": "Compared with frozen-A, release practice-B has 1 sample swap(s), 5 profile(s) copied onto other IDs, 1 membership change(s). Sample count unchanged (747) but membership changed: 5 sample(s) removed and 5 added. A count check alone would miss this. A1 is Blocked because of F1, F2, F3, F4; A2 is unaffected and was not rerun. A person must review before the new release is used.",
+  "plain_summary": "Blocked: A1 can't be trusted on this release yet, because measurements are attached to the wrong samples. First step: restore 2 sample profile(s) in protein_rppa.tsv.gz from the baseline release. Compared with frozen-A, release practice-B has 1 sample swap(s), 5 profile(s) copied onto other IDs, 1 membership change(s). The losses are concentrated in one group: Her2 lost 5 of 61 genuine profiles (8.2%), against 0.8% or less for every other PAM50Call_RNAseq group, so results for Her2 move more than the total count suggests. Random losses would be this concentrated with probability 8.2e-05 (hypergeometric test); that fits a targeted removal or a filtering error, and the tool can't tell which. The 12 changed samples come from 7 tissue source sites, with no sign that one site drives the changes. Sample count unchanged (747) but membership changed: 5 sample(s) removed and 5 added. A count check alone would miss this. A1 is Blocked because of F1, F2, F3, F4; A2 is unaffected and was not rerun. A1 moved 0.37\u00d7 its sampling noise (within sampling noise); the proposed repairs bring it back to baseline. Small shifts don't make a release safe: verdicts come from what changed, not how much. A person must review before the new release is used.",
+  "x_headline": "Blocked: A1 can't be trusted on this release yet, because measurements are attached to the wrong samples. First step: restore 2 sample profile(s) in protein_rppa.tsv.gz from the baseline release.",
   "next_steps": [
     {
       "rank": 1,
@@ -814,7 +893,8 @@
       ],
       "affects_analyses": [
         "A1"
-      ]
+      ],
+      "evidence_to_reconsider": "Reconsider once the restored profiles match the baseline and a rerun finds no swap or copy."
     },
     {
       "rank": 2,
@@ -836,11 +916,12 @@
       ],
       "affects_analyses": [
         "A1"
-      ]
+      ],
+      "evidence_to_reconsider": "Reconsider once these IDs are removed, or shown to be genuine new samples with their own measurements."
     },
     {
       "rank": 3,
-      "action": "Check 5 changed sample(s) in protein_rppa.tsv.gz against the source",
+      "action": "Confirm with the data provider that 5 added or removed sample(s) in protein_rppa.tsv.gz were intended",
       "samples": [
         "TCGA-A8-A08J-01",
         "TCGA-C8-A12Q-01",
@@ -850,18 +931,27 @@
       ],
       "n_samples": 5,
       "resolves": [
-        "F13"
+        "F7"
       ],
       "affects_analyses": [
         "A1"
-      ]
+      ],
+      "evidence_to_reconsider": "Reconsider once the provider confirms the change, and the affected analyses are rerun."
     }
   ],
+  "x_site_check": {
+    "changed_samples": 12,
+    "sites": 7,
+    "top_site": "A8",
+    "in_top_site": 2,
+    "expected_in_top_site": 0.8,
+    "p_by_chance": 0.19110984163233183
+  },
   "certificate": {
-    "cert_id": "1695561a6b4d3ad9",
+    "cert_id": "e28d79cf79bdec32",
     "payload": {
       "cert_format": "cohort-firewall/1",
-      "engine_version": "0.1.0",
+      "engine_version": "0.2.0",
       "policy_version": "0.1.0",
       "policy_sha256": "96178c766e51110d2cdcc34187819427187acd4c015f2d3aace50ee63e172915",
       "dataset_sha256": "e21b40e631efcaf020842757ed583ade92b32d5ab5421472b4a15bc8e70b3290",
@@ -873,15 +963,19 @@
         "TWR-MEM-1",
         "TWR-SWAP-1"
       ],
-      "issued_at": "2026-11-12T18:53:08+00:00"
+      "issued_at": "2026-11-19T16:57:27+00:00"
     },
-    "signature": "eC6zvZ3en/mnzUqQnUSzMh5oGtsAVMR3UceL98mAWqUX/rr7tiRHhXhEjsSxiZOgPMWWowczXOq/Wuj0/9ULAA==",
+    "signature": "SvykoVPels+aRBfUvOeFCYmLJuzRMejx5SqVjeofWjWM6nXk8l2NxQJq6O7dBr+YwEMCulfnZo0UNL3jr55RDg==",
     "alg": "Ed25519"
+  },
+  "x_shareable_summary": {
+    "text": "Blocked: A1 can't be trusted on this release yet, because measurements are attached to the wrong samples. First step: restore <11 sample profile(s) in protein_rppa.tsv.gz from the baseline release. Compared with frozen-A, release practice-B has <11 sample swap(s), <11 profile(s) copied onto other IDs, <11 membership change(s). The losses are concentrated in one group: Her2 lost <11 of 61 genuine profiles (8.2%), against 0.8% or less for every other PAM50Call_RNAseq group, so results for Her2 move more than the total count suggests. Random losses would be this concentrated with probability 8.2e-05 (hypergeometric test); that fits a targeted removal or a filtering error, and the tool can't tell which. The 12 changed samples come from <11 tissue source sites, with no sign that one site drives the changes. Sample count unchanged (747) but membership changed: <11 sample(s) removed and <11 added. A count check alone would miss this. A1 is Blocked because of F1, F2, F3, F4; A2 is unaffected and was not rerun. A1 moved 0.37\u00d7 its sampling noise (within sampling noise); the proposed repairs bring it back to baseline. Small shifts don't make a release safe: verdicts come from what changed, not how much. A person must review before the new release is used.",
+    "note": "Counts from 1 to 10 are shown as <11 (CMS small-cell suppression). A percentage next to a hidden count can still reveal it, so a person should read this before sharing. The full evidence record keeps exact counts and sample IDs for reviewers."
   },
   "baseline_unverified_files": [],
   "not_compared": [],
   "timing_seconds": {
     "baseline": 0.0,
-    "total": 10.2
+    "total": 2.8
   }
 }

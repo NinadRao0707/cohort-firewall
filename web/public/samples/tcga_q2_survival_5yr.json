@@ -1,4 +1,8 @@
 {
+  "shareable_summary": {
+    "text": "The data can support this question only after the steps below are taken and reported. <11,101 records match the group being studied. What needs attention: Only 32% of the cohort is observed through the 60-month horizon (median follow-up 27.7 months). A person must review before use.",
+    "note": "Counts from 1 to 10 are shown as <11 (CMS small-cell suppression). A percentage next to a hidden count can still reveal it, so a person should read this before sharing. The full evidence record keeps exact counts and sample IDs for reviewers."
+  },
   "verdict": "CONDITIONAL",
   "human_review": {
     "level": "required",
@@ -412,12 +416,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "eda8e7290a5c7860",
+    "cert_id": "23609edf757ba5a6",
     "payload": {
       "cert_format": "cohort-firewall/1",
-      "engine_version": "0.1.0",
+      "engine_version": "0.2.0",
       "policy_version": "0.5.1",
-      "policy_sha256": "0c59ba3616d3110ab05791c14039fb931b47f52778555a2349ccc089b7592a31",
+      "policy_sha256": "5da4bd3ca0bdb6537e80af86c4569ad20d2389926a75738ed23aa9602ca1ff04",
       "dataset_sha256": "d0c44cc4fca5e160f4cc855a9731173c78990b7935304ead70d09e64190812fa",
       "dictionary_sha256": "adb6b17fbed5e5e3261844460c25a6fb9e43b0df404841d85dac0556b21964f3",
       "spec_sha256": "01230a5c365c525b87afe53e3647a0da8e9432d8ba08ff8507252b97c620f356",
@@ -425,11 +429,11 @@
       "rule_ids": [
         "TIME-002"
       ],
-      "issued_at": "2026-11-12T18:52:57+00:00"
+      "issued_at": "2026-11-19T16:57:25+00:00"
     },
-    "signature": "dvM73NPHSxtvl7FS29jFKI36dOI7htSduAxe0txlxxkf8E7yC5Z8EPb52JKskp6d6MiJPC26wl/35Qyph97qAg==",
+    "signature": "HEKey3C5ZwkyI4jYA6lGUqaNRwPtnMYuKooawij1dlyh+lBbCW80QiFd/IBcFvQROY3Tu5S+UUND7hnLEe4bBA==",
     "alg": "Ed25519"
   },
-  "engine_version": "0.1.0",
+  "engine_version": "0.2.0",
   "policy_version": "0.5.1"
 }

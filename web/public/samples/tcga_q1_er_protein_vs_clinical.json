@@ -1,4 +1,8 @@
 {
+  "shareable_summary": {
+    "text": "The data can support this question only after the steps below are taken and reported. <11,046 records match the group being studied. What needs attention: Field 'er_alpha_rppa' is missing for 33% of the cohort. A person must review before use.",
+    "note": "Counts from 1 to 10 are shown as <11 (CMS small-cell suppression). A percentage next to a hidden count can still reveal it, so a person should read this before sharing. The full evidence record keeps exact counts and sample IDs for reviewers."
+  },
   "verdict": "CONDITIONAL",
   "human_review": {
     "level": "required",
@@ -361,12 +365,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "6c794a5a42a7a011",
+    "cert_id": "766a1db527bd2c03",
     "payload": {
       "cert_format": "cohort-firewall/1",
-      "engine_version": "0.1.0",
+      "engine_version": "0.2.0",
       "policy_version": "0.5.1",
-      "policy_sha256": "0c59ba3616d3110ab05791c14039fb931b47f52778555a2349ccc089b7592a31",
+      "policy_sha256": "5da4bd3ca0bdb6537e80af86c4569ad20d2389926a75738ed23aa9602ca1ff04",
       "dataset_sha256": "d0c44cc4fca5e160f4cc855a9731173c78990b7935304ead70d09e64190812fa",
       "dictionary_sha256": "adb6b17fbed5e5e3261844460c25a6fb9e43b0df404841d85dac0556b21964f3",
       "spec_sha256": "c2a276fd1c9f6a793a65ed5579223257e065ba8ac3d417b0b82395d7db871fa7",
@@ -374,11 +378,11 @@
       "rule_ids": [
         "CMP-004"
       ],
-      "issued_at": "2026-11-12T18:52:57+00:00"
+      "issued_at": "2026-11-19T16:57:25+00:00"
     },
-    "signature": "dT3k7Bv0mvrA6scqN4DpeHOTcB68WjAtmYtUSsXi3+L7yApy+yhcTSfMUlFLckWCbaU7dxIhzh09NX3kF6mWBA==",
+    "signature": "SnL9zCERRhConzXkSzwJvxGsvuWHLe+43LTrCy/n6ZNMhBDskL3sbpJYnyaiK5LWvbbYmOtqphMHjFmEMM5TAw==",
     "alg": "Ed25519"
   },
-  "engine_version": "0.1.0",
+  "engine_version": "0.2.0",
   "policy_version": "0.5.1"
 }

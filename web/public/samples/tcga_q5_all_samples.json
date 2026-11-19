@@ -1,4 +1,8 @@
 {
+  "shareable_summary": {
+    "text": "The data can support this question only after the steps below are taken and reported. <11,247 records match the group being studied. What needs attention: The outcome is missing for 39% of the cohort. 142 patient(s) appear more than once (1247 rows for 1101 patients), so counting rows counts some people twice (e.g. TCGA-A7-A0CE, TCGA-A7-A0CH, TCGA-A7-A0D9, TCGA-A7-A0DB, TCGA-A7-A0DC). A person must review before use.",
+    "note": "Counts from 1 to 10 are shown as <11 (CMS small-cell suppression). A percentage next to a hidden count can still reveal it, so a person should read this before sharing. The full evidence record keeps exact counts and sample IDs for reviewers."
+  },
   "verdict": "CONDITIONAL",
   "human_review": {
     "level": "required",
@@ -427,12 +431,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "f11145a0a7f44870",
+    "cert_id": "fbe91587c3edbeb9",
     "payload": {
       "cert_format": "cohort-firewall/1",
-      "engine_version": "0.1.0",
+      "engine_version": "0.2.0",
       "policy_version": "0.5.1",
-      "policy_sha256": "0c59ba3616d3110ab05791c14039fb931b47f52778555a2349ccc089b7592a31",
+      "policy_sha256": "5da4bd3ca0bdb6537e80af86c4569ad20d2389926a75738ed23aa9602ca1ff04",
       "dataset_sha256": "d0c44cc4fca5e160f4cc855a9731173c78990b7935304ead70d09e64190812fa",
       "dictionary_sha256": "adb6b17fbed5e5e3261844460c25a6fb9e43b0df404841d85dac0556b21964f3",
       "spec_sha256": "7d955e5d64d3e00362d976590e8c82ac29d3e32939e93a1e236e56691175fc89",
@@ -441,11 +445,11 @@
         "CMP-002",
         "UNIT-001"
       ],
-      "issued_at": "2026-11-12T18:52:57+00:00"
+      "issued_at": "2026-11-19T16:57:25+00:00"
     },
-    "signature": "z4s1g49C78H3xcUWBC5Jy7fFoSTmefRu3tDZS9/9xYFZLJveM0f/+rbwMqkvtukaDEeRjlJP/L7bfnnYS63pAw==",
+    "signature": "5FaHd666WdX7MJMwP1BsZPrOtfrpndCsfVRmUuFbpFSZ+2u2i+8NLQTvA/HeES5pGUgeQBxJZ93u6uRGi14wCg==",
     "alg": "Ed25519"
   },
-  "engine_version": "0.1.0",
+  "engine_version": "0.2.0",
   "policy_version": "0.5.1"
 }

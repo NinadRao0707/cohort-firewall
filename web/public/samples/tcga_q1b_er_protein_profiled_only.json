@@ -1,8 +1,12 @@
 {
+  "shareable_summary": {
+    "text": "The data can support this question as stated. 698 records match the group being studied. No check found a problem for this question. A person must review before use.",
+    "note": "Counts from 1 to 10 are shown as <11 (CMS small-cell suppression). A percentage next to a hidden count can still reveal it, so a person should read this before sharing. The full evidence record keeps exact counts and sample IDs for reviewers."
+  },
   "verdict": "READY",
   "human_review": {
-    "level": "recommended",
-    "text": "A person should still confirm the question and data match before training."
+    "level": "required",
+    "text": "Ready for this question, but a named reviewer must still confirm the question and data match, and record a note, before use."
   },
   "accepted_limitations": [],
   "ignored_acceptances": [],
@@ -335,22 +339,22 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "a4184b46ea98f340",
+    "cert_id": "72602f67999fb6c6",
     "payload": {
       "cert_format": "cohort-firewall/1",
-      "engine_version": "0.1.0",
+      "engine_version": "0.2.0",
       "policy_version": "0.5.1",
-      "policy_sha256": "0c59ba3616d3110ab05791c14039fb931b47f52778555a2349ccc089b7592a31",
+      "policy_sha256": "5da4bd3ca0bdb6537e80af86c4569ad20d2389926a75738ed23aa9602ca1ff04",
       "dataset_sha256": "d0c44cc4fca5e160f4cc855a9731173c78990b7935304ead70d09e64190812fa",
       "dictionary_sha256": "adb6b17fbed5e5e3261844460c25a6fb9e43b0df404841d85dac0556b21964f3",
       "spec_sha256": "ce381e96d79a7541db2bdc2316538efb55debde26e6d6da1d4eecbc148c5a810",
       "verdict": "READY",
       "rule_ids": [],
-      "issued_at": "2026-11-12T18:52:57+00:00"
+      "issued_at": "2026-11-19T16:57:25+00:00"
     },
-    "signature": "dSEtXoOpQUK/eH2OigDiNxCsF2QAHLHaEOpG1lRlzACLza3FEDUqFwfstgrPgAlenklMZ4mEF1VBS8yuCpXdAg==",
+    "signature": "qucRtwBW04RSOP3B2wi5nD3C+JprM1qKAg4pCJJo+DKFFnW2HVuccL4cPTHkoeGw+Z9ZgoJ0rzr9czZo0HBwDg==",
     "alg": "Ed25519"
   },
-  "engine_version": "0.1.0",
+  "engine_version": "0.2.0",
   "policy_version": "0.5.1"
 }

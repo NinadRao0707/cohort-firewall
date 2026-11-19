@@ -1,4 +1,8 @@
 {
+  "shareable_summary": {
+    "text": "The tool can't confirm something this question needs, so the data doesn't pass. <11,400 records match the group being studied. What needs attention: No data dictionary was supplied, so column meaning, timing and provenance cannot be verified. Rule META-009 references a metric the check did not produce. A person must review before use.",
+    "note": "Counts from 1 to 10 are shown as <11 (CMS small-cell suppression). A percentage next to a hidden count can still reveal it, so a person should read this before sharing. The full evidence record keeps exact counts and sample IDs for reviewers."
+  },
   "verdict": "INSUFFICIENT_EVIDENCE",
   "human_review": {
     "level": "required",
@@ -421,12 +425,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "ee7d1eb730a8b4fa",
+    "cert_id": "5f6aec8aaea7bc95",
     "payload": {
       "cert_format": "cohort-firewall/1",
-      "engine_version": "0.1.0",
+      "engine_version": "0.2.0",
       "policy_version": "0.5.1",
-      "policy_sha256": "0c59ba3616d3110ab05791c14039fb931b47f52778555a2349ccc089b7592a31",
+      "policy_sha256": "5da4bd3ca0bdb6537e80af86c4569ad20d2389926a75738ed23aa9602ca1ff04",
       "dataset_sha256": "31275bc4e6681487c7e17cd7939b7e5d1dd855d369321a7e890bb19b6b037e32",
       "dictionary_sha256": null,
       "spec_sha256": "843d4731ec71bef6469c594caf0270965ec21dab11db52fa14373ace058b3e95",
@@ -435,11 +439,11 @@
         "META-001",
         "META-009"
       ],
-      "issued_at": "2026-11-12T18:52:57+00:00"
+      "issued_at": "2026-11-19T16:57:25+00:00"
     },
-    "signature": "wj1Hk3AZWphp9ff9y5LDrfmqp3gNMeievqFqoFhS3DAHr2iagjZHmBfoMps1ZZLBGpuzERKQaZHMUZBQJveaCw==",
+    "signature": "BINYt3FRPYpbl96TNHpJwKy3bs/5XPRfschPEGUBRD4kvnftPWX5KvO1RdiLXdE9x33T0ORLWprSIcPND0ucBA==",
     "alg": "Ed25519"
   },
-  "engine_version": "0.1.0",
+  "engine_version": "0.2.0",
   "policy_version": "0.5.1"
 }

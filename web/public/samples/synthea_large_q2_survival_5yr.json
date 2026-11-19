@@ -1,4 +1,8 @@
 {
+  "shareable_summary": {
+    "text": "The data can support this question only after the steps below are taken and reported. <11,142 records match the group being studied. What needs attention: Field 'tumor_size' is missing for 27% of the cohort. Some subgroups are too small to evaluate model behavior reliably: race=hawaiian (n=13), race=other (n=13), race=native (n=<11). A person must review before use.",
+    "note": "Counts from 1 to 10 are shown as <11 (CMS small-cell suppression). A percentage next to a hidden count can still reveal it, so a person should read this before sharing. The full evidence record keeps exact counts and sample IDs for reviewers."
+  },
   "verdict": "CONDITIONAL",
   "human_review": {
     "level": "required",
@@ -444,12 +448,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "73c061103f7ebfd4",
+    "cert_id": "920f2e1ea952043e",
     "payload": {
       "cert_format": "cohort-firewall/1",
-      "engine_version": "0.1.0",
+      "engine_version": "0.2.0",
       "policy_version": "0.5.1",
-      "policy_sha256": "0c59ba3616d3110ab05791c14039fb931b47f52778555a2349ccc089b7592a31",
+      "policy_sha256": "5da4bd3ca0bdb6537e80af86c4569ad20d2389926a75738ed23aa9602ca1ff04",
       "dataset_sha256": "af34aae37e9e542dca5b81039b8ee1a49f2263b85a5f13588e95f85aa89e289f",
       "dictionary_sha256": "ffb6df259cfc22476a238af54dafa149c97d967140018c814cbbbdd29925a0fa",
       "spec_sha256": "a66507caa19364935f8c9a6aedb5c260877a976e6597378eab8c2346883ebc46",
@@ -458,11 +462,11 @@
         "CMP-004",
         "SUB-002"
       ],
-      "issued_at": "2026-11-12T18:53:08+00:00"
+      "issued_at": "2026-11-19T16:57:28+00:00"
     },
-    "signature": "tk2CKFgLl4kCT3xv7y0ATMtfPBwToXjcoTDzIUkKwkCg3ZeOm8HTzUHbgS+dKe3LXWdtdleoZo7NRwCfsF1bBA==",
+    "signature": "KC9GzGTnHbmA+r9+7GESBmE08+V/swWvmmntCQTRTut6cSDIl5a33lirRopy+1qrHi9sPn4xo+CTMIQJy+11AA==",
     "alg": "Ed25519"
   },
-  "engine_version": "0.1.0",
+  "engine_version": "0.2.0",
   "policy_version": "0.5.1"
 }

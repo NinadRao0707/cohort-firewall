@@ -1,4 +1,8 @@
 {
+  "shareable_summary": {
+    "text": "The data can't support this question as asked. <11,400 records match the group being studied. What needs attention: Column(s) look like direct identifiers: first_name (flagged by its name), last_name (flagged by its name), ssn (flagged by its name), birthdate (flagged by its name), zip (flagged by its name). A person must review before use.",
+    "note": "Counts from 1 to 10 are shown as <11 (CMS small-cell suppression). A percentage next to a hidden count can still reveal it, so a person should read this before sharing. The full evidence record keeps exact counts and sample IDs for reviewers."
+  },
   "verdict": "BLOCKED",
   "human_review": {
     "level": "required",
@@ -425,12 +429,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "2fbb0976fb770282",
+    "cert_id": "11cdc1ff8abbe1aa",
     "payload": {
       "cert_format": "cohort-firewall/1",
-      "engine_version": "0.1.0",
+      "engine_version": "0.2.0",
       "policy_version": "0.5.1",
-      "policy_sha256": "0c59ba3616d3110ab05791c14039fb931b47f52778555a2349ccc089b7592a31",
+      "policy_sha256": "5da4bd3ca0bdb6537e80af86c4569ad20d2389926a75738ed23aa9602ca1ff04",
       "dataset_sha256": "fd323369fcc7c1e20633cec6935513123f2422b5731df362d15af043f034fa00",
       "dictionary_sha256": "cc2d1de66d8b616e2fae076def8c636640d31dc2fc0d73236223d06b7e141726",
       "spec_sha256": "843d4731ec71bef6469c594caf0270965ec21dab11db52fa14373ace058b3e95",
@@ -438,11 +442,11 @@
       "rule_ids": [
         "PHI-001"
       ],
-      "issued_at": "2026-11-12T18:52:57+00:00"
+      "issued_at": "2026-11-19T16:57:24+00:00"
     },
-    "signature": "p1HCZRRcSq82/G1YvZ9vmr3F0hRO1WxRidmRrVyXFeeffaByj9vWsa1bytajcFgBDeHyhSQzqFexqsP9X/6hCg==",
+    "signature": "z35UYZF1ODlOI3kGxk83XHvHe+MnTNxSwjq0IroIkUJLqtOyiDiUsXxy25ym71HOrvkGDSBvoIRxRZaP0sNfCQ==",
     "alg": "Ed25519"
   },
-  "engine_version": "0.1.0",
+  "engine_version": "0.2.0",
   "policy_version": "0.5.1"
 }

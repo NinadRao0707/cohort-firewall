@@ -9,7 +9,7 @@ the analyses it affects, gives each a verdict, and writes `findings.json` in the
 | Sealed envelope | Release check → **+ Open envelope** → number and code → **Open and compare** |
 | Any folder | `python -m cohort_firewall.tower --b <folder> --out outputs/findings.json` |
 | Validate the output | `python ../oncosys-hackathon-challenge/format/validate.py outputs/findings.json` |
-| Leave out summary findings | add `--no-summary-findings` |
+| Summary findings | Kept in `x_summaries` by default; `--summary-findings` puts them back in `findings`, `--no-summary-findings` drops them |
 
 The baseline defaults to the frozen release (`data/tcga-brca/raw` in the challenge repository) and is
 checked against `sources.csv`. If it doesn't match, every verdict is Insufficient Evidence (TWR-PROV-1).

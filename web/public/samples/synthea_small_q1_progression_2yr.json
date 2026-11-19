@@ -1,4 +1,8 @@
 {
+  "shareable_summary": {
+    "text": "The data can't support this question as asked. 157 records match the group being studied. What needs attention: Only 12 records in the smaller outcome class; too few to develop or evaluate a model. Field 'tumor_size' is missing for 26% of the cohort. There are <11 more issue(s) below. A person must review before use.",
+    "note": "Counts from 1 to 10 are shown as <11 (CMS small-cell suppression). A percentage next to a hidden count can still reveal it, so a person should read this before sharing. The full evidence record keeps exact counts and sample IDs for reviewers."
+  },
   "verdict": "BLOCKED",
   "human_review": {
     "level": "required",
@@ -491,12 +495,12 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "2613b6d5e1fc6314",
+    "cert_id": "c3384184e9ee1cb6",
     "payload": {
       "cert_format": "cohort-firewall/1",
-      "engine_version": "0.1.0",
+      "engine_version": "0.2.0",
       "policy_version": "0.5.1",
-      "policy_sha256": "0c59ba3616d3110ab05791c14039fb931b47f52778555a2349ccc089b7592a31",
+      "policy_sha256": "5da4bd3ca0bdb6537e80af86c4569ad20d2389926a75738ed23aa9602ca1ff04",
       "dataset_sha256": "36c4dd46760187e50e27ea25869566a09c8d6fd515e3a1d9f5975ccf64c751dc",
       "dictionary_sha256": "ffb6df259cfc22476a238af54dafa149c97d967140018c814cbbbdd29925a0fa",
       "spec_sha256": "306bf29e4b0a29cfac7f25c574c7ee2c8b105ed1e70362f1925cb5e44bded1c6",
@@ -506,11 +510,11 @@
         "EVT-001",
         "SUB-002"
       ],
-      "issued_at": "2026-11-12T18:53:08+00:00"
+      "issued_at": "2026-11-19T16:57:28+00:00"
     },
-    "signature": "E/7styoA8Vz9e8Bvrv7i8hTCeNzewGnTL9FbE/XZmLXFsfGLzl420Dn1AszfIR0r5ij9LsU19eQqEbujr0r/Dg==",
+    "signature": "I5MW0Q6vO1n9KPAAY9RSERZkpkg/2lwioFg+ininjTwafaR9zfpP/8qrSmHNSMgIZaZkW8j3LkaM2aBqQ8m3CQ==",
     "alg": "Ed25519"
   },
-  "engine_version": "0.1.0",
+  "engine_version": "0.2.0",
   "policy_version": "0.5.1"
 }
