@@ -38,6 +38,16 @@ npm run build
 | `lib/` | API clients and response types |
 | `public/samples/` | Saved results for offline use |
 
-## Deploying
-The app can be hosted on Vercel as a saved-results demo: set the project's root directory to `web`
-and leave `NEXT_PUBLIC_API_URL` unset. Live checks need the API and the frozen data, so they run locally.
+## Deploying the public demo (Vercel)
+The hosted site is a **synthetic-data demo**. On Vercel, demo mode turns on automatically:
+- a banner says the data is synthetic, and only synthetic examples are listed;
+- Release check opens a synthetic run (`public/samples/tower_demo.json`, made by
+  `python scripts/build_public_demo.py`) with made-up `DEMO-` IDs and random values;
+- before building, `scripts/prepare-demo.mjs` **deletes every saved sample that isn't on the synthetic
+  allow-list**, so results with real TCGA sample IDs are never deployed, not even by direct URL.
+
+Real TCGA-BRCA runs stay local. Live checks need the API and the frozen data, so they also run locally.
+
+Setup: import the repo on Vercel, set **Root Directory** to `web`, and deploy. `vercel.json` already
+sets the build command. Leave `NEXT_PUBLIC_API_URL` unset. To preview demo mode locally:
+`NEXT_PUBLIC_DEMO_MODE=1 npm run dev`.

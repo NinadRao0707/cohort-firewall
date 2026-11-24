@@ -948,7 +948,7 @@
     "p_by_chance": 0.19110984163233183
   },
   "certificate": {
-    "cert_id": "5dd7bd57b65537f9",
+    "cert_id": "9b921bac5ba59d96",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.2.0",
@@ -963,9 +963,9 @@
         "TWR-MEM-1",
         "TWR-SWAP-1"
       ],
-      "issued_at": "2026-11-19T16:57:13+00:00"
+      "issued_at": "2026-11-24T17:25:40+00:00"
     },
-    "signature": "N2u0CR0cBMugFrWQSMgtwLNYXVm73KBd1vX79BC7aMT7Hzp+HldiUN7qmvD21aNG5Pziu/UgNpcSLtNlHGczCQ==",
+    "signature": "DB3USa44jsLsrg2/McuPhZ9Sa+MZKjwjyVvXSbKCyqiDSVYGchxNE3SZGHODINEEJUofitHlLJd0xwPHnYskAA==",
     "alg": "Ed25519"
   },
   "x_shareable_summary": {
@@ -975,11 +975,11 @@
   "baseline_unverified_files": [],
   "not_compared": [],
   "timing_seconds": {
-    "baseline": 2.0,
-    "total": 4.9
+    "baseline": 0.0,
+    "total": 2.8
   },
   "x_ledger": {
-    "seq": 80,
-    "hash": "8716bd1eea92ce10927a63388f7a85d7c436fb28b4360446361622c83c83ddc1"
+    "seq": 101,
+    "hash": "f61dc9f8765d8949f89faf99dcd60340960acc4b5e723be0ac63afcd4cfff8aa"
   }
 }

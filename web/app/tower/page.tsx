@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { Nav } from "@/components/Nav";
+import { DEMO_MODE } from "@/lib/demo";
 import { ChipPopover } from "@/components/Popover";
 import { TowerResults } from "@/components/TowerResults";
 import { apiConfigured, buildRelease, listReleases, loadTowerSample, runTower, unsealEnvelope, type FindingsDoc } from "@/lib/tower";
@@ -106,7 +107,7 @@ export default function TowerPage() {
                     <small>Runs the event&apos;s make_release.py, then compares. Its answer key is never read.</small></label>
                   <label className="field"><span>Open a findings.json file</span>
                     <input type="file" accept=".json,application/json" onChange={(e) => openFile(e.target.files?.[0])} /></label>
-                  <button type="button" className="secondary" onClick={() => go(loadTowerSample)}>Open the saved practice-B run</button>
+                  <button type="button" className="secondary" onClick={() => go(loadTowerSample)}>{DEMO_MODE ? "Open the synthetic demo run" : "Open the saved practice-B run"}</button>
                   <button type="button" className="secondary" onClick={() => refresh()} disabled={!apiConfigured || busy}>Refresh the release list</button>
                   <label className="radio-row"><input type="checkbox" checked={rna} onChange={(e) => setRna(e.target.checked)} /> Include the 64 MB RNA file</label>
                 </div>
@@ -121,7 +122,7 @@ export default function TowerPage() {
         {error && <p className="error" role="alert">{error}</p>}
         {doc ? <TowerResults doc={doc} /> : (
           <div className="empty">
-            <p>{apiConfigured ? "Choose a release and select Compare releases." : "This copy shows saved results only: open More, then the saved practice-B run."}</p>
+            <p>{apiConfigured ? "Choose a release and select Compare releases." : (DEMO_MODE ? "This public demo uses synthetic data: open More, then the synthetic demo run." : "This copy shows saved results only: open More, then the saved practice-B run.")}</p>
             <p className="quiet">Analyses that nothing touches are left alone, and every change is listed for a person to decide.</p>
           </div>
         )}

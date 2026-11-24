@@ -1,0 +1,932 @@
+{
+  "format_version": "0.2",
+  "producer": {
+    "team": "Insufficient Evidence (synthetic demo)",
+    "product": "Cohort Control Tower",
+    "track": "cohort-firewall"
+  },
+  "data": {
+    "dataset": "TCGA-BRCA",
+    "releases": [
+      {
+        "name": "frozen-A",
+        "files": [
+          {
+            "file": "clinical.tsv",
+            "sha256": "440645d7d44b1e46092992afbef238012c5992dfb77f6e83bfda35546643a8ed",
+            "hash_of": "file"
+          },
+          {
+            "file": "copy_number_gistic.tsv.gz",
+            "sha256": "79a0ca537fd1bed862b596989558eda5ee5ec59bffd151e8425a6f8b0f32c94c",
+            "hash_of": "file"
+          },
+          {
+            "file": "mutation_gene_level.tsv.gz",
+            "sha256": "b59c8a5b3040f91b5cff85ab52e0b00ffec74e5d707a7d257d64067751c381c9",
+            "hash_of": "file"
+          },
+          {
+            "file": "protein_rppa.tsv.gz",
+            "sha256": "1da5a3129ae637641732883d2cdbbd18437939a8f5801e6cd0bcb7b6394449d5",
+            "hash_of": "file"
+          },
+          {
+            "file": "survival.tsv",
+            "sha256": "024c38d50f447a11f35865e452bf961e101cb3c75f14a2ddc5f2b13109746c27",
+            "hash_of": "file"
+          }
+        ]
+      },
+      {
+        "name": "demo-release",
+        "files": [
+          {
+            "file": "clinical.tsv",
+            "sha256": "64064b1eb8830165d464dbb6ad72d091205820a42a13dce084a3e3e545d42c8d",
+            "hash_of": "content"
+          },
+          {
+            "file": "copy_number_gistic.tsv.gz",
+            "sha256": "0b432fd3f564788784710249a66a6493e07e0520a968ebbc5f1af2fe6fe0376a",
+            "hash_of": "content"
+          },
+          {
+            "file": "mutation_gene_level.tsv.gz",
+            "sha256": "6347bb6fd2c8a7623e2e66bd2e16899c9fd015ad698049a5efefcc7d609c5b0b",
+            "hash_of": "content"
+          },
+          {
+            "file": "protein_rppa.tsv.gz",
+            "sha256": "bcd94bf5725e3a275bf045ba413e448ae71683d3479f838a70c27bd8a46af633",
+            "hash_of": "content"
+          },
+          {
+            "file": "survival.tsv",
+            "sha256": "024c38d50f447a11f35865e452bf961e101cb3c75f14a2ddc5f2b13109746c27",
+            "hash_of": "content"
+          }
+        ]
+      }
+    ]
+  },
+  "question": "Is release demo-release still fit for the protected analyses (A1, A2) that were run on frozen-A?",
+  "verdict": "Blocked",
+  "findings": [
+    {
+      "id": "F1",
+      "kind": "label_conflict",
+      "summary": "Clinical fields changed for DEMO-39-00E6-01: PAM50Call_RNAseq 'Basal' \u2192 'LumB'",
+      "severity": "high",
+      "confidence": "high",
+      "x_severity_reason": "High: A2 groups or filters by PAM50Call_RNAseq, which changed for this sample.",
+      "x_confidence_reason": "Exact comparison of the values in both releases.",
+      "evidence": [
+        {
+          "kind": "sample",
+          "id": "DEMO-39-00E6-01",
+          "release": "demo-release",
+          "file": "clinical.tsv"
+        }
+      ],
+      "affects_analyses": [
+        "A2"
+      ],
+      "not_affected_analyses": [
+        "A1"
+      ],
+      "limitation": "The tool sees that a label changed, not which version is correct.",
+      "needs_human_review": true
+    },
+    {
+      "id": "F2",
+      "kind": "label_conflict",
+      "summary": "Clinical fields changed for DEMO-48-004B-01: PAM50Call_RNAseq 'Basal' \u2192 'LumB'",
+      "severity": "high",
+      "confidence": "high",
+      "x_severity_reason": "High: A2 groups or filters by PAM50Call_RNAseq, which changed for this sample.",
+      "x_confidence_reason": "Exact comparison of the values in both releases.",
+      "evidence": [
+        {
+          "kind": "sample",
+          "id": "DEMO-48-004B-01",
+          "release": "demo-release",
+          "file": "clinical.tsv"
+        }
+      ],
+      "affects_analyses": [
+        "A2"
+      ],
+      "not_affected_analyses": [
+        "A1"
+      ],
+      "limitation": "The tool sees that a label changed, not which version is correct.",
+      "needs_human_review": true
+    },
+    {
+      "id": "F3",
+      "kind": "label_conflict",
+      "summary": "Clinical fields changed for DEMO-71-0051-01: PAM50Call_RNAseq 'Basal' \u2192 'LumB'",
+      "severity": "high",
+      "confidence": "high",
+      "x_severity_reason": "High: A2 groups or filters by PAM50Call_RNAseq, which changed for this sample.",
+      "x_confidence_reason": "Exact comparison of the values in both releases.",
+      "evidence": [
+        {
+          "kind": "sample",
+          "id": "DEMO-71-0051-01",
+          "release": "demo-release",
+          "file": "clinical.tsv"
+        }
+      ],
+      "affects_analyses": [
+        "A2"
+      ],
+      "not_affected_analyses": [
+        "A1"
+      ],
+      "limitation": "The tool sees that a label changed, not which version is correct.",
+      "needs_human_review": true
+    },
+    {
+      "id": "F4",
+      "kind": "label_conflict",
+      "summary": "Clinical fields changed for DEMO-90-004D-01: PAM50Call_RNAseq 'Her2' \u2192 'Basal'",
+      "severity": "high",
+      "confidence": "high",
+      "x_severity_reason": "High: A2 groups or filters by PAM50Call_RNAseq, which changed for this sample.",
+      "x_confidence_reason": "Exact comparison of the values in both releases.",
+      "evidence": [
+        {
+          "kind": "sample",
+          "id": "DEMO-90-004D-01",
+          "release": "demo-release",
+          "file": "clinical.tsv"
+        }
+      ],
+      "affects_analyses": [
+        "A2"
+      ],
+      "not_affected_analyses": [
+        "A1"
+      ],
+      "limitation": "The tool sees that a label changed, not which version is correct.",
+      "needs_human_review": true
+    },
+    {
+      "id": "F5",
+      "kind": "sample_swap",
+      "summary": "DEMO-48-0039-01 and DEMO-58-00C1-01 exchanged profiles in protein_rppa.tsv.gz",
+      "severity": "high",
+      "confidence": "high",
+      "x_severity_reason": "High: measurements are attached to the wrong samples in data A1 uses, so its result can't be trusted (A1 difference 2.456 \u2192 2.386).",
+      "x_confidence_reason": "Exact match: each sample now carries the other's exact baseline profile.",
+      "evidence": [
+        {
+          "kind": "sample",
+          "id": "DEMO-48-0039-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "DEMO-58-00C1-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        }
+      ],
+      "affects_analyses": [
+        "A1"
+      ],
+      "not_affected_analyses": [
+        "A2"
+      ],
+      "limitation": "Exact-match detection: a swap combined with small value edits is reported separately as a probable swap.",
+      "needs_human_review": true
+    },
+    {
+      "id": "F6",
+      "kind": "duplicate",
+      "summary": "New sample DEMO-ZZ-9999-01 in protein_rppa.tsv.gz is an exact copy of DEMO-60-00E0-01",
+      "severity": "high",
+      "confidence": "high",
+      "x_severity_reason": "High: the same measurement is counted under two sample IDs in data A1 uses, so its result can't be trusted (A1 difference 2.456 \u2192 2.386).",
+      "x_confidence_reason": "Exact match to one baseline sample's profile.",
+      "evidence": [
+        {
+          "kind": "sample",
+          "id": "DEMO-ZZ-9999-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz",
+          "note": "carries the exact profile of DEMO-60-00E0-01, which is unchanged"
+        }
+      ],
+      "affects_analyses": [
+        "A1"
+      ],
+      "not_affected_analyses": [
+        "A2"
+      ],
+      "limitation": "Exact-match detection: a near-copy with small edits appears as a new sample instead.",
+      "needs_human_review": true
+    },
+    {
+      "id": "F7",
+      "kind": "unlinked_record",
+      "summary": "1 sample(s) in protein_rppa.tsv.gz have no clinical record, so no analysis can place them in a group",
+      "severity": "medium",
+      "confidence": "high",
+      "x_severity_reason": "Medium: these samples can't be joined to clinical data, so any analysis that needs a label silently drops them.",
+      "x_confidence_reason": "Sample IDs compared directly between releases.",
+      "evidence": [
+        {
+          "kind": "sample",
+          "id": "DEMO-ZZ-9999-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        }
+      ],
+      "affects_analyses": [],
+      "not_affected_analyses": [
+        "A1",
+        "A2"
+      ],
+      "limitation": "Checks sample IDs against clinical.tsv in the same release; samples that already lacked a clinical record in the baseline are not flagged.",
+      "needs_human_review": true
+    },
+    {
+      "id": "F8",
+      "kind": "membership_change",
+      "summary": "3 sample(s) disappeared from protein_rppa.tsv.gz",
+      "severity": "medium",
+      "confidence": "high",
+      "x_severity_reason": "Medium: removes samples from the data A1 uses, changing who or what is counted (A1 difference 2.456 \u2192 2.386).",
+      "x_confidence_reason": "Sample IDs compared directly between releases.",
+      "evidence": [
+        {
+          "kind": "sample",
+          "id": "DEMO-45-00CF-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "DEMO-53-00A5-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "DEMO-98-00F2-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        }
+      ],
+      "affects_analyses": [
+        "A1"
+      ],
+      "not_affected_analyses": [
+        "A2"
+      ],
+      "limitation": "Detected by comparing exact values between releases.",
+      "needs_human_review": true
+    }
+  ],
+  "x_summaries": [
+    {
+      "id": "S1",
+      "kind": "missing_data",
+      "summary": "protein_rppa.tsv.gz: genuine profiles for breast_carcinoma_estrogen_receptor_status = 'Negative' fell from 61 to 59",
+      "severity": "low",
+      "confidence": "low",
+      "x_severity_reason": "Low: breast_carcinoma_estrogen_receptor_status = Negative lost 2 of 61 genuine profiles (3.3%); the lost profiles are in data A1 uses. Restates the changes above.",
+      "x_confidence_reason": "Exact counts, but a loss this size is consistent with chance (p = 0.43).",
+      "evidence": [
+        {
+          "kind": "sample",
+          "id": "DEMO-58-00C1-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "DEMO-98-00F2-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        }
+      ],
+      "affects_analyses": [
+        "A1"
+      ],
+      "not_affected_analyses": [
+        "A2"
+      ],
+      "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
+      "needs_human_review": true,
+      "x_summary_of_other_findings": true,
+      "x_p_by_chance": 0.43046563249889613
+    },
+    {
+      "id": "S2",
+      "kind": "missing_data",
+      "summary": "protein_rppa.tsv.gz: genuine profiles for breast_carcinoma_estrogen_receptor_status = 'Positive' fell from 157 to 154",
+      "severity": "low",
+      "confidence": "low",
+      "x_severity_reason": "Low: breast_carcinoma_estrogen_receptor_status = Positive lost 3 of 157 genuine profiles (1.9%); the lost profiles are in data A1 uses. Restates the changes above.",
+      "x_confidence_reason": "Exact counts, but a loss this size is consistent with chance (p = 0.87).",
+      "evidence": [
+        {
+          "kind": "sample",
+          "id": "DEMO-45-00CF-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "DEMO-48-0039-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "DEMO-53-00A5-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        }
+      ],
+      "affects_analyses": [
+        "A1"
+      ],
+      "not_affected_analyses": [
+        "A2"
+      ],
+      "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
+      "needs_human_review": true,
+      "x_summary_of_other_findings": true,
+      "x_p_by_chance": 0.8650733831328796
+    },
+    {
+      "id": "S3",
+      "kind": "missing_data",
+      "summary": "protein_rppa.tsv.gz: genuine profiles for PAM50Call_RNAseq = 'Basal' fell from 29 to 27",
+      "severity": "medium",
+      "confidence": "low",
+      "x_severity_reason": "Medium: PAM50Call_RNAseq = Basal lost 2 of 29 genuine profiles (6.9%); the lost profiles are in data A1 uses. Restates the changes above.",
+      "x_confidence_reason": "Exact counts, but a loss this size is consistent with chance (p = 0.12).",
+      "evidence": [
+        {
+          "kind": "sample",
+          "id": "DEMO-53-00A5-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "DEMO-58-00C1-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        }
+      ],
+      "affects_analyses": [
+        "A1"
+      ],
+      "not_affected_analyses": [
+        "A2"
+      ],
+      "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
+      "needs_human_review": true,
+      "x_summary_of_other_findings": true,
+      "x_p_by_chance": 0.11992820291224562
+    },
+    {
+      "id": "S4",
+      "kind": "missing_data",
+      "summary": "protein_rppa.tsv.gz: genuine profiles for PAM50Call_RNAseq = 'LumA' fell from 74 to 73",
+      "severity": "low",
+      "confidence": "low",
+      "x_severity_reason": "Low: PAM50Call_RNAseq = LumA lost 1 of 74 genuine profiles (1.4%); the lost profiles are in data A1 uses. Restates the changes above.",
+      "x_confidence_reason": "Exact counts, but a loss this size is consistent with chance (p = 0.88).",
+      "evidence": [
+        {
+          "kind": "sample",
+          "id": "DEMO-48-0039-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        }
+      ],
+      "affects_analyses": [
+        "A1"
+      ],
+      "not_affected_analyses": [
+        "A2"
+      ],
+      "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
+      "needs_human_review": true,
+      "x_summary_of_other_findings": true,
+      "x_p_by_chance": 0.8788210462336207
+    },
+    {
+      "id": "S5",
+      "kind": "missing_data",
+      "summary": "protein_rppa.tsv.gz: genuine profiles for PAM50Call_RNAseq = 'Normal' fell from 15 to 14",
+      "severity": "medium",
+      "confidence": "low",
+      "x_severity_reason": "Medium: PAM50Call_RNAseq = Normal lost 1 of 15 genuine profiles (6.7%); the lost profiles are in data A1 uses. Restates the changes above.",
+      "x_confidence_reason": "Exact counts, but a loss this size is consistent with chance (p = 0.29).",
+      "evidence": [
+        {
+          "kind": "sample",
+          "id": "DEMO-45-00CF-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        }
+      ],
+      "affects_analyses": [
+        "A1"
+      ],
+      "not_affected_analyses": [
+        "A2"
+      ],
+      "limitation": "Counts genuine profiles (not copies of another sample) per clinical subgroup, using the newer release's labels.",
+      "needs_human_review": true,
+      "x_summary_of_other_findings": true,
+      "x_p_by_chance": 0.2932320413724161
+    }
+  ],
+  "analyses": [
+    {
+      "id": "A1",
+      "status": "changed",
+      "description": "Mean ER-alpha (RPPA) in ER-positive vs ER-negative primary tumors (clinical IHC status).",
+      "inputs": [
+        "clinical.tsv",
+        "protein_rppa.tsv.gz"
+      ],
+      "reason": "Rerun because 5 detected change(s) touch its inputs and samples.",
+      "verdict": "Blocked",
+      "verdict_rules": [
+        {
+          "rule_id": "TWR-SWAP-1",
+          "verdict": "Blocked",
+          "reason": "1 sample swap(s) in its inputs: measurements are attached to the wrong samples (DEMO-48-0039-01, DEMO-58-00C1-01).",
+          "remedy": "Restore the affected samples from the previous release, or exclude them, then rerun."
+        },
+        {
+          "rule_id": "TWR-DUP-1",
+          "verdict": "Blocked",
+          "reason": "1 sample(s) now carry another sample's exact profile, so the same measurement is counted under different IDs (DEMO-ZZ-9999-01).",
+          "remedy": "Restore the original profiles from the previous release, or exclude the duplicates, then rerun."
+        },
+        {
+          "rule_id": "TWR-MEM-1",
+          "verdict": "Conditional",
+          "reason": "3 sample(s) appeared or disappeared in its inputs, changing who is counted.",
+          "remedy": "Confirm the removals and additions are intended and report the new denominator."
+        }
+      ],
+      "affected_by": [
+        "F5",
+        "F6",
+        "F8"
+      ],
+      "needs_human_review": true,
+      "before": {
+        "analysis": "A1",
+        "inputs": [
+          "clinical.tsv",
+          "protein_rppa.tsv.gz"
+        ],
+        "n_samples": 197,
+        "n_positive": 141,
+        "n_negative": 56,
+        "mean_positive": 1.375,
+        "mean_negative": -1.081,
+        "difference": 2.456,
+        "n_sample_ids": 197
+      },
+      "after": {
+        "analysis": "A1",
+        "inputs": [
+          "clinical.tsv",
+          "protein_rppa.tsv.gz"
+        ],
+        "n_samples": 194,
+        "n_positive": 139,
+        "n_negative": 55,
+        "mean_positive": 1.352,
+        "mean_negative": -1.034,
+        "difference": 2.386,
+        "n_sample_ids": 194
+      },
+      "x_impact": {
+        "noise": {
+          "metric": "difference",
+          "kind": "scalar",
+          "before": 2.456,
+          "after": 2.386,
+          "delta": -0.07,
+          "noise": 0.1512,
+          "noise_name": "bootstrap standard error",
+          "baseline_ci95": [
+            2.1623,
+            2.7552
+          ],
+          "after_inside_baseline_ci": true,
+          "sign_flipped": false,
+          "ratio": 0.46,
+          "label": "within sampling noise",
+          "bootstrap_draws": 100
+        },
+        "repair": {
+          "metric": "difference",
+          "baseline": 2.456,
+          "new_release": 2.386,
+          "after_all_repairs": 2.456,
+          "back_to_baseline": true,
+          "by_kind": [
+            {
+              "kind": "sample_swap",
+              "findings": [
+                "F5"
+              ],
+              "value_if_only_this_is_fixed": 2.442,
+              "share_of_shift_pct": 80
+            },
+            {
+              "kind": "membership_change",
+              "findings": [
+                "F8"
+              ],
+              "value_if_only_this_is_fixed": 2.401,
+              "share_of_shift_pct": 21
+            },
+            {
+              "kind": "duplicate",
+              "findings": [
+                "F6"
+              ],
+              "value_if_only_this_is_fixed": 2.386,
+              "share_of_shift_pct": 0
+            }
+          ]
+        },
+        "sentence": "A1's difference moved -0.07 (2.456 \u2192 2.386), 0.46\u00d7 its sampling noise (bootstrap standard error 0.1512): within sampling noise. A small shift doesn't make it safe: the verdict comes from what changed, not how much, and another analysis of the same samples could move further. The swaps account for 80% of the shift. With all proposed repairs applied it returns to its baseline value."
+      }
+    },
+    {
+      "id": "A2",
+      "status": "changed",
+      "description": "Share of primary tumors in each PAM50 RNA-seq subtype (subtyped samples only).",
+      "inputs": [
+        "clinical.tsv"
+      ],
+      "reason": "Rerun because 4 detected change(s) touch its inputs and samples.",
+      "verdict": "Blocked",
+      "verdict_rules": [
+        {
+          "rule_id": "TWR-LBL-1",
+          "verdict": "Blocked",
+          "reason": "4 sample(s) changed a clinical label this analysis groups by (DEMO-39-00E6-01, DEMO-48-004B-01, DEMO-71-0051-01, DEMO-90-004D-01).",
+          "remedy": "Confirm each label against the source record before using the new release."
+        }
+      ],
+      "affected_by": [
+        "F1",
+        "F2",
+        "F3",
+        "F4"
+      ],
+      "needs_human_review": true,
+      "before": {
+        "analysis": "A2",
+        "inputs": [
+          "clinical.tsv"
+        ],
+        "n_samples": 207,
+        "counts": {
+          "Basal": 37,
+          "Her2": 23,
+          "LumA": 85,
+          "LumB": 45,
+          "Normal": 17
+        },
+        "percent": {
+          "Basal": 17.9,
+          "Her2": 11.1,
+          "LumA": 41.1,
+          "LumB": 21.7,
+          "Normal": 8.2
+        },
+        "n_sample_ids": 207
+      },
+      "after": {
+        "analysis": "A2",
+        "inputs": [
+          "clinical.tsv"
+        ],
+        "n_samples": 207,
+        "counts": {
+          "Basal": 35,
+          "Her2": 22,
+          "LumA": 85,
+          "LumB": 48,
+          "Normal": 17
+        },
+        "percent": {
+          "Basal": 16.9,
+          "Her2": 10.6,
+          "LumA": 41.1,
+          "LumB": 23.2,
+          "Normal": 8.2
+        },
+        "n_sample_ids": 207
+      },
+      "x_impact": {
+        "noise": {
+          "metric": "percent",
+          "kind": "distribution",
+          "shift": 1.5,
+          "unit": "percentage points (total variation)",
+          "noise": 8.75,
+          "noise_name": "95th percentile of resampling shifts",
+          "ratio": 0.17,
+          "label": "within sampling noise",
+          "bootstrap_draws": 100
+        },
+        "repair": {
+          "metric": "percent shift (TVD, points)",
+          "baseline": 0.0,
+          "new_release": 1.5,
+          "after_all_repairs": 0.0,
+          "back_to_baseline": true,
+          "by_kind": [
+            {
+              "kind": "label_conflict",
+              "findings": [
+                "F1",
+                "F2",
+                "F3",
+                "F4"
+              ],
+              "value_if_only_this_is_fixed": 0.0,
+              "share_of_shift_pct": 100
+            }
+          ]
+        },
+        "sentence": "A2's percent mix shifted 1.5 points, 0.17\u00d7 what resampling alone produces: within sampling noise. A small shift doesn't make it safe: the verdict comes from what changed, not how much, and another analysis of the same samples could move further. With all proposed repairs applied it returns to its baseline value."
+      }
+    }
+  ],
+  "repairs": [
+    {
+      "id": "R1",
+      "action": "flag_for_review",
+      "targets": [
+        {
+          "kind": "sample",
+          "id": "DEMO-39-00E6-01",
+          "release": "demo-release",
+          "file": "clinical.tsv"
+        }
+      ],
+      "justification": "The tool cannot tell whether this change is a correction or an error.",
+      "addresses": [
+        "F1"
+      ]
+    },
+    {
+      "id": "R2",
+      "action": "flag_for_review",
+      "targets": [
+        {
+          "kind": "sample",
+          "id": "DEMO-48-004B-01",
+          "release": "demo-release",
+          "file": "clinical.tsv"
+        }
+      ],
+      "justification": "The tool cannot tell whether this change is a correction or an error.",
+      "addresses": [
+        "F2"
+      ]
+    },
+    {
+      "id": "R3",
+      "action": "flag_for_review",
+      "targets": [
+        {
+          "kind": "sample",
+          "id": "DEMO-71-0051-01",
+          "release": "demo-release",
+          "file": "clinical.tsv"
+        }
+      ],
+      "justification": "The tool cannot tell whether this change is a correction or an error.",
+      "addresses": [
+        "F3"
+      ]
+    },
+    {
+      "id": "R4",
+      "action": "flag_for_review",
+      "targets": [
+        {
+          "kind": "sample",
+          "id": "DEMO-90-004D-01",
+          "release": "demo-release",
+          "file": "clinical.tsv"
+        }
+      ],
+      "justification": "The tool cannot tell whether this change is a correction or an error.",
+      "addresses": [
+        "F4"
+      ]
+    },
+    {
+      "id": "R5",
+      "action": "restore_from_previous_release",
+      "targets": [
+        {
+          "kind": "sample",
+          "id": "DEMO-48-0039-01",
+          "release": "frozen-A",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "DEMO-58-00C1-01",
+          "release": "frozen-A",
+          "file": "protein_rppa.tsv.gz"
+        }
+      ],
+      "justification": "Both samples' previous profiles are intact in the baseline release.",
+      "addresses": [
+        "F5"
+      ]
+    },
+    {
+      "id": "R6",
+      "action": "exclude",
+      "targets": [
+        {
+          "kind": "sample",
+          "id": "DEMO-ZZ-9999-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        }
+      ],
+      "justification": "DEMO-ZZ-9999-01 duplicates DEMO-60-00E0-01 and has no profile of its own.",
+      "addresses": [
+        "F6"
+      ]
+    },
+    {
+      "id": "R7",
+      "action": "flag_for_review",
+      "targets": [
+        {
+          "kind": "sample",
+          "id": "DEMO-45-00CF-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "DEMO-53-00A5-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        },
+        {
+          "kind": "sample",
+          "id": "DEMO-98-00F2-01",
+          "release": "demo-release",
+          "file": "protein_rppa.tsv.gz"
+        }
+      ],
+      "justification": "The tool cannot tell whether this change is a correction or an error.",
+      "addresses": [
+        "F8"
+      ]
+    }
+  ],
+  "limitations": [
+    "Change detection compares exact values. A swap with small edits on top is caught by a near-match pass and reported as a probable swap with medium confidence; other edits to a swapped or copied profile show as value edits.",
+    "The tool shows what changed, not which release is correct. Every repair needs a person's decision.",
+    "Research data-quality check only: no diagnosis, treatment recommendation, risk score or clinical claim."
+  ],
+  "engine": {
+    "name": "cohort-firewall",
+    "version": "0.1.0",
+    "tower_policy": "0.1.0"
+  },
+  "plain_summary": "Blocked: A1 can't be trusted on this release yet, because measurements are attached to the wrong samples. First step: restore 2 sample profile(s) in protein_rppa.tsv.gz from the baseline release. Compared with frozen-A, release demo-release has 4 clinical label change(s), 1 sample swap(s), 1 profile(s) copied onto other IDs, 1 sample(s) with no clinical record, 1 membership change(s). A1 is Blocked because of F5, F6, F8; A2 is Blocked because of F1, F2, F3, F4. A1 moved 0.46\u00d7 its sampling noise (within sampling noise); the proposed repairs bring it back to baseline. A2 moved 0.17\u00d7 its sampling noise (within sampling noise); the proposed repairs bring it back to baseline. Small shifts don't make a release safe: verdicts come from what changed, not how much. A person must review before the new release is used.",
+  "x_headline": "Blocked: A1 can't be trusted on this release yet, because measurements are attached to the wrong samples. First step: restore 2 sample profile(s) in protein_rppa.tsv.gz from the baseline release.",
+  "next_steps": [
+    {
+      "rank": 1,
+      "action": "Restore 2 sample profile(s) in protein_rppa.tsv.gz from the baseline release",
+      "samples": [
+        "DEMO-48-0039-01",
+        "DEMO-58-00C1-01"
+      ],
+      "n_samples": 2,
+      "resolves": [
+        "F5"
+      ],
+      "affects_analyses": [
+        "A1"
+      ],
+      "evidence_to_reconsider": "Reconsider once the restored profiles match the baseline and a rerun finds no swap or copy."
+    },
+    {
+      "rank": 2,
+      "action": "Exclude 1 new sample ID(s) in protein_rppa.tsv.gz that copy another sample's profile",
+      "samples": [
+        "DEMO-ZZ-9999-01"
+      ],
+      "n_samples": 1,
+      "resolves": [
+        "F6"
+      ],
+      "affects_analyses": [
+        "A1"
+      ],
+      "evidence_to_reconsider": "Reconsider once these IDs are removed, or shown to be genuine new samples with their own measurements."
+    },
+    {
+      "rank": 3,
+      "action": "Confirm 4 relabelled clinical record(s) in clinical.tsv against the source",
+      "samples": [
+        "DEMO-39-00E6-01",
+        "DEMO-48-004B-01",
+        "DEMO-71-0051-01",
+        "DEMO-90-004D-01"
+      ],
+      "n_samples": 4,
+      "resolves": [
+        "F1",
+        "F2",
+        "F3",
+        "F4"
+      ],
+      "affects_analyses": [
+        "A2"
+      ],
+      "evidence_to_reconsider": "Reconsider once the source record shows which label is correct."
+    },
+    {
+      "rank": 4,
+      "action": "Confirm with the data provider that 3 added or removed sample(s) in protein_rppa.tsv.gz were intended",
+      "samples": [
+        "DEMO-45-00CF-01",
+        "DEMO-53-00A5-01",
+        "DEMO-98-00F2-01"
+      ],
+      "n_samples": 3,
+      "resolves": [
+        "F8"
+      ],
+      "affects_analyses": [
+        "A1"
+      ],
+      "evidence_to_reconsider": "Reconsider once the provider confirms the change, and the affected analyses are rerun."
+    }
+  ],
+  "x_site_check": null,
+  "certificate": {
+    "cert_id": "8b884119b4fac0f5",
+    "payload": {
+      "cert_format": "cohort-firewall/1",
+      "engine_version": "0.1.0",
+      "policy_version": "0.1.0",
+      "policy_sha256": "96178c766e51110d2cdcc34187819427187acd4c015f2d3aace50ee63e172915",
+      "dataset_sha256": "a9c366e02be6bd65221bf0498b55a18740220ac31b026f91b1ded573e51fb5eb",
+      "dictionary_sha256": null,
+      "spec_sha256": "4980a83d9a964b76e3377cea3490d12cf15f1cb69e063ebfacb34238db4959c8",
+      "verdict": "BLOCKED",
+      "rule_ids": [
+        "TWR-DUP-1",
+        "TWR-LBL-1",
+        "TWR-MEM-1",
+        "TWR-SWAP-1"
+      ],
+      "issued_at": "2026-11-24T17:09:50+00:00"
+    },
+    "signature": "6eQuUEA2dwsTCJ8tZ2f1ZcOLQJYUPCZ/Gx5ydm4qgcqA+WBM9Ga+9fBXdqfCGTqkjssKb9xNppDdByLkg9D1Dw==",
+    "alg": "Ed25519"
+  },
+  "x_shareable_summary": {
+    "text": "Blocked: A1 can't be trusted on this release yet, because measurements are attached to the wrong samples. First step: restore <11 sample profile(s) in protein_rppa.tsv.gz from the baseline release. Compared with frozen-A, release demo-release has <11 clinical label change(s), <11 sample swap(s), <11 profile(s) copied onto other IDs, <11 sample(s) with no clinical record, <11 membership change(s). A1 is Blocked because of F5, F6, F8; A2 is Blocked because of F1, F2, F3, F4. A1 moved 0.46\u00d7 its sampling noise (within sampling noise); the proposed repairs bring it back to baseline. A2 moved 0.17\u00d7 its sampling noise (within sampling noise); the proposed repairs bring it back to baseline. Small shifts don't make a release safe: verdicts come from what changed, not how much. A person must review before the new release is used.",
+    "note": "Counts from 1 to 10 are shown as <11 (CMS small-cell suppression). A percentage next to a hidden count can still reveal it, so a person should read this before sharing. The full evidence record keeps exact counts and sample IDs for reviewers."
+  },
+  "baseline_unverified_files": [],
+  "not_compared": [],
+  "timing_seconds": {
+    "baseline": 0.0,
+    "total": 0.9
+  },
+  "x_demo": {
+    "synthetic": true,
+    "note": "Synthetic demo: random values, made-up DEMO- IDs. Not TCGA data."
+  }
+}

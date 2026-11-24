@@ -1,3 +1,4 @@
+import { DEMO_MODE } from "./demo";
 import { apiConfigured } from "./api";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "";
@@ -87,7 +88,7 @@ export async function buildRelease(config: unknown): Promise<string> {
 }
 
 export async function loadTowerSample(): Promise<FindingsDoc> {
-  const res = await fetch("/samples/tower_practice-B.json");
+  const res = await fetch(DEMO_MODE ? "/samples/tower_demo.json" : "/samples/tower_practice-B.json");
   if (!res.ok) throw new Error("No saved Control Tower sample. Run scripts/export_web_samples.py.");
   return res.json();
 }

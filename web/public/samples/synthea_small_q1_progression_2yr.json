@@ -495,7 +495,7 @@
     "source": "template"
   },
   "certificate": {
-    "cert_id": "c3384184e9ee1cb6",
+    "cert_id": "a64a2624282a799c",
     "payload": {
       "cert_format": "cohort-firewall/1",
       "engine_version": "0.2.0",
@@ -510,9 +510,9 @@
         "EVT-001",
         "SUB-002"
       ],
-      "issued_at": "2026-11-19T16:57:28+00:00"
+      "issued_at": "2026-11-24T17:25:49+00:00"
     },
-    "signature": "I5MW0Q6vO1n9KPAAY9RSERZkpkg/2lwioFg+ininjTwafaR9zfpP/8qrSmHNSMgIZaZkW8j3LkaM2aBqQ8m3CQ==",
+    "signature": "Zunuy88Ln4izWgO+dAh70wb7y5u5Kaz4l/7ap+qTnZoHlILB8N+SBBQ60ur15rV158fj0OmUg0qULS3f7P6IBg==",
     "alg": "Ed25519"
   },
   "engine_version": "0.2.0",

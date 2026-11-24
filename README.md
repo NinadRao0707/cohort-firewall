@@ -82,7 +82,7 @@ The review is signed, timestamped and saved with the evidence record.
 | Three private releases built with the event's `make_release.py --config` | **22 / 22** changes found, 0 unexplained findings |
 | Practice sealed envelope (Saturday's format, no RNA) | **11 / 11**, about 7 s after unsealing |
 | Fresh clone on a clean folder | Setup, tests, a real comparison, the validator and the web build all pass |
-| **Independent rerun by the organizers** (clean computer, README only, commit `ab5084f`) | One-command setup in 45 s; all 64 test checks passed; 4 / 4 planted changes found on an unseen release, no false alarms; the unaffected analysis correctly left alone. The web app wasn't part of their run |
+| **Independent rerun by the organizers** (clean computer, README only; applies to the code-freeze version [v0.1.0](../../tree/ab5084f), commit `ab5084f`) | One-command setup in 45 s; all 64 test checks passed; 4 / 4 planted changes found on an unseen release, no false alarms; the unaffected analysis correctly left alone. The web app wasn't part of their run |
 
 On the frozen release, the same data gets different verdicts for different questions:
 
@@ -205,8 +205,8 @@ elsewhere (a review note, a ticket) to detect that, as transparency logs do.
 After judging, the organizers shared written feedback with six suggestions. All six are implemented:
 review on every verdict, confidence that follows the evidence, summaries kept apart from findings,
 probable-swap detection for swaps hidden by value edits, a one-sentence release headline with "what
-would change the verdict" on every next step, and pinned dependency versions. See
-[`CHANGELOG.md`](CHANGELOG.md).
+would change the verdict" on every next step, and pinned dependency versions. The web app also has a
+public demo mode that uses synthetic data only. See [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Limitations
 These are also shown in the product, under **Limitations of this check**, and on every finding.
@@ -227,6 +227,7 @@ python data/make_variants.py && python tests/test_variants.py # 26 seeded-defect
 python tests/test_review.py                                   # 14 review rules: approval limits, notes on every verdict, forged results
 python tests/test_ledger.py                                   # audit ledger: edits, deletions, reordering, forgeries
 python tests/test_disclosure.py                               # small-cell suppression keeps IDs, hides counts 1-10
+python tests/test_public_demo.py                              # the hosted demo can only ship synthetic samples
 bash scripts/rehearse.sh                                      # 3 private releases, graded against their answer keys
 bash scripts/fresh_clone_test.sh                              # what a judge does, from an empty folder
 ```
@@ -239,6 +240,9 @@ bash scripts/fresh_clone_test.sh                              # what a judge doe
   derived outputs (`examples/outputs/`, `web/public/samples/`) hold sample barcodes and summary numbers only.
 - **Synthetic data, for engine tests only:** a generated stand-in cohort (`data/make_demo_cohort.py`)
   and optional Synthea output. Neither contains real patients, and neither is used for judged results.
+- **The hosted browser demo uses synthetic data only**, with made-up `DEMO-` IDs and random values.
+  Saved results with real TCGA sample IDs are removed at build time and never deployed; real TCGA
+  runs happen locally. `tests/test_public_demo.py` checks this.
 - **No keys or secrets are committed.** The signing key is generated locally in `keys/` (git-ignored).
 
 ### AI features

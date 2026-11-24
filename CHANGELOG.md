@@ -15,6 +15,9 @@ Changes made after judging, in response to the organizers' written feedback.
 - **Clearer release results.** The summary opens with one sentence (verdict, main reason, first step);
   "check against the source" is split by what changed; every next step says what would change the verdict.
 - **Pinned versions.** `requirements.lock` holds exact package versions; `setup.sh` installs it when present.
+- **Public demo mode.** The hosted web app shows synthetic examples only (made-up `DEMO-` IDs), with a
+  banner, and the build removes any saved result with real TCGA IDs. Guarded by `tests/test_public_demo.py`.
+- Plain wording for samples with no clinical record in the release summary.
 - Engine version 0.1.0 → 0.2.0, so certificates show which version produced a result.
 
 ## 0.1.0 (code freeze, Nov 14, 2026)

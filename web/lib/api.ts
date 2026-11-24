@@ -1,3 +1,4 @@
+import { DEMO_MODE, SYNTHETIC_SAMPLES } from "./demo";
 import type { EvaluateResponse } from "./types";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "";
@@ -42,7 +43,7 @@ export async function loadSample(name: string): Promise<EvaluateResponse> {
   return res.json();
 }
 
-export const SAMPLES: { name: string; label: string }[] = [
+const ALL_SAMPLES: { name: string; label: string }[] = [
   { name: "tcga_q1_er_protein_vs_clinical", label: "TCGA: ER protein vs clinical ER" },
   { name: "tcga_q1b_er_protein_profiled_only", label: "TCGA: same, protein-profiled only" },
   { name: "tcga_q2_survival_5yr", label: "TCGA: 5-year overall survival" },
@@ -63,3 +64,6 @@ export const SAMPLES: { name: string; label: string }[] = [
   { name: "synthea_large_q1_progression_2yr", label: "Synthetic (Synthea): large cohort: 2-year worsening" },
   { name: "synthea_large_q2_survival_5yr", label: "Synthetic (Synthea): large cohort: 5-year survival" },
 ];
+
+/** In the hosted demo only synthetic examples are listed (and only they are deployed). */
+export const SAMPLES = ALL_SAMPLES.filter((x) => !DEMO_MODE || SYNTHETIC_SAMPLES.has(x.name));

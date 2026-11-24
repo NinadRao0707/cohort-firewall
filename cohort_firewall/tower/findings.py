@@ -359,7 +359,8 @@ RECONSIDER = {
 }
 KIND_TEXT = {"sample_swap": "sample swap(s)", "duplicate": "profile(s) copied onto other IDs",
              "membership_change": "membership change(s)", "label_conflict": "clinical label change(s)",
-             "missing_data": "missing-data change(s)", "other": "other change(s)"}
+             "missing_data": "missing-data change(s)", "unlinked_record": "sample(s) with no clinical record",
+             "other": "other change(s)"}
 
 
 def site_check(findings: list[dict], universe: list[str]) -> dict | None:
