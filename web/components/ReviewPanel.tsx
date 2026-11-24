@@ -1,4 +1,5 @@
 "use client";
+import { LocalOnly } from "./LocalOnly";
 import { useState } from "react";
 import { DECISION_LABEL, DECISIONS_FOR, downloadJson, reviewQuestion, reviewRelease, type ReviewRecord } from "@/lib/card";
 import { apiConfigured } from "@/lib/api";
@@ -48,7 +49,13 @@ export function QuestionReview({ result }: { result: EvaluateResponse }) {
   const [name, setName] = useState(""); const [role, setRole] = useState(""); const [note, setNote] = useState("");
   const [rec, setRec] = useState<ReviewRecord | null>(null);
   const [error, setError] = useState(""); const [busy, setBusy] = useState(false);
-  if (!apiConfigured) return null;
+  if (!apiConfigured) return (
+    <LocalOnly title="Review before use">
+      A person reviews the evidence and records a decision: approve, approve with conditions, reject, or ask
+      for more evidence. Every decision needs a name and a note, Blocked can&apos;t be approved, and the
+      review is signed and timestamped. Reviews are signed by the local app, so they aren&apos;t available here.
+    </LocalOnly>
+  );
   const toggle = (id: string) => setAck((a) => (a.includes(id) ? a.filter((x) => x !== id) : [...a, id]));
 
   async function submit() {
@@ -104,7 +111,14 @@ export function ReleaseReview({ doc }: { doc: FindingsDoc }) {
   const [name, setName] = useState(""); const [role, setRole] = useState(""); const [note, setNote] = useState("");
   const [rec, setRec] = useState<ReviewRecord | null>(null);
   const [error, setError] = useState(""); const [busy, setBusy] = useState(false);
-  if (!apiConfigured || !analyses.length) return null;
+  if (!analyses.length) return null;
+  if (!apiConfigured) return (
+    <LocalOnly title="Review before using the new release">
+      A person records a decision for each protected analysis (here A1 and A2). Blocked analyses can only be
+      rejected or sent back for more evidence, every decision needs a name and a note, and the review is
+      signed and timestamped. Reviews are signed by the local app, so they aren&apos;t available here.
+    </LocalOnly>
+  );
   const affecting = doc.findings.filter((f) => (f.affects_analyses ?? []).length > 0);
   const toggle = (id: string) => setAck((a) => (a.includes(id) ? a.filter((x) => x !== id) : [...a, id]));
 

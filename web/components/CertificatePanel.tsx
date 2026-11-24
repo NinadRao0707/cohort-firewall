@@ -53,7 +53,7 @@ export function CertificatePanel({ cert }: { cert: Certificate }) {
         {state === "valid" && "Signature valid. This record has not been changed."}
         {state === "invalid" && "Signature does not match. This record was changed after it was issued."}
         {state === "error" && message}
-        {state === "idle" && !apiConfigured && "Start the API to verify signatures."}
+        {state === "idle" && !apiConfigured && "Signatures are checked by the local app. This record was signed when the result was made."}
       </p>
     </section>
   );

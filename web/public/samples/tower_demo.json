@@ -18,17 +18,17 @@
           },
           {
             "file": "copy_number_gistic.tsv.gz",
-            "sha256": "79a0ca537fd1bed862b596989558eda5ee5ec59bffd151e8425a6f8b0f32c94c",
+            "sha256": "ae357639eb51aa43b43ee83af5cb426a09fbc31567d8aca9e521a1e137f35b79",
             "hash_of": "file"
           },
           {
             "file": "mutation_gene_level.tsv.gz",
-            "sha256": "b59c8a5b3040f91b5cff85ab52e0b00ffec74e5d707a7d257d64067751c381c9",
+            "sha256": "9847faa7624dcb202b970a9c9b87767ac9a2c75f5271e3c2d891259bb6f31266",
             "hash_of": "file"
           },
           {
             "file": "protein_rppa.tsv.gz",
-            "sha256": "1da5a3129ae637641732883d2cdbbd18437939a8f5801e6cd0bcb7b6394449d5",
+            "sha256": "1606fceb98fcb53c5630f549995dc3409de3d0c6086c70dd237ca044305015e3",
             "hash_of": "file"
           },
           {
@@ -816,7 +816,7 @@
   ],
   "engine": {
     "name": "cohort-firewall",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "tower_policy": "0.1.0"
   },
   "plain_summary": "Blocked: A1 can't be trusted on this release yet, because measurements are attached to the wrong samples. First step: restore 2 sample profile(s) in protein_rppa.tsv.gz from the baseline release. Compared with frozen-A, release demo-release has 4 clinical label change(s), 1 sample swap(s), 1 profile(s) copied onto other IDs, 1 sample(s) with no clinical record, 1 membership change(s). A1 is Blocked because of F5, F6, F8; A2 is Blocked because of F1, F2, F3, F4. A1 moved 0.46\u00d7 its sampling noise (within sampling noise); the proposed repairs bring it back to baseline. A2 moved 0.17\u00d7 its sampling noise (within sampling noise); the proposed repairs bring it back to baseline. Small shifts don't make a release safe: verdicts come from what changed, not how much. A person must review before the new release is used.",
@@ -894,13 +894,13 @@
   ],
   "x_site_check": null,
   "certificate": {
-    "cert_id": "8b884119b4fac0f5",
+    "cert_id": "0980037ae4a40b20",
     "payload": {
       "cert_format": "cohort-firewall/1",
-      "engine_version": "0.1.0",
+      "engine_version": "0.2.0",
       "policy_version": "0.1.0",
       "policy_sha256": "96178c766e51110d2cdcc34187819427187acd4c015f2d3aace50ee63e172915",
-      "dataset_sha256": "a9c366e02be6bd65221bf0498b55a18740220ac31b026f91b1ded573e51fb5eb",
+      "dataset_sha256": "41d74de296eff1fa574a161cf03d3e4d277688b3f1dcd0b66e9d3119686e8f7e",
       "dictionary_sha256": null,
       "spec_sha256": "4980a83d9a964b76e3377cea3490d12cf15f1cb69e063ebfacb34238db4959c8",
       "verdict": "BLOCKED",
@@ -910,9 +910,9 @@
         "TWR-MEM-1",
         "TWR-SWAP-1"
       ],
-      "issued_at": "2026-11-24T17:09:50+00:00"
+      "issued_at": "2026-11-24T17:37:26+00:00"
     },
-    "signature": "6eQuUEA2dwsTCJ8tZ2f1ZcOLQJYUPCZ/Gx5ydm4qgcqA+WBM9Ga+9fBXdqfCGTqkjssKb9xNppDdByLkg9D1Dw==",
+    "signature": "8WWwA9MgXBTlL1Ixy4envjcaWoVdObnevigMhqz0h1zAN1LG1WxGz+g5ODU3ZHRrYCn6vZQK6SpxTCNM0FiyDQ==",
     "alg": "Ed25519"
   },
   "x_shareable_summary": {
@@ -923,7 +923,7 @@
   "not_compared": [],
   "timing_seconds": {
     "baseline": 0.0,
-    "total": 0.9
+    "total": 0.7
   },
   "x_demo": {
     "synthetic": true,

@@ -249,3 +249,5 @@ button.link { background: none; border: 0; padding: 2px 0; color: var(--ink); fo
   border-radius: var(--radius); font-size: 0.875rem; color: var(--ink-soft); }
 .demo-banner strong { color: var(--ink); }
 .demo-banner a { color: var(--ink); }
+.local-only { border: 1px dashed var(--rule); border-radius: var(--radius); padding: 12px 14px; margin-top: 16px; }
+.local-only a { color: var(--ink); }

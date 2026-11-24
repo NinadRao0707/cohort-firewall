@@ -1,4 +1,5 @@
 "use client";
+import { LocalOnly } from "./LocalOnly";
 import { useState } from "react";
 import { apiConfigured } from "@/lib/api";
 
@@ -14,7 +15,13 @@ const EVENT: Record<string, string> = {
 export function LedgerPanel({ entry }: { entry?: { seq?: number; hash?: string } }) {
   const [data, setData] = useState<LedgerResponse | null>(null);
   const [error, setError] = useState("");
-  if (!apiConfigured) return null;
+  if (!apiConfigured) return (
+    <LocalOnly title="Audit ledger">
+      Locally, every check, envelope and review becomes a signed, timestamped entry chained to the one before
+      it, so no past result or decision can be changed or removed without the chain breaking at that entry.
+      The ledger lives on the machine that runs the checks, so it isn&apos;t part of this demo.
+    </LocalOnly>
+  );
   async function check() {
     setError("");
     try {
