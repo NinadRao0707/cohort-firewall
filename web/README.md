@@ -39,7 +39,7 @@ npm run build
 | `public/samples/` | Saved results for offline use |
 
 ## Deploying the public demo (Vercel)
-The hosted site is a **synthetic-data demo**. On Vercel, demo mode turns on automatically:
+Live at **https://cohort-firewall.vercel.app**. The hosted site is a **synthetic-data demo**. On Vercel, demo mode turns on automatically:
 - a banner says the data is synthetic, and only synthetic examples are listed;
 - Release check opens a synthetic run (`public/samples/tower_demo.json`, made by
   `python scripts/build_public_demo.py`) with made-up `DEMO-` IDs and random values;

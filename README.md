@@ -18,6 +18,7 @@ evidence, the rule and the fix behind every one.
 | **Team** | Ninad Rao, Kareesa Rao, Sreelasya Changalasetty, Sanica Chaudhary |
 | **Product output** | `findings.json` in shared format v0.2. Example: [`examples/outputs/findings-practice-B.json`](examples/outputs/findings-practice-B.json) |
 | **Demo video** | [Edited walkthrough (3 min)](https://youtu.be/HmnjMwQLBB8) · [Code-freeze submission](https://youtu.be/6q2zScy7b7Y) |
+| **Live demo** | [cohort-firewall.vercel.app](https://cohort-firewall.vercel.app) (synthetic data with made-up IDs; real TCGA runs stay local) |
 
 ## Contents
 - [Who it's for](#who-its-for)
